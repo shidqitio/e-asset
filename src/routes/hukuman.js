@@ -1,18 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const hukumanSchema = require("../request/hukuman");
 const {
-  getAllHukuman,
-  getHukumanById,
-  createHukuman,
-  updateHukuman,
-  deleteHukuman,
-} = require("../controllers/hukuman");
+  index,
+  show,
+  store,
+  update,
+  destroy,
+} = require("../controllers/hukumanController");
 
-router.get("/", getAllHukuman);
-router.get("/:id", getHukumanById);
-router.post("/", hukumanSchema.create, createHukuman);
-router.put("/:id", hukumanSchema.update, updateHukuman);
-router.delete("/:id", deleteHukuman);
+router.get("/", index);
+router.get("/:kode_hukuman", show);
+router.post("/", store);
+router.put("/:kode_hukuman", update);
+router.delete("/:kode_hukuman", destroy);
 
 module.exports = router;

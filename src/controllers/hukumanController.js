@@ -104,7 +104,7 @@ exports.update = (req, res, next) => {
     };
 
     Hukuman.findOne({ where : {kode_hukuman : req.params.kode_hukuman}})
-    then((hukum) => {
+    .then((hukum) => {
         if(!hukum) {
             const error = new Error("Kode Hukuman Tidak Ada");
             error.statusCode = 422; 
@@ -136,6 +136,13 @@ exports.destroy = (req, res, next) => {
         }
         return Hukuman.destroy({
             where: {kode_hukuman : req.params.kode_hukuman}
+        });
+    })
+    .then((response) => {
+        res.json({
+            status: "success",
+            message: "Berhasil menghapus data",
+            data: response,    
         });
     })
     .catch((err) => {
