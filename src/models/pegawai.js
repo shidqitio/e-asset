@@ -68,6 +68,10 @@ const Pegawai = db.define(
       type: DataTypes.ENUM("Aktif", "Pensiun", "Diberhentikan", "Meninggal"),
       allowNull: false,
     },
+    foto_pegawai : {
+      type: DataTypes.STRING(255), 
+      allowNull : true
+    },
     ucr: {
       type: DataTypes.STRING(100),
       allowNull: true,
