@@ -1,13 +1,27 @@
 const Pegawai = require("../models/pegawai");
 const Agama = require("../models/agama"); 
-const jafung = require("../models/jafung");
+const Jafung = require("../models/jafung");
 const path = require("path");
 const fs = require("fs");
 
 
 
 exports.index = (req, res, next) => {
-    Pegawai.findAll()
+    Pegawai.findAll({
+        attributes: {
+            exclude : ["ucr","uch","udcr","udch"]
+        },
+        include : [
+            {
+                model : Agama, 
+                attributes : ["kode_agama","nama_agama"],
+            },
+            {
+                model : Jafung, 
+                attributes : ["kode_jafung","nama_jafung"],
+            },
+        ],
+    })
     .then((pegawai) => {
         res.json({
             status : "Success", 
@@ -68,7 +82,21 @@ exports.store = (req, res, next) =>{
 };
 
 exports.show = (req, res, next) => {
-    Pegawai.findOne({where : {nip : req.params.nip}})
+    Pegawai.findOne({where : {nip : req.params.nip},
+        attributes: {
+            exclude : ["ucr","uch","udcr","udch"]
+        },
+        include : [
+            {
+                model : Agama, 
+                attributes : ["kode_agama","nama_agama"],
+            },
+            {
+                model : Jafung, 
+                attributes : ["kode_jafung","nama_jafung"],
+            },
+        ],
+    })
     .then((app) => {
         if(!app) {
             const error = new Error("Nip Tidak Ada");
