@@ -29,7 +29,7 @@ exports.store = (req, res, next) => {
         let kode1 = parseInt(kode_hukuman.charAt(0));
         let kode2 = parseInt(kode_hukuman.charAt(1));
 
-        if(kode > 0) {
+        if(kode1 > 0) {
             if(kode2 === 9) {
                 kode1 = parseInt(kode1) + 1 ;
                 kode2 = 0 ;
