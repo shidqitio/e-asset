@@ -28,8 +28,8 @@ exports.store = (req, res, next) => {
 
     let kode1 = parseInt(kode_fakultas.charAt(0));
 
-    if(kode > 0 ){
-      kode1 = parseInt(kode1) + 1 
+    if(kode1 > 0 ){
+      kode1 = parseInt(kode1) + 1 ;
       kode_fakultas = kode1.toString()
     } else {
       kode_fakultas = parseInt(kode_fakultas) + 1

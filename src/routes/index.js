@@ -10,6 +10,10 @@ const jafungRoutes = require("./jafung");
 const jafungpangkatRoutes = require("./jafungPangkat")
 const keluargaRoutes = require("./keluarga");
 const jabatanstrukturalRoutes = require("./jabatanStruktural");
+const jeniskaryatulisRoutes = require("./jenisKaryaTulis");
+const tingkatpendidikanRoutes = require("./tingkatPendidikan");
+const programstudiRoutes = require("./programStudi");
+const jurusanRoutes = require("./jurusan");
 
 router.use("/agama", agamaRoutes);
 router.use("/fakultas", fakultasRoutes);
@@ -21,5 +25,10 @@ router.use("/jafung",jafungRoutes);
 router.use("/jafpang", jafungpangkatRoutes)
 router.use("/keluarga",keluargaRoutes);
 router.use("/jastruk", jabatanstrukturalRoutes);
+router.use("/karya_tulis", jeniskaryatulisRoutes);
+router.use("/tingkat_pendidikan", tingkatpendidikanRoutes);
+router.use("/prodi", programstudiRoutes);
+router.use("/jurusan", jurusanRoutes);
+
 
 module.exports = router;
