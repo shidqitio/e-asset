@@ -43,7 +43,6 @@ router.get("/", index);
 router.post(
   "/", 
   [
-    uploadImage.single("foto_pegawai"),
     check("nip")
     .isLength({max : 20})
     .withMessage("NIP Maksimal 20 Karakter"),
@@ -62,9 +61,6 @@ router.post(
     check("nidn")
     .isLength({max : 10})
     .withMessage("NIDN Pegawai Maksimal 10 Karakter"),
-    check("nidn")
-    .notEmpty()
-    .withMessage("NIDN Pegawai Harus Diisi"),
     check("tempat_lahir")
     .isLength({max : 100})
     .withMessage("tempat_lahir Maksimal 100 Karakter"),
@@ -107,46 +103,7 @@ router.post(
   ],
   (req, res, next) => {
     const errors = validationResult(req);
-    if(!errors.isEmpty() && !req.file) {
-      const error = new Error();
-      error.statusCode = 422;
-      error.message = [
-        ...error.array(),
-        {
-          value : req.file?.filename,
-          msg : "Gambar Harus di Upload",
-          params : "imageUrl",
-          location : "body",
-        },
-      ];
-      throw error;
-    }
-
-    if(!req.file) {
-      const error = new Error();
-      error.statusCode = 422;
-      error.message = [
-        {
-          value : "", 
-          msg : "Image harus di Upload", 
-          params : "imageUrl", 
-          location : "body",
-        },
-      ];
-      throw error;
-    }
     if(!errors.isEmpty()) {
-      const filename = path.parse(req.file.filename).base;
-      const filePath = path.join(
-        __dirname, 
-        "public",
-        "images",
-        "foto_pegawai",
-        filename
-      );
-      fs.unlink(filePath, (err) => {
-        console.log("unlink error", err);
-      });
       const error = new Error();
       error.statusCode = 422;
       error.message = errors.array();
@@ -174,9 +131,6 @@ router.put(
     check("nidn")
     .isLength({max : 10})
     .withMessage("NIDN Pegawai Maksimal 10 Karakter"),
-    check("nidn")
-    .notEmpty()
-    .withMessage("NIDN Pegawai Harus Diisi"),
     check("tempat_lahir")
     .isLength({max : 100})
     .withMessage("tempat_lahir Maksimal 100 Karakter"),

@@ -1,6 +1,7 @@
 const Pegawai = require("../models/pegawai");
 const Agama = require("../models/agama"); 
 const Jafung = require("../models/jafung");
+const Golongan_Ruang = require("../models/golonganRuang")
 const path = require("path");
 const fs = require("fs");
 
@@ -20,6 +21,10 @@ exports.index = (req, res, next) => {
                 model : Jafung, 
                 attributes : ["kode_jafung","nama_jafung"],
             },
+            {
+                model : Golongan_Ruang, 
+                attributes : ["kode_golongan_ruang","keterangan_pangkat"]
+            }
         ],
     })
     .then((pegawai) => {
@@ -55,6 +60,7 @@ exports.store = (req, res, next) =>{
             tanggal_lahir : req.body.tanggal_lahir, 
             jenis_kelamin : req.body.jenis_kelamin, 
             kode_agama : req.body.kode_agama, 
+            kode_golongan_ruang : req.body.kode_golongan_ruang,
             tmt_cpns : req.body.tmt_cpns, 
             tmt_pns : req.body.tmt_pns,
             alamat : req.body.alamat,
@@ -95,6 +101,10 @@ exports.show = (req, res, next) => {
                 model : Jafung, 
                 attributes : ["kode_jafung","nama_jafung"],
             },
+            {
+                model : Golongan_Ruang, 
+                attributes : ["kode_golongan_ruang","keterangan_pangkat"],
+            },
         ],
     })
     .then((app) => {
@@ -126,6 +136,7 @@ exports.update = (req, res, next) => {
         tanggal_lahir : req.body.tanggal_lahir, 
         jenis_kelamin : req.body.jenis_kelamin, 
         kode_agama : req.body.kode_agama, 
+        kode_golongan_ruang : req.body.kode_golongan_ruang,
         tmt_cpns : req.body.tmt_cpns, 
         tmt_pns : req.body.tmt_pns,
         alamat : req.body.alamat,
@@ -146,6 +157,7 @@ exports.update = (req, res, next) => {
             tanggal_lahir : req.body.tanggal_lahir, 
             jenis_kelamin : req.body.jenis_kelamin, 
             kode_agama : req.body.kode_agama, 
+            kode_golongan_ruang : req.body.kode_golongan_ruang,
             tmt_cpns : req.body.tmt_cpns, 
             tmt_pns : req.body.tmt_pns,
             alamat : req.body.alamat,

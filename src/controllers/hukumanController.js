@@ -118,7 +118,8 @@ exports.update = (req, res, next) => {
                 message : "Berhasil Memperbarui Data", 
                 data : data,
             });
-    }).catch((err) => {
+    })
+    .catch((err) => {
         if(!err.statusCode) {
             err.statusCode = 500;
         }

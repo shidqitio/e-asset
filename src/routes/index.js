@@ -14,6 +14,8 @@ const jeniskaryatulisRoutes = require("./jenisKaryaTulis");
 const tingkatpendidikanRoutes = require("./tingkatPendidikan");
 const programstudiRoutes = require("./programStudi");
 const jurusanRoutes = require("./jurusan");
+const bankRoutes = require("./bank");
+const jabatanpengadaanRoutes = require("./jabatanPengadaan");
 
 router.use("/agama", agamaRoutes);
 router.use("/fakultas", fakultasRoutes);
@@ -29,6 +31,8 @@ router.use("/karya_tulis", jeniskaryatulisRoutes);
 router.use("/tingkat_pendidikan", tingkatpendidikanRoutes);
 router.use("/prodi", programstudiRoutes);
 router.use("/jurusan", jurusanRoutes);
+router.use("/bank", bankRoutes);
+router.use("/jabatan_pengadaan", jabatanpengadaanRoutes)
 
 
 module.exports = router;
