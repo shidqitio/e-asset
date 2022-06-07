@@ -1,4 +1,5 @@
 const JabatanPengadaan = require("../models/jabatanpengadaan");
+const {generateKode} = require("../helper/generatekode2")
 
 exports.index = (req, res, next) => {
     JabatanPengadaan.findAll()
@@ -42,41 +43,11 @@ exports.show = (req, res, next) => {
 exports.store = (req, res, next) => {
     JabatanPengadaan.max("kode_jabatan_pengadaan")
     .then((kode)=> {
-        let kode_jabatan_pengadaan = "00";
-
-        if(kode !== null){
-            kode_jabatan_pengadaan = kode;
-        }
-        let kode1 = parseInt(kode_jabatan_pengadaan.charAt(0));
-        let kode2 = parseInt(kode_jabatan_pengadaan.charAt(1));
-
-        if(kode1 > 0) {
-            if(kode2 === 9) {
-                kode1 = parseInt(kode1) + 1 ;
-                kode2 = 0 ;
-                kode_jabatan_pengadaan = kode1.toString() + kode2.toString();
-            } else {
-                kode_jabatan_pengadaan = parseInt(kode_hukuman) + 1
-            }
-        }
-
-        if(kode1 === 0) {
-            if(kode2 === 9) {
-                kode1 = parseInt(kode1) + 1;
-                kode2 = 0;
-                kode_jabatan_pengadaan = kode1.toString() + kode2.toString();
-            } else {
-                kode_jabatan_pengadaan = kode1.toString() + String(parseInt(kode2) + 1);
-            }
-        }
-        
-        if(kode === null) {
-            kode_jabatan_pengadaan = "00";
-        }
+        let kode_hasil = generateKode(kode)
 
         return JabatanPengadaan.create({
-            kode_jabatan_pengadaan : kode_jabatan_pengadaan, 
-            nama_jabatan_pengadaan : req.body.kode_jabatan_pengadaan,
+            kode_jabatan_pengadaan : kode_hasil, 
+            nama_jabatan_pengadaan : req.body.nama_jabatan_pengadaan,
             ucr : req.user,
         });
     })
@@ -104,7 +75,7 @@ exports.update = (req, res, next) => {
     JabatanPengadaan.findOne({where : {kode_jabatan_pengadaan : req.params.kode_jabatan_pengadaan}})
     .then((app) => {
         if(!app) {
-            const error = new Error("Kode Hukuman Tidak Ada");
+            const error = new Error("Kode Jabatan Pengadaan Tidak Ada");
             error.statusCode = 422; 
             throw error ;
         }

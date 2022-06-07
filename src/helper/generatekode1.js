@@ -11,7 +11,7 @@ exports.generateKode1 = (kode) => {
             kode1 = parseInt(kode1) + 1 ;
             kode_hasil = kode1.toString()
           } else {
-            kode_hasil = parseInt(kode_eselon) + 1
+            kode_hasil = parseInt(kode_gen) + 1
           }
       
           if(kode1 === 0) {

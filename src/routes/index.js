@@ -38,7 +38,7 @@ router.use("/tingkat_pendidikan", tingkatpendidikanRoutes);
 router.use("/prodi", programstudiRoutes);
 router.use("/jurusan", jurusanRoutes);
 router.use("/bank", bankRoutes);
-router.use("/jabatan_pengadaan", jabatanpengadaanRoutes);
+router.use("/jabatanpengadaan", jabatanpengadaanRoutes);
 router.use("/unit", unitRoutes);
 router.use("/eselon", eselonRoutes);
 router.use("/kegiatanjafung", kegiatanjafungRoutes);

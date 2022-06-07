@@ -1,5 +1,6 @@
 const Fakultas = require("../models/fakultas");
 const ProgramStudi = require("../models/programStudi");
+const {generateKode1} = require("../helper/generatekode1")
 
 exports.index = (req, res, next) => {
   Fakultas.findAll({
@@ -28,30 +29,10 @@ exports.index = (req, res, next) => {
 exports.store = (req, res, next) => {
   Fakultas.max("kode_fakultas")
   .then((kode) => {
-    let kode_fakultas = "0";
-
-    if(kode !== null) {
-      kode_fakultas = kode
-    }
-
-    let kode1 = parseInt(kode_fakultas.charAt(0));
-
-    if(kode1 > 0 ){
-      kode1 = parseInt(kode1) + 1 ;
-      kode_fakultas = kode1.toString()
-    } else {
-      kode_fakultas = parseInt(kode_fakultas) + 1
-    }
-
-    if(kode1 === 0) {
-      kode1 = parseInt(kode1) + 1;
-      kode_fakultas = kode1.toString()
-    } else {
-      kode_fakultas = kode1.toString();
-    }
+    let kode_hasil = generateKode1(kode)
 
     return Fakultas.create({
-      kode_fakultas : kode_fakultas, 
+      kode_fakultas : kode_hasil, 
       nama_fakultas : req.body.nama_fakultas, 
       ucr : "Indrawan"
     }); 
