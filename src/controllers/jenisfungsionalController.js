@@ -1,7 +1,20 @@
+const Jafung = require("../models/jafung");
 const JenisFungsional = require("../models/jenisFungsional");
+const UnsurUtama = require("../models/unsurUtama");
 
 exports.index = (req, res, next) => {
-    JenisFungsional.findAll()
+    JenisFungsional.findAll({
+        include : [
+            {
+                model : Jafung, 
+                attributes : ["kode_jafung", "nama_jafung"], 
+            }, 
+            {
+                model : UnsurUtama, 
+                attributes : ["kode_unsur_utama", "nama_unsur_utama"]
+            }
+        ]
+    })
     .then((fungsi) => {
         res.json({
             status : "Success",

@@ -1,8 +1,18 @@
 
 const Jafung = require("../models/jafung");
+const JafungPangkat = require("../models/jafungPangkat");
 
 exports.index = (req, res, next) => {
-    Jafung.findAll()
+    Jafung.findAll(
+        {
+            include : [
+                {
+                    model: JafungPangkat,
+                    attributes : ["kode_jafung_pangkat", "nama_jafung_pangkat"]
+                }
+            ]
+        }
+    )
     .then((jafung) => {
         res.json({
             status : "Success", 
@@ -19,7 +29,15 @@ exports.index = (req, res, next) => {
 };
 
 exports.show = (req,res,next) => {
-    Jafung.findAll({where : {kode_jafung : req.params.kode_jafung}})
+    Jafung.findAll({
+        where : {kode_jafung : req.params.kode_jafung},
+        include : [
+            {
+                model: Jenis_Fungsional,
+                attributes : ["kode_jenis_fungsional", "nama_jenis_fungsional"]
+            }
+        ]
+    })
     .then((app) => {
         if(!app) {
             const error = new Error("Kode Jafung Tidak Ada");

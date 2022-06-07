@@ -43,6 +43,7 @@ router.get("/", index);
 router.post(
   "/", 
   [
+    uploadImage.single("foto_pegawai"),
     check("nip")
     .isLength({max : 20})
     .withMessage("NIP Maksimal 20 Karakter"),

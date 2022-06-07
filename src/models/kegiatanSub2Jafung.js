@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const db = require("../database");
 const KegiatanSub1Jafung = require("./kegiatanSub1Jafung");
+const Jafung = require("./jafung"); 
 
 const KegiatanSub2Jafung = db.define(
   "KegiatanSub2Jafung",
@@ -61,12 +62,19 @@ const KegiatanSub2Jafung = db.define(
 
 KegiatanSub1Jafung.hasMany(KegiatanSub2Jafung, {
   foreignKey: "kode_kegiatan_sub1",
-  as: "KegiatanSub2Jafung",
 });
 
 KegiatanSub2Jafung.belongsTo(KegiatanSub1Jafung, {
   foreignKey: "kode_kegiatan_sub1",
-  as: "KegiatanSub1",
 });
+
+Jafung.hasMany(KegiatanSub2Jafung, {
+  foreignKey : "kode_jafung",
+})
+
+KegiatanSub2Jafung.belongsTo(Jafung, {
+  foreignKey : "kode_jafung"
+})
+
 
 module.exports = KegiatanSub2Jafung;

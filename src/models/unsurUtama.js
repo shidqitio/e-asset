@@ -7,7 +7,7 @@ const UnsurUtama = db.define(
   {
     kode_jenis_fungsional: {
       type: DataTypes.STRING(2),
-      allowNull: false,
+      allowNull: true,
     },
     kode_unsur_utama: {
       type: DataTypes.STRING(4),
@@ -41,5 +41,15 @@ const UnsurUtama = db.define(
     updatedAt: "udch",
   }
 );
+
+JenisFungsional.hasMany(UnsurUtama, {
+  foreignKey: "kode_jenis_fungsional",
+});
+UnsurUtama.belongsTo(JenisFungsional, {
+  foreignKey: "kode_jenis_fungsional",
+
+});
+
+
 
 module.exports = UnsurUtama;

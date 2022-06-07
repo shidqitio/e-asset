@@ -1,8 +1,7 @@
-const { Sequelize } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const db = require("../database");
-const Fakultas = require("./fakultas");
+const Fakultas = require("./fakultas")
 
-const { DataTypes } = Sequelize;
 
 const ProgramStudi = db.define(
   "ProgramStudi",
@@ -44,12 +43,14 @@ const ProgramStudi = db.define(
   }
 );
 
-// Fakultas.hasMany(ProgramStudi, {
-//   foreignKey: "kode_fakultas",
-// });
+Fakultas.hasMany(ProgramStudi, {
+  foreignKey: "kode_fakultas",
+});
 
-// ProgramStudi.belongsTo(Fakultas, {
-//   foreignKey: "kode_fakultas",
-// });
+ProgramStudi.belongsTo(Fakultas, {
+  foreignKey: "kode_fakultas",
+});
+
+
 
 module.exports = ProgramStudi;

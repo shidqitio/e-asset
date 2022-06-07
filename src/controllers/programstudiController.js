@@ -1,8 +1,16 @@
+const Jurusan = require("../models/jurusan");
 const ProgramStudi = require("../models/programStudi");
-const Fakultas = require("../models/fakultas")
+
 
 exports.index = (req, res, next) => {
-    ProgramStudi.findAll()
+    ProgramStudi.findAll({
+        include: [
+            {
+                model : Jurusan, 
+                attributes : ["kode_jurusan", "nama_jurusan"],
+            },
+        ],
+    })
     .then((prodi) => {
         if(!prodi) {
             const error = new Error("Program Studi Tidak Ditemukan");

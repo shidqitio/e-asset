@@ -44,12 +44,10 @@ const KegiatanJafung = db.define(
 
 UnsurUtama.hasMany(KegiatanJafung, {
   foreignKey: "kode_unsur_utama",
-  as: "KegiatanJafung",
 });
 
 KegiatanJafung.belongsTo(UnsurUtama, {
   foreignKey: "kode_unsur_utama",
-  as: "UnsurUtama",
 });
 
 module.exports = KegiatanJafung;

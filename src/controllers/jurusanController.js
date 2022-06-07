@@ -1,7 +1,15 @@
 const Jurusan = require("../models/jurusan");
+const ProgramStudi = require("../models/programStudi")
 
 exports.index = (req, res, next) => {
-    Jurusan.findAll()
+    ProgramStudi.findAll({
+        include: [
+            {
+                model : Jurusan,
+                attributes : ["kode_jurusan","nama_jurusan"],
+            },
+        ]
+    })
     .then((jurusan) => {
         res.json({
             status: "Success", 

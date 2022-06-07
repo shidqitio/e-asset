@@ -43,7 +43,6 @@ exports.index = (req, res, next) => {
 };
 
 exports.store = (req, res, next) =>{
-    const filename = path.parse(req.file.filename).base;
     Pegawai.findOne({where : {nip : req.body.nip}})
     .then((pegawai)=> {
         if(pegawai){
@@ -51,26 +50,56 @@ exports.store = (req, res, next) =>{
             error.statusCode = 422; 
             throw error;
         }
-        return Pegawai.create({
-            nip : req.body.nip, 
-            nama_pegawai : req.body.nama_pegawai,
-            kode_jafung : req.body.kode_jafung, 
-            nidn : req.body.nidn, 
-            tempat_lahir : req.body.tempat_lahir, 
-            tanggal_lahir : req.body.tanggal_lahir, 
-            jenis_kelamin : req.body.jenis_kelamin, 
-            kode_agama : req.body.kode_agama, 
-            kode_golongan_ruang : req.body.kode_golongan_ruang,
-            tmt_cpns : req.body.tmt_cpns, 
-            tmt_pns : req.body.tmt_pns,
-            alamat : req.body.alamat,
-            nomor_telp : req.body.nomor_telp, 
-            email : req.body.email, 
-            status_nikah : req.body.status_nikah, 
-            status_pegawai : req.body.status_pegawai, 
-            foto_pegawai : filename,
-            ucr : req.user
-        });
+        if(req.file){
+            const filename = path.parse(req.file.filename).base;
+            return Pegawai.create({
+                nip : req.body.nip, 
+                nama_pegawai : req.body.nama_pegawai,
+                kode_jafung : req.body.kode_jafung, 
+                nidn : req.body.nidn, 
+                tempat_lahir : req.body.tempat_lahir, 
+                tanggal_lahir : req.body.tanggal_lahir, 
+                jenis_kelamin : req.body.jenis_kelamin, 
+                kode_agama : req.body.kode_agama, 
+                kode_golongan_ruang : req.body.kode_golongan_ruang,
+                tmt_cpns : req.body.tmt_cpns, 
+                tmt_pns : req.body.tmt_pns,
+                alamat : req.body.alamat,
+                nomor_telp : req.body.nomor_telp, 
+                email : req.body.email, 
+                status_nikah : req.body.status_nikah, 
+                status_pegawai : req.body.status_pegawai, 
+                foto_pegawai : filename,
+                facebook : req.body.facebook, 
+                instagram : req.body.instagram, 
+                twitter : req.body.twitter, 
+                ucr : req.user
+            });
+        }
+        else{
+            return Pegawai.create({
+                nip : req.body.nip, 
+                nama_pegawai : req.body.nama_pegawai,
+                kode_jafung : req.body.kode_jafung, 
+                nidn : req.body.nidn, 
+                tempat_lahir : req.body.tempat_lahir, 
+                tanggal_lahir : req.body.tanggal_lahir, 
+                jenis_kelamin : req.body.jenis_kelamin, 
+                kode_agama : req.body.kode_agama, 
+                kode_golongan_ruang : req.body.kode_golongan_ruang,
+                tmt_cpns : req.body.tmt_cpns, 
+                tmt_pns : req.body.tmt_pns,
+                alamat : req.body.alamat,
+                nomor_telp : req.body.nomor_telp, 
+                email : req.body.email, 
+                status_nikah : req.body.status_nikah, 
+                status_pegawai : req.body.status_pegawai, 
+                facebook : req.body.facebook, 
+                instagram : req.body.instagram, 
+                twitter : req.body.twitter, 
+                ucr : req.user
+            });
+        }   
     })
     .then((create_pegawai) => {
         res.json({
@@ -144,6 +173,9 @@ exports.update = (req, res, next) => {
         email : req.body.email, 
         status_nikah : req.body.status_nikah, 
         status_pegawai : req.body.status_pegawai, 
+        facebook : req.body.facebook, 
+        instagram : req.body.instagram, 
+        twitter : req.body.twitter,
         uch : req.user,
     };
 
@@ -166,21 +198,33 @@ exports.update = (req, res, next) => {
             status_nikah : req.body.status_nikah, 
             status_pegawai : req.body.status_pegawai, 
             foto_pegawai : filename,
+            facebook : req.body.facebook, 
+            instagram : req.body.instagram, 
+            twitter : req.body.twitter,    
             uch : req.user,
         }
     }
 
     Pegawai.findOne({ where : {nip : req.params.nip}})
     .then((app) => {
-        if(req.file) {
-            clearImage(app.foto_pegawai);
+        if(req.file){
+            if(app.foto_pegawai !== null) {
+                clearImage(app.foto_pegawai);
+                return Pegawai.update(data, {where : {nip : req.params.nip}});
+            } else if(app.foto_pegawai === null) {
+                return Pegawai.update(data, {where : {nip : req.params.nip}});
+            }
         }
+        else{
+            return Pegawai.update(data, {where : {nip : req.params.nip}});
+        }
+
         if(!app) {
             const error = new Error("NIP Tidak Ada");
             error.statusCode = 422;
             throw error;
         }
-        return Pegawai.update(data, {where : {nip : req.params.nip}});
+
     })
     .then(() => {
         res.json({
@@ -197,7 +241,7 @@ exports.update = (req, res, next) => {
     });
 };
 
-exports.destroy = async (req, res, next) => {
+exports.destroy =  (req, res, next) => {
     Pegawai.findOne({where : {nip : req.params.nip }})
     .then((app) => {
         if(!app) {
@@ -205,10 +249,17 @@ exports.destroy = async (req, res, next) => {
             error.statusCode = 422;
             throw error;
         }
-        clearImage(app.foto_pegawai);
-        return Pegawai.destroy({
-            where : {nip : req.params.nip},
-        });
+        if(app.foto_pegawai === null){
+            return Pegawai.destroy({
+                where : {nip : req.params.nip},
+            });
+        } else{
+            clearImage(app.foto_pegawai);
+            return Pegawai.destroy({
+                where : {nip : req.params.nip},
+            });
+        }
+
     })
     .then((response) => {
         res.json({

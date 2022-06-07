@@ -13,7 +13,7 @@ const JafungPangkat = db.define(
     },
     kode_jafung: {
       type: DataTypes.STRING(5),
-      allowNull: false,
+      allowNull: true,
     },
     nama_jafung_pangkat: {
       type: DataTypes.STRING(100),
@@ -53,7 +53,6 @@ const JafungPangkat = db.define(
 
 JafungPangkat.belongsTo(Jafung, {
   foreignKey: "kode_jafung",
-  as: "Jafung",
 });
 
 Jafung.hasMany(JafungPangkat, {

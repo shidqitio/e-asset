@@ -9,13 +9,24 @@ const Unit = db.define(
       primaryKey: true,
       allowNull: false,
     },
+    revisi_ke : {
+      type : DataTypes.INTEGER(), 
+      primaryKey : true, 
+      allowNull : false,
+      defaultValue : 0,
+    },
     nama_unit: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    induk_unit : {
+      type : DataTypes.STRING(6),
+      allowNull : false,
+    },
     status_aktif_unit: {
       type: DataTypes.ENUM("0", "1"),
       allowNull: false,
+      defaultValue : 1,
     },
     ucr: {
       type: DataTypes.STRING(100),

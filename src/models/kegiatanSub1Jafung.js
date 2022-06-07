@@ -1,8 +1,6 @@
 const { DataTypes } = require("sequelize");
 const db = require("../database");
 const KegiatanJafung = require("./kegiatanJafung");
-const UnsurUtama = require("./unsurUtama");
-const JenisFungsional = require("./jenisFungsional");
 
 const KegiatanSub1Jafung = db.define(
   "KegiatanSub1Jafung",
@@ -46,28 +44,12 @@ const KegiatanSub1Jafung = db.define(
 
 KegiatanJafung.hasMany(KegiatanSub1Jafung, {
   foreignKey: "kode_kegiatan",
-  as: "KegiatanSub1Jafung",
 });
 KegiatanSub1Jafung.belongsTo(KegiatanJafung, {
   foreignKey: "kode_kegiatan",
-  as: "KegiatanJafung",
-});
-UnsurUtama.hasMany(KegiatanJafung, {
-  foreignKey: "kode_unsur_utama",
-  as: "Kegiatan",
-});
-KegiatanJafung.belongsTo(UnsurUtama, {
-  foreignKey: "kode_unsur_utama",
-  as: "Unsur",
 });
 
-JenisFungsional.hasMany(UnsurUtama, {
-  foreignKey: "kode_jenis_fungsional",
-  as: "UnsurUtama",
-});
-UnsurUtama.belongsTo(JenisFungsional, {
-  foreignKey: "kode_jenis_fungsional",
-  as: "JenisFungsi",
-});
+
+
 
 module.exports = KegiatanSub1Jafung;

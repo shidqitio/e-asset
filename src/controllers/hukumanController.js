@@ -1,4 +1,5 @@
 const Hukuman = require("../models/hukuman");
+const {generateKode} = require("../helper/generatekode2")
 
 exports.index = (req, res, next) => {
     Hukuman.findAll()
@@ -20,41 +21,10 @@ exports.index = (req, res, next) => {
 exports.store = (req, res, next) => {
     Hukuman.max("kode_hukuman")
     .then((kode) => {
-        let kode_hukuman = "00";
-
-        if(kode !== null) {
-            kode_hukuman = kode;
-        }
-
-        let kode1 = parseInt(kode_hukuman.charAt(0));
-        let kode2 = parseInt(kode_hukuman.charAt(1));
-
-        if(kode1 > 0) {
-            if(kode2 === 9) {
-                kode1 = parseInt(kode1) + 1 ;
-                kode2 = 0 ;
-                kode_hukuman = kode1.toString() + kode2.toString();
-            } else {
-                kode_hukuman = parseInt(kode_hukuman) + 1
-            }
-        }
-
-        if(kode1 === 0) {
-            if(kode2 === 9) {
-                kode1 = parseInt(kode1) + 1;
-                kode2 = 0;
-                kode_hukuman = kode1.toString() + kode2.toString();
-            } else {
-                kode_hukuman = kode1.toString() + String(parseInt(kode2) + 1);
-            }
-        }
-
-        if(kode === null) {
-            kode_hukuman = "00";
-        }
+        const kode_hasil = generateKode(kode);
 
         return Hukuman.create({
-            kode_hukuman : kode_hukuman, 
+            kode_hukuman : kode_hasil, 
             nama_hukuman : req.body.nama_hukuman, 
             ucr : "Indrawan",
         })

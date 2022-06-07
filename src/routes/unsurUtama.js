@@ -1,18 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getAll,
+  index,
   create,
-  getById,
+  show,
   updateId,
   deleteId,
-} = require("../controllers/unsurUtama");
-const unsurSchema = require("../request/unsurUtama");
+} = require("../controllers/unsurutamaController");
 
-router.get("/", getAll);
-router.get("/:id", getById);
-router.post("/", unsurSchema.create, create);
-router.put("/:id", unsurSchema.update, updateId);
-router.delete("/:id", deleteId);
+router.get("/", index);
+router.get("/:kode_unsur_utama", show);
+
 
 module.exports = router;

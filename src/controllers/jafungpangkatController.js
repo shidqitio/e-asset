@@ -2,7 +2,14 @@ const Jafung = require("../models/jafung");
 const Jafung_Pangkat = require("../models/jafungPangkat");
 
 exports.index = (req, res, next) => {
-    Jafung_Pangkat.findAll()
+    Jafung.findAll({
+        include : [
+            {
+                model : Jafung_Pangkat, 
+                attributes : ["kode_jafung_pangkat", "nama_jafung_pangkat", "kode_golongan_ruang","angka_kredit"]
+            }
+        ]
+    })
     .then((jafpang) => {
         res.json({
             status : "Success", 

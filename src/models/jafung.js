@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const db = require("../database");
+const JenisFungsional = require("./jenisFungsional")
 
 const Jafung = db.define(
   "Jafung",
@@ -11,7 +12,7 @@ const Jafung = db.define(
     },
     kode_jenis_fungsional: {
       type: DataTypes.STRING(2),
-      allowNull: false,
+      allowNull: true,
     },
     nama_jafung: {
       type: DataTypes.STRING(100),
@@ -40,5 +41,15 @@ const Jafung = db.define(
     updatedAt: "udch",
   }
 );
+
+
+
+JenisFungsional.hasMany(Jafung, {
+  foreignKey : "kode_jenis_fungsional",
+})
+
+Jafung.belongsTo(JenisFungsional, {
+  foreignKey : "kode_jenis_fungsional"
+})
 
 module.exports = Jafung;
