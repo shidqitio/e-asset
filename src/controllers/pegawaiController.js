@@ -1,6 +1,5 @@
 const Pegawai = require("../models/pegawai");
 const Agama = require("../models/agama"); 
-const Jafung = require("../models/jafung");
 const Golongan_Ruang = require("../models/golonganRuang")
 const TrxUnitKerjaPegawai = require("../models/Trxunitkerjapegawai");
 const path = require("path");
@@ -18,10 +17,6 @@ exports.index = (req, res, next) => {
             {
                 model : Agama, 
                 attributes : ["kode_agama","nama_agama"],
-            },
-            {
-                model : Jafung, 
-                attributes : ["kode_jafung","nama_jafung"],
             },
             {
                 model : Golongan_Ruang, 
@@ -44,13 +39,12 @@ exports.index = (req, res, next) => {
     })
 };
 
-exports.store = (req, res, next) =>{
+exports.store = (req, res, next) => {
     Pegawai.findOne({where : {nip : req.body.nip}})
     .then((pegawai)=> {
         if(pegawai) {
             const error = new Error("Nip Pegawai Sudah Ada")
             error.statusCode = 422; 
-            throw error
         }
         return db.transaction() 
         .then((t) => {
@@ -59,7 +53,6 @@ exports.store = (req, res, next) =>{
                 return Pegawai.create({
                     nip : req.body.nip, 
                     nama_pegawai : req.body.nama_pegawai,
-                    kode_jafung : req.body.kode_jafung, 
                     nidn : req.body.nidn, 
                     tempat_lahir : req.body.tempat_lahir, 
                     tanggal_lahir : req.body.tanggal_lahir, 
@@ -90,15 +83,25 @@ exports.store = (req, res, next) =>{
                 .then(() => {
                     return t.commit()
                 })
+                .then((create_pegawai) => {
+                    res.json({
+                        status : "Success", 
+                        message : "Berhasil Menambah Data", 
+                        data : create_pegawai
+                    });
+                })
                 .catch((err) => {
-                    return t.rollback()
+                      if(!err.statusCode) {
+                        err.statusCode = 500;
+                    }
+                    t.rollback();
+                    return next(err);
                 })
             }
             else {
                 return Pegawai.create({
                 nip : req.body.nip, 
                 nama_pegawai : req.body.nama_pegawai,
-                kode_jafung : req.body.kode_jafung, 
                 nidn : req.body.nidn, 
                 tempat_lahir : req.body.tempat_lahir, 
                 tanggal_lahir : req.body.tanggal_lahir, 
@@ -130,24 +133,22 @@ exports.store = (req, res, next) =>{
                 .then(() => {
                     return t.commit()
                 })
+                .then((create_pegawai) => {
+                    res.json({
+                        status : "Success", 
+                        message : "Berhasil Menambah Data", 
+                        data : create_pegawai
+                    });
+                })
                 .catch((err) => {
-                    return t.rollback()
+                    if(!err.statusCode) {
+                        err.statusCode = 500;
+                    }
+                    t.rollback();
+                    return next(err);
                 })
             }
         })
-    })
-    .then((data) => {
-        res.json({
-            status : "Success", 
-            message : "Berhasil Menambah Data", 
-            data : data
-        })
-    }) 
-    .catch((err) => {
-        if(!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
     })
 };
 
@@ -160,10 +161,6 @@ exports.show = (req, res, next) => {
             {
                 model : Agama, 
                 attributes : ["kode_agama","nama_agama"],
-            },
-            {
-                model : Jafung, 
-                attributes : ["kode_jafung","nama_jafung"],
             },
             {
                 model : Golongan_Ruang, 
@@ -194,7 +191,6 @@ exports.show = (req, res, next) => {
 exports.update = (req, res, next) => {
     let data = {
         nama_pegawai : req.body.nama_pegawai,
-        kode_jafung : req.body.kode_jafung, 
         nidn : req.body.nidn, 
         tempat_lahir : req.body.tempat_lahir, 
         tanggal_lahir : req.body.tanggal_lahir, 
@@ -218,7 +214,6 @@ exports.update = (req, res, next) => {
         const filename = path.parse(req.file.filename).base;
         data = {
             nama_pegawai : req.body.nama_pegawai,
-            kode_jafung : req.body.kode_jafung, 
             nidn : req.body.nidn, 
             tempat_lahir : req.body.tempat_lahir, 
             tanggal_lahir : req.body.tanggal_lahir, 

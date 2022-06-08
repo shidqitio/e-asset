@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const db = require("../database");
 const Agama = require("./agama");
-const Jafung = require("./jafung");
 const Golongan_Ruang = require("./golonganRuang")
 
 const Pegawai = db.define(
@@ -14,10 +13,6 @@ const Pegawai = db.define(
     },
     nama_pegawai: {
       type: DataTypes.STRING(100),
-      allowNull: false,
-    },
-    kode_jafung: {
-      type: DataTypes.STRING(5),
       allowNull: false,
     },
     nidn: {
@@ -102,14 +97,6 @@ Pegawai.belongsTo(Agama, {
 });
 
 Agama.hasOne(Pegawai, {
-  foreignKey: "nip",
-});
-
-Pegawai.belongsTo(Jafung, {
-  foreignKey: "kode_jafung",
-});
-
-Jafung.hasOne(Pegawai, {
   foreignKey: "nip",
 });
 

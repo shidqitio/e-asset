@@ -22,6 +22,9 @@ const kegiatanjafungRoutes = require("./kegiatanjafung");
 const kegiatanjafungsub1Routes = require("./kegiatanSub1Jafung");
 const kegiatanjafungsub2Routes = require("./kegiatanSub2Jafung");
 const jenisdokumenRoutes = require("./jenisDokumen")
+const jabatanpengadaandetailRoutes = require("./jabatanPengadaanDetail");
+const trxjabatanstrukturalRoutes = require("./TrxJabatanStruktural");
+
 
 router.use("/agama", agamaRoutes);
 router.use("/fakultas", fakultasRoutes);
@@ -45,6 +48,8 @@ router.use("/kegiatanjafung", kegiatanjafungRoutes);
 router.use("/kegiatansub1", kegiatanjafungsub1Routes);
 router.use("/kegiatansub2", kegiatanjafungsub2Routes);
 router.use("/jenisdokumen", jenisdokumenRoutes);
+router.use("/jabatanpengadaandetail", jabatanpengadaandetailRoutes);
+router.use("/trxjabatanstruktural", trxjabatanstrukturalRoutes)
 
 
 module.exports = router;

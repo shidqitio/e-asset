@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     callback(null,"./public/images/foto_pegawai/");
   }, 
   filename: (req, file, callback) => {
-    const nama_image = Date.now() + path.parse(file.originalname).ext;
+    const nama_image =  (req.body.nip) + path.parse(file.originalname).ext;
     callback(null, nama_image);
   }
 });
@@ -171,6 +171,12 @@ router.put(
     check("status_pegawai")
     .notEmpty()
     .withMessage("status_pegawai Tidak Boleh Kosong"),
+    check("kode_unit")
+    .notEmpty()
+    .withMessage("Kode Unit Tidak Boleh Kosong"),
+    check("tanggal_mulai")
+    .notEmpty()
+    .withMessage("Tanggal Mulai Tidak Boleh Kosong")
   ],
   (req, res, next) => {
     const errors = validationResult(req);
