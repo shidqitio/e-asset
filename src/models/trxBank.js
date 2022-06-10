@@ -19,7 +19,6 @@ const TrxBank = db.define(
         }, 
         no_rekening : {
             type : DataTypes.STRING(50), 
-            primaryKey : true, 
             allowNull : false, 
         }, 
         ucr: {
@@ -47,17 +46,19 @@ const TrxBank = db.define(
 );
 
 Pegawai.hasMany(TrxBank, {
-    primaryKey : "nip",
+    foreignKey : "nip",
 })
 
 TrxBank.belongsTo(Pegawai, {
-    primaryKey : "nip"
+    foreignKey : "nip",
 })
 
 Bank.hasMany(TrxBank, {
-    primaryKey : "kode_bank",
+    foreignKey : "kode_bank",
 })
 
 TrxBank.belongsTo(Bank, {
-    primaryKey : "kode_bank"
+    foreignKey : "kode_bank",
 })
+
+module.exports = TrxBank;

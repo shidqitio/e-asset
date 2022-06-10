@@ -1,11 +1,16 @@
 const Pegawai = require("../models/pegawai");
 const Agama = require("../models/agama"); 
-const Golongan_Ruang = require("../models/golonganRuang")
-const TrxUnitKerjaPegawai = require("../models/Trxunitkerjapegawai");
+const TrxUnitKerjaPegawai = require("../models/trxUnitKerjaPegawai");
+const TrxBank = require("../models/trxBank");
+const Unit = require("../models/unit")
 const path = require("path");
 const fs = require("fs");
-const db = require("../database/index");
-
+const Bank = require("../models/bank");
+const {logger} = require("../helper/log");  
+const TrxJabatanFungsional = require("../models/trxJabatanFungsional");
+const JenisFungsional = require("../models/jenisFungsional");
+const Jafung = require("../models/jafung");
+const JafungPangkat = require("../models/jafungPangkat");
 
 
 exports.index = (req, res, next) => {
@@ -19,8 +24,24 @@ exports.index = (req, res, next) => {
                 attributes : ["kode_agama","nama_agama"],
             },
             {
-                model : Golongan_Ruang, 
-                attributes : ["kode_golongan_ruang","keterangan_pangkat"]
+                model : TrxUnitKerjaPegawai, 
+                attributes : ["kode_unit", "nip"], 
+                include : [
+                    {
+                        model : Unit, 
+                        attributes : ["kode_unit", "nama_unit"]
+                    }
+                ]
+            }, 
+            {
+                model : TrxBank, 
+                attributes : ["kode_bank", "no_rekening"],
+                include : [
+                    {
+                        model : Bank, 
+                        attributes : ["kode_bank", "nama_bank"],
+                    }
+                ]
             }
         ],
     })
@@ -39,67 +60,17 @@ exports.index = (req, res, next) => {
     })
 };
 
-exports.store = (req, res, next) => {
+exports.store = (req, res, next) =>{
     Pegawai.findOne({where : {nip : req.body.nip}})
     .then((pegawai)=> {
-        if(pegawai) {
-            const error = new Error("Nip Pegawai Sudah Ada")
+        if(pegawai){
+            const error = new Error("NIP Sudah Terdaftar");
             error.statusCode = 422; 
+            throw error;
         }
-        return db.transaction() 
-        .then((t) => {
-            if(req.file) {
-                const filename = path.parse(req.file.filename).base;
-                return Pegawai.create({
-                    nip : req.body.nip, 
-                    nama_pegawai : req.body.nama_pegawai,
-                    nidn : req.body.nidn, 
-                    tempat_lahir : req.body.tempat_lahir, 
-                    tanggal_lahir : req.body.tanggal_lahir, 
-                    jenis_kelamin : req.body.jenis_kelamin, 
-                    kode_agama : req.body.kode_agama, 
-                    kode_golongan_ruang : req.body.kode_golongan_ruang,
-                    tmt_cpns : req.body.tmt_cpns, 
-                    tmt_pns : req.body.tmt_pns,
-                    alamat : req.body.alamat,
-                    nomor_telp : req.body.nomor_telp, 
-                    email : req.body.email, 
-                    status_nikah : req.body.status_nikah, 
-                    status_pegawai : req.body.status_pegawai, 
-                    foto_pegawai : filename,
-                    facebook : req.body.facebook, 
-                    instagram : req.body.instagram, 
-                    twitter : req.body.twitter, 
-                    ucr : req.user
-                }, {transaction : t})
-                .then(() => {
-                    return TrxUnitKerjaPegawai.create({
-                        nip : req.body.nip, 
-                        kode_unit : req.body.kode_unit, 
-                        tanggal_mulai : req.body.tanggal_mulai, 
-                        tanggal_akhir : req.body.tanggal_akhir,
-                    }, {transaction : t})
-                })
-                .then(() => {
-                    return t.commit()
-                })
-                .then((create_pegawai) => {
-                    res.json({
-                        status : "Success", 
-                        message : "Berhasil Menambah Data", 
-                        data : create_pegawai
-                    });
-                })
-                .catch((err) => {
-                      if(!err.statusCode) {
-                        err.statusCode = 500;
-                    }
-                    t.rollback();
-                    return next(err);
-                })
-            }
-            else {
-                return Pegawai.create({
+        if(req.file){
+            const filename = path.parse(req.file.filename).base;
+            return Pegawai.create({
                 nip : req.body.nip, 
                 nama_pegawai : req.body.nama_pegawai,
                 nidn : req.body.nidn, 
@@ -107,49 +78,58 @@ exports.store = (req, res, next) => {
                 tanggal_lahir : req.body.tanggal_lahir, 
                 jenis_kelamin : req.body.jenis_kelamin, 
                 kode_agama : req.body.kode_agama, 
-                kode_golongan_ruang : req.body.kode_golongan_ruang,
                 tmt_cpns : req.body.tmt_cpns, 
                 tmt_pns : req.body.tmt_pns,
                 ktp : req.body.ktp,
-                npwp : req.body.npwp,
                 alamat : req.body.alamat,
                 nomor_telp : req.body.nomor_telp, 
                 email : req.body.email, 
                 status_nikah : req.body.status_nikah, 
-                status_pegawai : req.body.status_pegawai, 
+                status_pegawai : req.body.status_pegawai,
+                foto_pegawai : filename,
                 facebook : req.body.facebook, 
                 instagram : req.body.instagram, 
                 twitter : req.body.twitter, 
                 ucr : req.user
-                }, {transaction : t})
-                .then(() => {
-                    return TrxUnitKerjaPegawai.create({
-                        nip : req.body.nip, 
-                        kode_unit : req.body.kode_unit, 
-                        tanggal_mulai : req.body.tanggal_mulai, 
-                        tanggal_akhir : req.body.tanggal_akhir,
-                    }, {transaction : t})
-                })
-                .then(() => {
-                    return t.commit()
-                })
-                .then((create_pegawai) => {
-                    res.json({
-                        status : "Success", 
-                        message : "Berhasil Menambah Data", 
-                        data : create_pegawai
-                    });
-                })
-                .catch((err) => {
-                    if(!err.statusCode) {
-                        err.statusCode = 500;
-                    }
-                    t.rollback();
-                    return next(err);
-                })
-            }
-        })
+            });
+        }
+        else{
+            return Pegawai.create({
+                nip : req.body.nip, 
+                nama_pegawai : req.body.nama_pegawai,
+                nidn : req.body.nidn, 
+                tempat_lahir : req.body.tempat_lahir, 
+                tanggal_lahir : req.body.tanggal_lahir, 
+                jenis_kelamin : req.body.jenis_kelamin, 
+                kode_agama : req.body.kode_agama, 
+                tmt_cpns : req.body.tmt_cpns, 
+                tmt_pns : req.body.tmt_pns,
+                ktp : req.body.ktp,
+                alamat : req.body.alamat,
+                nomor_telp : req.body.nomor_telp, 
+                email : req.body.email, 
+                status_nikah : req.body.status_nikah, 
+                status_pegawai : req.body.status_pegawai,
+                facebook : req.body.facebook, 
+                instagram : req.body.instagram, 
+                twitter : req.body.twitter, 
+                ucr : req.user
+            });
+        }   
     })
+    .then((create_pegawai) => {
+        res.json({
+            status : "Success", 
+            message : "Berhasil Menambah Data", 
+            data : create_pegawai
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    });
 };
 
 exports.show = (req, res, next) => {
@@ -163,9 +143,25 @@ exports.show = (req, res, next) => {
                 attributes : ["kode_agama","nama_agama"],
             },
             {
-                model : Golongan_Ruang, 
-                attributes : ["kode_golongan_ruang","keterangan_pangkat"],
-            },
+                model : TrxUnitKerjaPegawai, 
+                attributes : ["kode_unit", "nip"], 
+                include : [
+                    {
+                        model : Unit, 
+                        attributes : ["kode_unit", "nama_unit"]
+                    }
+                ]
+            }, 
+            {
+                model : TrxBank, 
+                attributes : ["kode_bank", "nip", "no_rekening"],
+                include : [
+                    {
+                        model : Bank, 
+                        attributes : ["kode_bank", "nama_bank"],
+                    }
+                ]
+            }
         ],
     })
     .then((app) => {
@@ -181,6 +177,7 @@ exports.show = (req, res, next) => {
         });
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode ) {
             err.statusCode = 500;
         }
@@ -264,6 +261,7 @@ exports.update = (req, res, next) => {
         });
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }
@@ -299,12 +297,69 @@ exports.destroy =  (req, res, next) => {
         });
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }
         next(err);
     });
 };
+
+exports.showbyEmail = (req, res, next) => {
+    Pegawai.findOne({
+        where : {email : req.params.email},
+        attributes : ["nip", "nama_pegawai", "foto_pegawai", "email"], 
+        include : [
+            {
+                model : TrxUnitKerjaPegawai, 
+                attributes : ["kode_unit", "nip"], 
+                include : [
+                    {
+                        model : Unit, 
+                        attributes : ["kode_unit", "nama_unit"]
+                    }
+                ]
+            }, 
+            {
+                model : TrxJabatanFungsional, 
+                attributes : ["nip", "kode_sub_kelas", "tmt_awal"], 
+                include : [
+                    {
+                        model : JenisFungsional , 
+                        attributes : ["kode_jenis_fungsional", "nama_jenis_fungsional"], 
+                    }, 
+                    {
+                        model : Jafung, 
+                        attributes : ["kode_jenis_fungsional", "kode_jafung", "nama_jafung"]
+                    }, 
+                    {
+                        model : JafungPangkat, 
+                        attributes : ["kode_jafung", "kode_jafung_pangkat", "nama_jafung_pangkat", "kode_golongan_ruang", "angka_kredit"]
+                    }
+                ]
+            }
+        ]
+    
+    })
+    .then((app) => {
+        if(!app) {
+            const error = new Error("Email Tidak Ada");
+            error.statusCode = 422;
+            throw error;
+        }
+        res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data", 
+            data : app
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    })
+}
 
 const clearImage = (filePath) => {
     filePath = path.join(__dirname,"..","..","public","images","foto_pegawai", filePath);

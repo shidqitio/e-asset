@@ -1,5 +1,6 @@
 const Hukuman = require("../models/hukuman");
 const {generateKode} = require("../helper/generatekode2")
+const {logger} = require("../helper/log");
 
 exports.index = (req, res, next) => {
     Hukuman.findAll()
@@ -11,6 +12,7 @@ exports.index = (req, res, next) => {
         });
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }
@@ -37,6 +39,7 @@ exports.store = (req, res, next) => {
         });
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }
@@ -90,6 +93,7 @@ exports.update = (req, res, next) => {
             });
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }
@@ -117,6 +121,7 @@ exports.destroy = (req, res, next) => {
         });
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }

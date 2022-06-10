@@ -24,6 +24,8 @@ const kegiatanjafungsub2Routes = require("./kegiatanSub2Jafung");
 const jenisdokumenRoutes = require("./jenisDokumen")
 const jabatanpengadaandetailRoutes = require("./jabatanPengadaanDetail");
 const trxjabatanstrukturalRoutes = require("./TrxJabatanStruktural");
+const trxbankRouter = require("./trxBank");
+const trxunitpegawaiRouter = require("./trxUnitKerjaPegawai")
 
 
 router.use("/agama", agamaRoutes);
@@ -50,6 +52,8 @@ router.use("/kegiatansub2", kegiatanjafungsub2Routes);
 router.use("/jenisdokumen", jenisdokumenRoutes);
 router.use("/jabatanpengadaandetail", jabatanpengadaandetailRoutes);
 router.use("/trxjabatanstruktural", trxjabatanstrukturalRoutes)
+router.use("/trxbank", trxbankRouter)
+router.use("/trxunitpegawai", trxunitpegawaiRouter);
 
 
 module.exports = router;

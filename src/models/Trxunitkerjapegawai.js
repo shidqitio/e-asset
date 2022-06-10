@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const db = require("../database")
 const Pegawai = require("./pegawai")
+const Unit = require("./unit")
 
 const TrxUnitKerjaPegawai = db.define(
     "TrxUnitKerjaPegawai", 
@@ -53,6 +54,14 @@ Pegawai.hasMany(TrxUnitKerjaPegawai, {
 
 TrxUnitKerjaPegawai.belongsTo(Pegawai, {
     foreignKey : "nip"
+})
+
+Unit.hasMany(TrxUnitKerjaPegawai, {
+    foreignKey : "kode_unit",
+})
+
+TrxUnitKerjaPegawai.belongsTo(Unit, {
+    foreignKey : "kode_unit"
 })
 
 module.exports = TrxUnitKerjaPegawai;

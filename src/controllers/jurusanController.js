@@ -88,7 +88,7 @@ exports.store = (req, res, next) => {
         return Jurusan.create({
             kode_jurusan : kode_hasil, 
             kode_program_studi : req.body.kode_program_studi, 
-            nama_jurusan : req.body.kode_jurusan
+            nama_jurusan : req.body.nama_jurusan
         });
     })
     .then((app) => {

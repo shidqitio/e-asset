@@ -51,12 +51,18 @@ const JafungPangkat = db.define(
   }
 );
 
+Jafung.hasMany(JafungPangkat, {
+  foreignKey: "kode_jafung",
+});
+
 JafungPangkat.belongsTo(Jafung, {
   foreignKey: "kode_jafung",
 });
 
-Jafung.hasMany(JafungPangkat, {
-  foreignKey: "kode_jafung",
+
+
+GolonganRuang.hasMany(JafungPangkat, {
+  foreignKey: "kode_golongan_ruang",
 });
 
 JafungPangkat.belongsTo(GolonganRuang, {
@@ -64,8 +70,6 @@ JafungPangkat.belongsTo(GolonganRuang, {
   as: "GolonganRuang",
 });
 
-GolonganRuang.hasMany(JafungPangkat, {
-  foreignKey: "kode_golongan_ruang",
-});
+
 
 module.exports = JafungPangkat;

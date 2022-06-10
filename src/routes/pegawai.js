@@ -5,7 +5,8 @@ const {
   store, 
   update, 
   show, 
-  destroy
+  destroy, 
+  showbyEmail
 } = require("../controllers/pegawaiController");
 const path = require("path");
 const fs = require("fs");
@@ -171,9 +172,6 @@ router.put(
     check("status_pegawai")
     .notEmpty()
     .withMessage("status_pegawai Tidak Boleh Kosong"),
-    check("kode_unit")
-    .notEmpty()
-    .withMessage("Kode Unit Tidak Boleh Kosong"),
     check("tanggal_mulai")
     .notEmpty()
     .withMessage("Tanggal Mulai Tidak Boleh Kosong")
@@ -205,6 +203,8 @@ router.put(
 );
 
 router.get("/:nip", show);
+
+router.get("/email/:email",showbyEmail)
 
 router.delete("/:nip", destroy);
 

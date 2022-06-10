@@ -56,6 +56,7 @@ exports.store = (req, res, next) => {
         })
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }
@@ -83,6 +84,7 @@ exports.show = (req, res, next) => {
         })
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }
@@ -121,6 +123,7 @@ exports.update = (req,res,next) => {
         })
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }
@@ -156,6 +159,7 @@ exports.destroy = (req, res, next) => {
         })
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }

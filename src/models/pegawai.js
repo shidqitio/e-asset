@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const db = require("../database");
 const Agama = require("./agama");
-const Golongan_Ruang = require("./golonganRuang")
 
 const Pegawai = db.define(
   "Pegawai",
@@ -100,12 +99,5 @@ Agama.hasOne(Pegawai, {
   foreignKey: "nip",
 });
 
-Pegawai.belongsTo(Golongan_Ruang,{
-  foreignKey: "kode_golongan_ruang",
-});
-
-Golongan_Ruang.hasOne(Pegawai, {
-  foreignKey: "kode_golongan_ruang",
-})
 
 module.exports = Pegawai;

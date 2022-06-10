@@ -4,8 +4,6 @@ const db = require("./src/database");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
-const log4js = require("log4js");
-const logger = log4js.getLogger();
 
 const http = require("http");
 const server = http.createServer(app);
@@ -23,8 +21,6 @@ app.use(require("./src/routes"));
 
 app.use(require("./src/middlewares/errorHandler"));
 
-logger.level = "debug";
-logger.debug("Some Debug Message");
 
 db.sync()
   .then(() => {
