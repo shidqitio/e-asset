@@ -46,6 +46,7 @@ exports.store = (req, res, next) => {
         }
         else {
             const {kode_kegiatan} = data[index-1];
+            console.log(kode_kegiatan)
             let tes = kode_kegiatan.split(".");
             let kode_keg = tes[2];
             let kode_awal = req.body.kode_unsur_utama;
@@ -76,7 +77,8 @@ exports.store = (req, res, next) => {
             }
             return KegiatanJafung.create({
                 kode_unsur_utama : req.body.kode_unsur_utama,
-                nama_kegiatan: req.body.nama_kegiatan_kegiatan, 
+                kode_kegiatan : kode_hasil,
+                nama_kegiatan: req.body.nama_kegiatan, 
                 ucr : req.user,
             })
     })

@@ -27,7 +27,8 @@ exports.index = (req,res,next) => {
 };
 
 exports.store = (req, res, next) => {
-    TrxUnitKerjaPegawai.findAll({where : {nip : req.body.nip}})
+    console.log(req.body)
+    TrxUnitKerjaPegawai.findAll({where : {nip: req.body.nip}})
     .then((app) => {
         if(app) {
             const error = new Error("Nip Sudah Terdaftar"); 
@@ -35,11 +36,19 @@ exports.store = (req, res, next) => {
         }
         return db.transaction()
         .then((t) => {
+        TrxUnitKerjaPegawai.findOne({where : {nip: req.body.nip}})
+        .then((app)=> {
+            if(app){
+                const error = new Error("Nip Sudah Terdaftar"); 
+                error.statusCode = 422; 
+                throw error
+            }
             return TrxUnitKerjaPegawai.create({
                 kode_unit : req.body.kode_unit, 
                 nip : req.body.nip, 
                 tanggal_mulai : req.body.tanggal_mulai,
             },{transaction : t})
+        })
             .then(() => {
                 let kode_jafung_pangkat = req.body.kode_jafung_pangkat ; 
                 let kode_jafung = kode_jafung_pangkat.substring(5,0)
@@ -56,7 +65,20 @@ exports.store = (req, res, next) => {
                 }, {transaction : t})
              })
              .then(() => {
-                 return t.commit()
+                 let fakultas = req.body.kode_fakultas
+                 if(fakultas) {
+                    TrxProgramStudiPegawai.create({
+                        nip : req.body.nip, 
+                        kode_fakultas : req.body.kode_fakultas, 
+                        kode_program_studi : req.body.kode_program_studi, 
+                        kode_jurusan : req.body.kode_jurusan, 
+                        kode_pindah : req.body.kode_pindah, 
+                        tanggal_mulai : req.body.tanggal_mulai
+                    })
+                    return t.commit()
+                 } else{
+                    return t.commit()
+                 } 
              }) 
             .then((create) => {
                 res.json({
@@ -75,3 +97,4 @@ exports.store = (req, res, next) => {
         })
     }) 
 }
+
