@@ -38,7 +38,7 @@ const trxanjabformdRouter = require("./trxAnjabFormD")
 const trxanjabformeRouter = require("./trxAnjabFormE");
 const trxunitkerjaupbjjRouter = require("./trxUnitKerjaUpbjj");
 const trxanjabformeupbjjRouter = require("./trxAnjabFormEUpbjj")
-
+const subkelasRouter = require("./subKelas");
 
 
 router.use("/agama", agamaRoutes);
@@ -79,6 +79,7 @@ router.use("/trxanjabformd", trxanjabformdRouter );
 router.use("/trxanjabforme", trxanjabformeRouter);
 router.use("/trxunitkerjaupbjj", trxunitkerjaupbjjRouter);
 router.use("/trxanjabformeupbjj", trxanjabformeupbjjRouter)
+router.use("/subkelas", subkelasRouter)
 
 
 

@@ -22,11 +22,11 @@ const Keluarga = db.define(
       allowNull: true,
     },
     udcr: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATE(),
       allowNull: true,
     },
     udch: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATE(),
       allowNull: true,
     },
   },
