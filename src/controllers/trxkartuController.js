@@ -68,7 +68,17 @@ exports.show = (req, res,next) => {
 }
 
 exports.store = (req, res, next) => {
-    TrxKartu.findOne()
+    const request = req.body;
+    const data = request.kartu.map((item) => {
+    return {
+            nip : item.nip, 
+            kode_kartu : item.kode_kartu, 
+            nomor_kartu : item.nomor_kartu,
+        }
+    })
+    TrxKartu.findOne({
+        where : data
+    })
     .then((app) => {
         if(app) {
             const error = new Error ("Nip Sudah Ada");
@@ -76,7 +86,7 @@ exports.store = (req, res, next) => {
             throw error
         }
         const request = req.body;
-        const data = request.map((item) => {
+        const data = request.kartu.map((item) => {
             return {
                 nip : item.nip, 
                 kode_kartu : item.kode_kartu, 

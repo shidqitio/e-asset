@@ -1,6 +1,7 @@
 const TrxBank = require("../models/trxBank");
 const Pegawai = require("../models/pegawai");
 const Bank = require("../models/bank")
+const {logger} = require("../helper/log");
 
 exports.index = (req, res, next) => {
     TrxBank.findAll({
