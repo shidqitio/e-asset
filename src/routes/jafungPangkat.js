@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   index,
+  tampil,
   show, 
   store,
   update, 
@@ -11,6 +12,7 @@ const {
 const {check, validationResult} = require("express-validator");
 
 router.get("/", index)
+router.get("/data",tampil)
 router.get("/:kode_jafung_pangkat", show)
 router.post("/",
   [

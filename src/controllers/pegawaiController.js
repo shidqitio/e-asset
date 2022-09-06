@@ -11,6 +11,8 @@ const TrxJabatanFungsional = require("../models/trxJabatanFungsional");
 const JenisFungsional = require("../models/jenisFungsional");
 const Jafung = require("../models/jafung");
 const JafungPangkat = require("../models/jafungPangkat");
+const TrxJabatanPengadaan = require("../models/trxJabatanPengadaan");
+const JabatanPengadaanDetail = require("../models/jabatanpengadaandetail");
 
 
 exports.index = (req, res, next) => {
@@ -367,3 +369,57 @@ const clearImage = (filePath) => {
         console.log("Unlink error", err);
     });
 };
+
+//Kebutuhan Expenditure
+exports.pegawaippk = (req, res, next) => {
+    Pegawai.findOne({
+        where : {
+            nip : req.params.nip
+        },
+        include : [
+            {
+                model : TrxUnitKerjaPegawai, 
+                where : {
+                    kode_unit : req.params.kode_unit,
+                },
+                include : [
+                    {
+                        model : Unit
+                    }
+                ]
+            },
+        ],
+        include : [
+            {
+                model: TrxJabatanPengadaan, 
+                where : {
+                    kode_jabatan_pengadaan_detail : "01.01"
+                },
+                include : [
+                    {
+                        model : JabatanPengadaanDetail
+                    }
+                ]
+            }
+        ]
+    })
+    .then((app) => {
+        if(!app) {
+            const error = new Error("Nip Tidak Ada");
+            error.statusCode = 422; 
+            throw error;
+        }
+        res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data", 
+            data : app,
+        });
+    })
+    .catch((err) => {
+        logger(err)
+        if(!err.statusCode ) {
+            err.statusCode = 500;
+        }
+        next (err);
+    });
+}

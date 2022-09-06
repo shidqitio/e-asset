@@ -1,5 +1,7 @@
 const Jafung = require("../models/jafung");
 const Jafung_Pangkat = require("../models/jafungPangkat");
+const {QueryTypes} = require('sequelize')
+const sequelize = require('../database')
 
 exports.index = (req, res, next) => {
     Jafung.findAll({
@@ -24,6 +26,31 @@ exports.index = (req, res, next) => {
         next(err);
     });
 };
+
+exports.tampil = (req, res, next) => {
+    sequelize.query(
+        `Select jf.*, j.*, jp.* from ref_jenis_fungsional as jf LEFT JOIN 
+        ref_jafung as j ON jf.kode_jenis_fungsional = j.kode_jenis_fungsional 
+        LEFT JOIN ref_jafung_pangkat as jp ON j.kode_jafung = jp.kode_jafung
+        `, 
+        {
+            type: QueryTypes.SELECT
+        }
+    )
+    .then((data)=> {
+        res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data", 
+            data: data,
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode){
+            err.statusCode = 500;
+        }
+        next(err);
+    });
+}
 
 exports.show = (req, res, next) => {
     Jafung_Pangkat.findAll({where : {kode_jafung_pangkat : req.params.kode_jafung_pangkat}})

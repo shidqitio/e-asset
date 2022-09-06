@@ -62,29 +62,32 @@ exports.store = (req, res, next) => {
                 kode_jabatan_struktural = kode1.toString() + kode2.toString() + kode3.toString();
             }
 
-            if(kode2 > 0){
+            else if(kode2 > 0){
                 if(kode3 === 9){
-                  kode1 = 0;
                   kode2 = parseInt(kode2) + 1;
                   kode3 = 0;
                   kode_jabatan_struktural = kode1.toString() + kode2.toString() + kode3.toString();
                 }
                 else{
                     kode_jabatan_struktural = kode1.toString() + kode2.toString() + String(parseInt(kode3) + 1);
+               
                 }
             }
     
-            if(kode2 === 0){
+            else if(kode2 === 0){
                 if(kode3 === 9 ){
-                    kode1 = 0
                     kode2 = parseInt(kode2) + 1
                     kode3 = 0
                     kode_jabatan_struktural = kode1.toString() + kode2.toString() + kode3.toString();
-                } else if(kode3 > 9) {
+                } else if(kode3 > 0) {
+                    kode_jabatan_struktural = kode1.toString() + kode2.toString() + String(parseInt(kode3) + 1);
+                } else if (kode3 === 0) {
                     kode_jabatan_struktural = kode1.toString() + kode2.toString() + String(parseInt(kode3) + 1);
                 }
             }
+
         }
+
 
         if(kode1 === 0){
             //kode1 = 0 kode2 = 9 kode3 = 9
@@ -102,7 +105,7 @@ exports.store = (req, res, next) => {
                   kode3 = 0;
                   kode_jabatan_struktural = kode1.toString() + kode2.toString() + kode3.toString();
                 }
-                else  {
+                else {
                     kode_jabatan_struktural = kode1.toString() + kode2.toString() + String(parseInt(kode3) + 1);
                 }
             }
@@ -126,7 +129,7 @@ exports.store = (req, res, next) => {
             kode_jabatan_struktural : kode_jabatan_struktural, 
             nama_jabatan : req.body.nama_jabatan, 
             kode_eselon : req.body.kode_eselon, 
-            status_jabatan : req.body.status_jabatan,
+            status_jabatan_struktural : req.body.status_jabatan_struktural,
             kelas : req.body.kelas, 
         });
     })
@@ -150,7 +153,7 @@ exports.update = (req, res, next) => {
         kode_jabatan_struktural : req.params.kode_jabatan_struktural, 
         nama_jabatan : req.body.nama_jabatan, 
         kode_eselon : req.body.kode_eselon, 
-        status_jabatan : req.body.status_jabatan,
+        status_jabatan_struktural : req.body.status_jabatan,
         kelas : req.body.kelas,
     };
 

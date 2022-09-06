@@ -9,7 +9,7 @@ const JabatanStruktural = db.define(
       primaryKey: true,
       allowNull: false,
     },
-    nama_jenis_jabatan: {
+    nama_jabatan: {
       type: DataTypes.STRING(50),
       allowNull: false,
     },

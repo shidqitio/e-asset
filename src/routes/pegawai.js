@@ -6,7 +6,8 @@ const {
   update, 
   show, 
   destroy, 
-  showbyEmail
+  showbyEmail,
+  pegawaippk
 } = require("../controllers/pegawaiController");
 const path = require("path");
 const fs = require("fs");
@@ -203,6 +204,8 @@ router.put(
 );
 
 router.get("/:nip", show);
+
+router.get("/ppk/:nip/:kode_unit", pegawaippk)
 
 router.get("/email/:email",showbyEmail)
 

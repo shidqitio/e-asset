@@ -24,7 +24,7 @@ router.post("/",
     check("kode_eselon")
     .notEmpty()
     .withMessage("Kode Eselon Tidak Boleh Kosong"),
-    check("status_jabatan")
+    check("status_jabatan_struktural")
     .notEmpty()
     .withMessage("Status Jabatan Tidak Boleh Kosong"),
     check("kelas")
@@ -55,7 +55,7 @@ router.put("/:kode_jabatan_struktural",
     check("kode_eselon")
     .notEmpty()
     .withMessage("Kode Eselon Tidak Boleh Kosong"),
-    check("status_jabatan")
+    check("status_jabatan_struktural")
     .notEmpty()
     .withMessage("Status Jabatan Tidak Boleh Kosong"),
     check("kelas")
