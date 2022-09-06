@@ -97,6 +97,7 @@ exports.store = (req, res, next) => {
                  //Pemisah Kode dan Nama Unit
             let unit = req.body.unit 
             const split_unit = unit.split("||")
+            
             let kode_unit = split_unit[0]
             let nama_unit = split_unit[1]
             //Pemisah Kode dan Nama RKT
@@ -168,7 +169,7 @@ exports.store = (req, res, next) => {
             })
             }
             else{
-             //Pemisah Kode dan Nama Unit
+            //Pemisah Kode dan Nama Unit
             let unit = req.body.unit 
             const split_unit = unit.split("||")
             let kode_unit = split_unit[0]
@@ -533,4 +534,31 @@ exports.parafapip = (req, res, next) => {
         }
         return next(err);
     });
+}
+
+exports.update = (req, res, next) => {
+    return db.transaction ((t) => {
+            //Pemisah Kode dan nama Unit
+            let unit = req.body.unit 
+            const split_unit = unit.split("||")
+            let kode_unit = split_unit[0]
+             //Pemisah Kode dan Nama RKT
+             let kegiatan_rkt = req.body.kegiatan_rkt
+             const split_rkt = kegiatan_rkt.split("||")
+             let kode_kegiatan_rkt = parseInt(split_rkt[0])
+        return RkbmutPengadaanHeader.findAll({
+            where : {
+                kode_unit_kerja : kode_unit, 
+                kode_kegiatan_rkt : kode_kegiatan_rkt, 
+            },
+            include : [
+                {
+                    model : RkbmutPengadaanDetail, 
+                }
+            ]
+        })
+        .then((dest) => {
+            console.log("Tes :",dest)
+        })
+    })
 }

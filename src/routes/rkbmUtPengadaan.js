@@ -9,7 +9,8 @@ const {
     parafunit, 
     parafunitselesai,
     reviewunit,
-    parafapip
+    parafapip, 
+    update
 } = require("../controllers/rkmbutpengadaanController")
 
 router.get("/unit/:kode_unit_kerja", indexunit)
@@ -17,6 +18,8 @@ router.get("/unit/:kode_unit_kerja", indexunit)
 router.get("/apip", indexapip)
 
 router.post("/", store)
+
+router.post("/update", update)
 
 router.put("/review/:kode_unit_kerja/:kode_kegiatan_rkt", review)
 
