@@ -537,7 +537,8 @@ exports.parafapip = (req, res, next) => {
 }
 
 exports.update = (req, res, next) => {
-    return db.transaction ((t) => {
+    return db.transaction() 
+        .then((t) => {
             //Pemisah Kode dan nama Unit
             let unit = req.body.unit 
             const split_unit = unit.split("||")
@@ -546,10 +547,12 @@ exports.update = (req, res, next) => {
              let kegiatan_rkt = req.body.kegiatan_rkt
              const split_rkt = kegiatan_rkt.split("||")
              let kode_kegiatan_rkt = parseInt(split_rkt[0])
-        return RkbmutPengadaanHeader.findAll({
+        RkbmutPengadaanHeader.findAll({
             where : {
                 kode_unit_kerja : kode_unit, 
                 kode_kegiatan_rkt : kode_kegiatan_rkt, 
+                status_revisi : 0, 
+                revisi_ke : 0
             },
             include : [
                 {
@@ -557,8 +560,72 @@ exports.update = (req, res, next) => {
                 }
             ]
         })
-        .then((dest) => {
-            console.log("Tes :",dest)
+        .then((head) => {
+            if(head.length === 0 ) {
+                const error = new Error("Data Tidak Ada")
+                error.statusCode = 422 
+                throw error
+            }
+            let index = head.length
+            let head_arr = JSON.parse(JSON.stringify(head))
+            const {kode_kegiatan_rkt} = head_arr[index - 1]
+            const {kode_unit_kerja} = head_arr[index - 1]
+            return RkbmutPengadaanDetail.destroy({
+                where : {
+                    kode_kegiatan_rkt : kode_kegiatan_rkt, 
+                    kode_unit_kerja : kode_unit_kerja, 
+                    revisi_ke : 0, 
+                    status_revisi : 0
+                }
+            },{
+                transaction : t
+            })
+            .then((destroy) => {
+                if(!destroy){
+                    const error = new Error("Data Gagal Dihapus")
+                    error.statusCode = 422 
+                    throw error
+                }
+                const request = req.body
+                const data = request.rkbmutpengadaandetail.map((item) => {
+                    return {
+                        kode_skema_pengadaan : item.kode_skema_pengadaan,                         
+                        kode_asset : item.kode_asset, 
+                        kode_unit_kerja : kode_unit_kerja, 
+                        kode_kegiatan_rkt : kode_kegiatan_rkt, 
+                        kuantitas : item.kuantitas, 
+                        sbsk : item.sbsk, 
+                        existing_bmut : item.existing_bmut, 
+                        kebutuhan_riil : item.kebutuhan_riil, 
+                        keterangan : item.keterangan,
+                        status_revisi : 0, 
+                        revisi_ke : 0
+                    }
+                });
+                return RkbmutPengadaanDetail.bulkCreate(data, {
+                    transaction : t
+                })
+                .then((insert) => {
+                    if(!insert) {
+                        const error = new Error("Data Gagal Dibuat")
+                        error.statusCode = 422 
+                        throw error
+                    }
+                    res.json({
+                        status : "Success", 
+                        message : "Berhasil Menambah Data",
+                        data : insert
+                    })
+                    return t.commit()
+                })  
+            })
+        }) 
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback()
+            return next(err);
         })
     })
 }
