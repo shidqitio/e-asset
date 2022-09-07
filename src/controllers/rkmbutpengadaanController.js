@@ -5,15 +5,17 @@ const db = require("../config/database");
 // Data RKBMUT UNIT
 exports.indexunit = (req, res, next) => {
     RkbmutPengadaanHeader.findAll({
-        include : [
-            {
-                model : RkbmutPengadaanDetail
-            }
-        ],
         where : {
             kode_unit_kerja : req.params.kode_unit_kerja, 
             status_revisi : 0
-        }
+        },
+        include : [
+            {
+                model : RkbmutPengadaanDetail
+            }, 
+        ],
+        required : true
+       
     })
     .then((data) => {
         if(data.length === 0) {

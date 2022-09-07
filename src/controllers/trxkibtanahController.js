@@ -19,6 +19,9 @@ exports.index = (req, res, next) => {
                 }, 
                 include : [
                     {
+                        model : Asset
+                    },
+                    {
                         model : DokumenTanah, 
                     }, 
                     {
@@ -174,6 +177,14 @@ exports.updatenuptanah = (req, res, next) => {
                         where : [
                             {
                                 kode_pembukuan : req.params.kode_pembukuan
+                            }
+                        ], 
+                        include : [
+                            {
+                                model : DokumenTanah, 
+                            }, 
+                            {
+                                model : StatusPemilik
                             }
                         ]
                     }

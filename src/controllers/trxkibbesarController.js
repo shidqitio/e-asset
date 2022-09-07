@@ -5,13 +5,25 @@ const Aset = require("../models/asset")
 const {Op} = require("sequelize")
 
 exports.index = (req, res, next) => {
-    TrxKibAlatbesar.findAll({
+    Pembukuan.findAll({
         include : [
             {
-                model : StatusPemilik
-            }, 
-            {
-                model : Aset
+                model : TrxKibAlatbesar, 
+                where : [
+                    {
+                        nup : {
+                            [Op.not] : null
+                        }
+                    }
+                ], 
+                include : [
+                    {
+                        model : Aset
+                    }, 
+                    {
+                        model : StatusPemilik
+                    }
+                ]
             }
         ]
     })
@@ -100,7 +112,15 @@ exports.indexantrian = (req, res, next) => {
                     nup : {
                         [Op.is] : null
                     }
-                }
+                }, 
+                include : [
+                    {
+                        model : Aset
+                    }, 
+                    {
+                        model : StatusPemilik
+                    }
+                ]
             }
         ]
     })

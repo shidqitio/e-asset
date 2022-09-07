@@ -89,16 +89,16 @@ RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
     foreignKey : "kode_kegiatan_rkt"
 })
 
-RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
-    foreignKey : "kode_unit_kerja"
-})
+// RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
+//     foreignKey : "kode_unit_kerja"
+// })
+
+// RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
+//     foreignKey : "kode_unit_kerja"
+// })
 
 RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
     foreignKey : "kode_kegiatan_rkt"
-})
-
-RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
-    foreignKey : "kode_unit_kerja"
 })
 
 
