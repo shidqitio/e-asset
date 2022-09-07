@@ -7,19 +7,24 @@ const {Op} = require("sequelize")
 const Pembukuan = require("../models/pembukuan")
 
 exports.index = (req, res, next) => {
-    TrxKibTanah.findAll({
+    Pembukuan.findAll({
         include : [
             {
-                model : Asset
-            },
-            {
-                model : JenisTrn
-            }, 
-            {
-                model : DokumenTanah
-            }, 
-            {
-                model : StatusPemilik
+                model : TrxKibTanah,
+                where : 
+                {
+                    nup : { 
+                        [Op.not] : null
+                    }
+                }, 
+                include : [
+                    {
+                        model : DokumenTanah, 
+                    }, 
+                    {
+                        model : StatusPemilik
+                    }
+                ]
             }
         ]
     })
@@ -79,6 +84,7 @@ exports.store = (req, res, next) => {
             kode_unit : kode_unit, 
             nama_unit : nama_unit, 
             longitude : req.body.longitude, 
+            alamat : req.body.alamat,
             latitude : req.body.latitude, 
             tanah_bangunan : req.body.tanah_bangunan, 
             tanah_sarana : req.body.tanah_sarana, 

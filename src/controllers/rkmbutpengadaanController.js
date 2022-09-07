@@ -547,7 +547,7 @@ exports.update = (req, res, next) => {
              let kegiatan_rkt = req.body.kegiatan_rkt
              const split_rkt = kegiatan_rkt.split("||")
              let kode_kegiatan_rkt = parseInt(split_rkt[0])
-        RkbmutPengadaanHeader.findAll({
+        return RkbmutPengadaanHeader.findAll({
             where : {
                 kode_unit_kerja : kode_unit, 
                 kode_kegiatan_rkt : kode_kegiatan_rkt, 

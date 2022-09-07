@@ -70,7 +70,11 @@ exports.store = (req, res, next) => {
     })
     .then((data) => {
         if(data.length !== 0){ 
-
+            let datum = JSON.parse(JSON.stringify(data))
+            const index = datum.length
+            const {revisi_ke} = datum[index - 1]
+            revisi = revisi_ke + 1 
+            
         }
     })
 }

@@ -1,5 +1,7 @@
 const db = require("../config/database")
 const Asset = require("./asset")
+const DokumenTanah = require("./dokumenTanah")
+const StatusPemilik = require("./statusPemilik")
 const {DataTypes} = require("sequelize")
 const Pembukuan = require("./pembukuan")
 
@@ -43,6 +45,10 @@ const TrxKibTanah = db.define(
         nama_unit : {
             type : DataTypes.STRING(255), 
             allowNull : true
+        },
+        alamat : {
+            type : DataTypes.TEXT(), 
+            allowNull : true,
         }, 
         longitude : {
             type : DataTypes.STRING(255),
@@ -163,6 +169,22 @@ Pembukuan.hasMany(TrxKibTanah, {
 
 TrxKibTanah.belongsTo(Pembukuan, {
     foreignKey :"kode_pembukuan"
+})
+
+DokumenTanah.hasMany(TrxKibTanah, {
+    foreignKey : "kode_dokumen"
+})
+
+TrxKibTanah.belongsTo(DokumenTanah, {
+    foreignKey : "kode_dokumen"
+})
+
+StatusPemilik.hasMany(TrxKibTanah, {
+    foreignKey : "kode_status_pemilik"
+})
+
+TrxKibTanah.belongsTo(StatusPemilik, {
+    foreignKey : "kode_status_pemilik"
 })
 
 module.exports = TrxKibTanah;
