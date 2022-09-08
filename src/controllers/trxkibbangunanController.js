@@ -1,5 +1,4 @@
 const Asset = require("../models/asset")
-const JenisTrn = require("../models/jenisTrn")
 const TrxKibTanah = require("../models/trxKibTanah")
 const StatusPemilik = require("../models/statusPemilik")
 const TrxKibBangunan = require("../models/trxKibBangunan")
@@ -7,23 +6,37 @@ const Pembukuan = require("../models/pembukuan")
 const {Op} = require("sequelize")
 
 exports.index = (req, res, next) => {
-    TrxKibBangunan.findAll({
+    Pembukuan.findAll({
         include : [
             {
-                model : Asset
-            }, 
-            {
-                model : JenisTrn,
-            }, 
-            {
-                model : TrxKibTanah
-            }, 
-            {
-                model : StatusPemilik
+                model : TrxKibBangunan,
+                where : [
+                    {
+                        nup : {
+                            [Op.not] : null
+                        }
+                    }
+                ], 
+                include : [
+                    {
+                        model : Asset
+                    }, 
+                    {
+                        model : TrxKibTanah
+                    }, 
+                    {
+                        model : StatusPemilik
+                    }
+                ]
             }
         ]
     })
     .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Bangunan Tidak Ada");
+            error.statusCode = 422; 
+            throw error
+        }
         res.json({
             status : "Success", 
             message : "Berhasil Menampilkan Data",

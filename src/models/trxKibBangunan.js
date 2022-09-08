@@ -2,6 +2,7 @@ const db = require("../config/database")
 const {DataTypes} = require("sequelize")
 const Asset = require("./asset")
 const Pembukuan = require("./pembukuan")
+const TrxKibTanah = require("./trxKibTanah")
 // const TrxKibTanah = require("./trxKibTanah")
 
 const TrxKibBangunan = db.define(
@@ -141,6 +142,14 @@ const TrxKibBangunan = db.define(
 // TrxKibBangunan.belongsTo(TrxKibTanah, {
 //     foreignKey : "no_kib_tanah"
 // })
+
+TrxKibTanah.hasMany(TrxKibBangunan, {
+    foreignKey : "nup"
+})
+
+TrxKibBangunan.belongsTo(TrxKibTanah, {
+    foreignKey : "nup_tanah"
+})
 
 Pembukuan.hasMany(TrxKibBangunan, {
     foreignKey : "kode_pembukuan"

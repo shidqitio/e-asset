@@ -1,29 +1,38 @@
 const Asset = require("../models/asset")
 const TrxKibAngkutan = require("../models/trxKibAngkutan")
-const JenisTrn = require("../models/jenisTrn")
 const StatusPemilik = require("../models/statusPemilik")
 const Pembukuan = require("../models/pembukuan")
 const {Op} = require("sequelize")
 
 
 exports.index = (req,res,next) => {
-    TrxKibAngkutan.findAll({
+    Pembukuan.findAll({
         include : [
             {
-                model : Asset,
-            }, 
-            {
-                model : JenisTrn
-            }, 
-            {
-                model : StatusPemilik
+                model : TrxKibAngkutan, 
+                where : [
+                    {
+                        nup : [
+                            {
+                                [Op.not] : null
+                            }
+                        ]
+                    }
+                ], 
+                include : [
+                    {
+                        model : Asset,
+                    }, 
+                    {
+                        model : StatusPemilik
+                    }
+                ]
             }
-          
         ]
     })
     .then((data) => {
         if(data.length === 0) {
-            const error = new Error("Data Tidak Ada")
+            const error = new Error("Data Angkutan Tidak Ada")
             error.statusCode = 422; 
             throw error
         }

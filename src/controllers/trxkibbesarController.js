@@ -29,7 +29,7 @@ exports.index = (req, res, next) => {
     })
     .then((data) => {
         if(data.length === 0) {
-            const error = new Error("Data Barang Tidak Ada");
+            const error = new Error("Data Alat Besar Tidak Ada");
             error.statusCode = 422; 
             throw error
         }
