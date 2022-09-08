@@ -29,6 +29,6 @@ router.use("/kibangkutan", trxkibangkutanRoutes)
 router.use("/kibalatbesar",trxkibalatbesarRoutes)
 router.use("/kibbangunan",trxkibbangunanRoutes)
 router.use("/rkbmpengadaan", rkbmutpengadaanRoutes)
-router.use("/rbmpemanfaatan", rkbmutpemanfaatanRoutes)
+router.use("/rkbmpemanfaatan", rkbmutpemanfaatanRoutes)
 
 module.exports = router;

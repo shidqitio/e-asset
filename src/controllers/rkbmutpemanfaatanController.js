@@ -72,6 +72,7 @@ exports.store = (req, res, next) => {
         if(data.length !== 0){ 
             const error = new Error("Data Sudah Ada")
             error.statusCode = 422;
+            console.log("Sesuatu")
             throw error
         }
         //Pemisah Kode dan Nama Unit
@@ -80,7 +81,7 @@ exports.store = (req, res, next) => {
         let kode_unit = split_unit[0]
         let nama_unit = split_unit[1]
         //Insert RKBMUT Pemanfaatan 
-        RkbmUTPemanfaatan.create({
+        return RkbmUTPemanfaatan.create({
             kode_unit_kerja : kode_unit, 
             nama_unit_kerja : nama_unit, 
             kode_asset : req.body.kode_asset, 
@@ -95,21 +96,16 @@ exports.store = (req, res, next) => {
             jangka_waktu : req.body.jangka_waktu, 
             potensi_pnpb : req.body.potensi_pnpb, 
             keterangan : req.body.keterangan
-        })
+        });
     })
-    .then((app) => {
-        if(!app) {
-            const error = new Error("Data Gagal Dimasukkan")
-            error.statusCode = 422;
-            throw error
-        }
+    .then((result) => {
         res.json({
             status : "Success", 
             message : "Data Berhasil Dimasukkan", 
-            data : app
+            data : result
         });
     })
-    .then((err) => {
+    .catch((err) => {
         if(!err.statusCode) {
             err.statusCode = 500;
         }

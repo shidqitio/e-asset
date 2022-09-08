@@ -82,7 +82,7 @@ const RkbmUTPemanfaatan = db.define(
           },
     }, 
     {
-        tableName : "ref_rkmut_pemanfaatan", 
+        tableName : "ref_rkbmut_pemanfaatan", 
         createdAt : "udcr", 
         updatedAt : "udch"
     }
