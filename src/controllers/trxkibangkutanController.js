@@ -12,11 +12,11 @@ exports.index = (req,res,next) => {
                 model : TrxKibAngkutan, 
                 where : [
                     {
-                        nup : [
+                        nup : 
                             {
                                 [Op.not] : null
                             }
-                        ]
+                        
                     }
                 ], 
                 include : [
@@ -32,6 +32,52 @@ exports.index = (req,res,next) => {
     })
     .then((data) => {
         if(data.length === 0) {
+            const error = new Error("Data Angkutan Tidak Ada")
+            error.statusCode = 422; 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data",
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    })
+}
+
+exports.indexbyid = (req,res,next) => {
+    Pembukuan.findOne({
+        where : {kode_pembukuan : req.params.kode_pembukuan},
+        include : [
+            {
+                model : TrxKibAngkutan, 
+                where : [
+                    {
+                        nup : 
+                            {
+                                [Op.not] : null
+                            }
+                        
+                    }
+                ], 
+                include : [
+                    {
+                        model : Asset,
+                    }, 
+                    {
+                        model : StatusPemilik
+                    }
+                ]
+            }
+        ]
+    })
+    .then((data) => {
+        if(!data) {
             const error = new Error("Data Angkutan Tidak Ada")
             error.statusCode = 422; 
             throw error

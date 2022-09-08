@@ -47,6 +47,50 @@ exports.index = (req, res, next) => {
     });
 }
 
+exports.indexbyid = (req, res, next) => {
+    Pembukuan.findAll({
+        where : {kode_pembukuan : req.params.kode_pembukuan},
+        include : [
+            {
+                model : TrxKibAlatbesar, 
+                where : [
+                    {
+                        nup : {
+                            [Op.not] : null
+                        }
+                    }
+                ], 
+                include : [
+                    {
+                        model : Aset
+                    }, 
+                    {
+                        model : StatusPemilik
+                    }
+                ]
+            }
+        ]
+    })
+    .then((data) => {
+        if(!data === 0) {
+            const error = new Error("Data Alat Besar Tidak Ada");
+            error.statusCode = 422; 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan",
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    });
+}
+
 exports.store = (req, res, next) => {
     TrxKibAlatbesar.findAll()
     .then((data) => {

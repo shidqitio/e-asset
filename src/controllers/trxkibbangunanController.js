@@ -51,6 +51,53 @@ exports.index = (req, res, next) => {
     })
 }
 
+exports.indexbyid = (req, res, next) => {
+    Pembukuan.findOne({
+        where : {kode_pembukuan : req.params.kode_pembukuan},
+        include : [
+            {
+                model : TrxKibBangunan,
+                where : [
+                    {
+                        nup : {
+                            [Op.not] : null
+                        }
+                    }
+                ], 
+                include : [
+                    {
+                        model : Asset
+                    }, 
+                    {
+                        model : TrxKibTanah
+                    }, 
+                    {
+                        model : StatusPemilik
+                    }
+                ]
+            }
+        ]
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Bangunan Tidak Ada");
+            error.statusCode = 422; 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data",
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    })
+}
+
 //Store
 exports.store = (req, res, next) => {
     TrxKibBangunan.findAll()
