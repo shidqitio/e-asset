@@ -24,6 +24,10 @@ const RkbmutPengadaanHeader = db.define(
             allowNull : false, 
             primaryKey : true
         },
+        status_paraf : {
+            type : DataTypes.INTEGER(11), 
+            allowNull : true
+        },
         revisi_ke : {
             type : DataTypes.INTEGER(11), 
             allowNull : false, 

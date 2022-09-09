@@ -1,6 +1,7 @@
 const RkbmutPengadaanHeader = require("../models/rkbmutPengadaanHeader");
 const RkbmutPengadaanDetail = require("../models/rkbmutPengadaanDetail");
 const db = require("../config/database");
+const {Op} = require("sequelize")
 
 // Data RKBMUT UNIT
 exports.index = (req, res, next) => {
@@ -36,37 +37,82 @@ exports.index = (req, res, next) => {
     });
 }
 
-// //DATA RKBMUT APIP
-// exports.indexapip = (req, res, next) => {
-//     RkbmutPengadaanHeader.findAll({
-//         include : [
-//             {
-//                 model : RkbmutPengadaanDetail
-//             }
-//         ],
-//         where : {
-//             status_revisi : 1
-//         }
-//     })
-//     .then((data) => {
-//         if(data.length === 0) {
-//             const error = new Error("Data Tidak Ada");
-//             error.statusCode = 422; 
-//             throw error
-//         }
-//         res.json({
-//             status : "Success", 
-//             message : "Data Berhasil Ditampilkan", 
-//             data : data 
-//         })
-//     })
-//     .catch((err) => {
-//         if(!err.statusCode) {
-//             err.statusCode = 500;
-//         }
-//         next(err)
-//     });
-// }
+// Data RKBMUT PPK
+exports.indexppk = (req, res, next) => {
+    RkbmutPengadaanHeader.findAll({
+        where : {
+            kode_unit_kerja : req.params.kode_unit_kerja, 
+            [Op.or] : [
+                {status_paraf : 1}, 
+                {status_paraf : 2}
+            ]
+        },
+        include : [
+            {
+                model : RkbmutPengadaanDetail
+            }, 
+        ],
+        required : true
+       
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada");
+            error.statusCode = 422; 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan", 
+            data : data 
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    });
+}
+
+// Data RKBMUT APIP
+exports.indexapip = (req, res, next) => {
+    RkbmutPengadaanHeader.findAll({
+        where : {
+            kode_unit_kerja : req.params.kode_unit_kerja, 
+            status_paraf : 2 , 
+        },
+        include : [
+            {
+                model : RkbmutPengadaanDetail
+            }, 
+        ],
+        required : true
+       
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada");
+            error.statusCode = 422; 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan", 
+            data : data 
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    });
+}
+
+
+
+
 
 //Imsert RKBMUT Pengadaan
 exports.store = (req, res, next) => {
@@ -129,7 +175,8 @@ exports.store = (req, res, next) => {
                 nama_jenis_belanja : nama_jenis_belanja, 
                 tahun : req.body.tahun, 
                 status_revisi : 0, 
-                revisi_ke : revisi
+                revisi_ke : revisi, 
+                status_paraf : 0
             },{transaction : t})
             .then((header) => {
                 const head = JSON.parse(JSON.stringify(header))
@@ -246,15 +293,15 @@ exports.store = (req, res, next) => {
     })
 }
 
-//Paraf UNIT MENGETAHUI DIAJUKAN APIP
-exports.parafunit = (req, res, next) => {
+//Unit Mengajukan Ke PPK 
+exports.ajukanppk = (req, res, next) => {
     return db.transaction()
     .then((t) => {
         RkbmutPengadaanHeader.findAll({
             where : {
                 status_revisi : 0 , 
                 kode_unit_kerja : req.params.kode_unit_kerja,
-                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                status_paraf : 0
             }
         })
         .then((data) => {
@@ -264,12 +311,57 @@ exports.parafunit = (req, res, next) => {
                 throw error
             }
             const upd = {
-                status_revisi : 1
+                status_paraf : 1
             }
             return RkbmutPengadaanHeader.update(upd, {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja, 
-                    kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                }
+            })
+            .then((respon) => {
+                res.json({
+                    status : "Success", 
+                    message : "Berhasil Diajukan Ke PPK", 
+                    data : respon
+                })
+                return t.commit()
+            })
+            .catch((err) => {
+                if(!err.statusCode) {
+                    err.statusCode = 500;
+                }
+                t.rollback();
+                return next(err);
+            })
+        })
+    }) 
+}
+
+
+//Paraf PPK MENGETAHUI DIAJUKAN APIP
+exports.parafunit = (req, res, next) => {
+    return db.transaction()
+    .then((t) => {
+        RkbmutPengadaanHeader.findAll({
+            where : {
+                status_revisi : 0 , 
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_paraf : 1
+            }
+        })
+        .then((data) => {
+            if(data.length === 0 ) {
+                const error = new Error("Tidak Ada Data Paraf")
+                error.statusCode = 422 
+                throw error
+            }
+            const upd = {
+                status_revisi : 1,
+                status_paraf : 2
+            }
+            return RkbmutPengadaanHeader.update(upd, {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
                 }
             })
             .then((respon) => {

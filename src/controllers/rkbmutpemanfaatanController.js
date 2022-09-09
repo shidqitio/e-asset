@@ -2,10 +2,9 @@ const db = require("../config/database");
 const RkbmUTPemanfaatan = require("../models/rkbmutPemanfaatan")
 
 //Data RKBMUT UNIT 
-exports.indexunit = (req, res, next) => {
+exports.index = (req, res, next) => {
     RkbmUTPemanfaatan.findAll({
         where : {
-            status_revisi : 0,
             kode_unit_kerja : req.params.kode_unit_kerja 
         }
     })
@@ -29,32 +28,6 @@ exports.indexunit = (req, res, next) => {
     });
 }
 
-//Data RKBMUT APIP 
-exports.indexapip = (req, res, next) => {
-    RkbmUTPemanfaatan.findAll({
-        where : {
-            status_revisi : 1, 
-        }
-    })
-    .then((data) => {
-        if(data.length === 0) {
-            const error = new Error("Data Tidak Ada")
-            error.statusCode = 422; 
-            throw error
-        }
-        res.json({
-            status : "Success", 
-            message : "Data Berhasil Ditampilkan", 
-            data : data
-        })
-    })
-    .catch((err) => {
-        if(!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err)
-    });
-}
 
 //INSERT RKBMUT PEMANFAATAN
 exports.store = (req, res, next) => {
@@ -164,7 +137,7 @@ exports.parafunitselesai = (req, res, next) => {
         where : {
             kode_unit_kerja : req.params.kode_unit_kerja, 
             nup : req.params.nup, 
-            status_revisi : 0
+            status_revisi : 2
         }
     })
     .then((data) => {
@@ -174,7 +147,7 @@ exports.parafunitselesai = (req, res, next) => {
             throw error
         }
         const upd = {
-            status_revisi : 2
+            status_revisi : 3
         }
         return RkbmUTPemanfaatan.update(upd, {
             where : {
@@ -219,7 +192,7 @@ exports.parafapip = (req, res, next) => {
             throw error
         }
         const upd = {
-            status_revisi : 2
+            status_revisi : 3
         }
         return RkbmUTPemanfaatan.update(upd, {
             where : {
@@ -269,9 +242,9 @@ exports.reviewapip = (req, res, next) => {
         let kode = revisi_ke + 1
         const upd = {
             kode_asset : req.body.kode_asset, 
-            tahun : req.body.tahun, 
             revisi_ke : kode, 
-            status_revisi : 0, 
+            status_revisi : 2,
+            revisi_ke : kode,  
             total_realisasi_pnpb : req.body.total_realisasi_pnpb, 
             jumlah_item : req.body.jumlah_item, 
             kode_bentuk_pemanfaatan : req.body.kode_bentuk_pemanfaatan, 
@@ -284,7 +257,70 @@ exports.reviewapip = (req, res, next) => {
         return RkbmUTPemanfaatan.update(upd, {
             where : {
                 nup : req.params.nup, 
-                kode_unit_kerja : req.params.kode_unit_kerja
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                status_revisi : 1
+            }
+        });
+    })
+    .then((update) => {
+        if(!update){
+            const error = new Error("Gagal Update");
+            error.statusCode = 422; 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Berhasil Memberi Review", 
+            data : update
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+//Revisi Dari UNIT 
+exports.reviewunit = (req, res, next) => {
+    RkbmUTPemanfaatan.findAll({
+        where : {
+            status_revisi : 2, 
+            kode_unit_kerja : req.params.kode_unit_kerja, 
+            nup : req.params.nup
+        }
+    })
+    .then((data) => {
+        if(data.length === 0){
+            const error = new Error("Data Tidak Ada");
+            error.statusCode = 422; 
+            throw error
+        }
+        let data_awal = JSON.parse(JSON.stringify(data))
+        let index = data.length
+        const {revisi_ke} = data_awal[index-1]
+        let kode = revisi_ke + 1
+        const upd = {
+            kode_asset : req.body.kode_asset, 
+            tahun : req.body.tahun, 
+            revisi_ke : kode, 
+            status_revisi : 1,
+            revisi_ke : kode,  
+            total_realisasi_pnpb : req.body.total_realisasi_pnpb, 
+            jumlah_item : req.body.jumlah_item, 
+            kode_bentuk_pemanfaatan : req.body.kode_bentuk_pemanfaatan, 
+            peruntukan : req.body.peruntukan,
+            jangka_waktu : req.body.jangka_waktu, 
+            potensi_pnpb : req.body.potensi_pnpb, 
+            keterangan : req.body.keterangan
+        }
+
+        return RkbmUTPemanfaatan.update(upd, {
+            where : {
+                nup : req.params.nup, 
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_revisi : 2
             }
         });
     })
