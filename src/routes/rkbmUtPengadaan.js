@@ -2,8 +2,8 @@ const express = require("express")
 const router = express.Router()
 
 const {
-    indexunit, 
-    indexapip,
+    index, 
+    // indexapip,
     store, 
     review, 
     parafunit, 
@@ -13,9 +13,9 @@ const {
     update
 } = require("../controllers/rkmbutpengadaanController")
 
-router.get("/unit/:kode_unit_kerja", indexunit)
+router.get("/:kode_unit_kerja", index)
 
-router.get("/apip", indexapip)
+// router.get("/apip", indexapip)
 
 router.post("/", store)
 

@@ -3,11 +3,10 @@ const RkbmutPengadaanDetail = require("../models/rkbmutPengadaanDetail");
 const db = require("../config/database");
 
 // Data RKBMUT UNIT
-exports.indexunit = (req, res, next) => {
+exports.index = (req, res, next) => {
     RkbmutPengadaanHeader.findAll({
         where : {
             kode_unit_kerja : req.params.kode_unit_kerja, 
-            status_revisi : 0
         },
         include : [
             {
@@ -37,37 +36,37 @@ exports.indexunit = (req, res, next) => {
     });
 }
 
-//DATA RKBMUT APIP
-exports.indexapip = (req, res, next) => {
-    RkbmutPengadaanHeader.findAll({
-        include : [
-            {
-                model : RkbmutPengadaanDetail
-            }
-        ],
-        where : {
-            status_revisi : 1
-        }
-    })
-    .then((data) => {
-        if(data.length === 0) {
-            const error = new Error("Data Tidak Ada");
-            error.statusCode = 422; 
-            throw error
-        }
-        res.json({
-            status : "Success", 
-            message : "Data Berhasil Ditampilkan", 
-            data : data 
-        })
-    })
-    .catch((err) => {
-        if(!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err)
-    });
-}
+// //DATA RKBMUT APIP
+// exports.indexapip = (req, res, next) => {
+//     RkbmutPengadaanHeader.findAll({
+//         include : [
+//             {
+//                 model : RkbmutPengadaanDetail
+//             }
+//         ],
+//         where : {
+//             status_revisi : 1
+//         }
+//     })
+//     .then((data) => {
+//         if(data.length === 0) {
+//             const error = new Error("Data Tidak Ada");
+//             error.statusCode = 422; 
+//             throw error
+//         }
+//         res.json({
+//             status : "Success", 
+//             message : "Data Berhasil Ditampilkan", 
+//             data : data 
+//         })
+//     })
+//     .catch((err) => {
+//         if(!err.statusCode) {
+//             err.statusCode = 500;
+//         }
+//         next(err)
+//     });
+// }
 
 //Imsert RKBMUT Pengadaan
 exports.store = (req, res, next) => {
