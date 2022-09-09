@@ -323,13 +323,13 @@ exports.parafunitselesai = (req, res, next) => {
                     data : respon
                 })
             })
-            .catch((err) => {
-                if(!err.statusCode) {
-                    err.statusCode = 500;
-                }
-                t.rollback();
-                return next(err);
-            })
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback();
+            return next(err);
         })
     }) 
 }
