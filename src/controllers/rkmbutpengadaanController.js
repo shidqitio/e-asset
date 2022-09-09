@@ -297,7 +297,7 @@ exports.parafunitselesai = (req, res, next) => {
     .then((t) => {
         RkbmutPengadaanHeader.findAll({
             where : {
-                status_revisi : 0 , 
+                status_revisi : 2 , 
                 kode_unit_kerja : req.params.kode_unit_kerja,
                 kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
             }
@@ -309,7 +309,7 @@ exports.parafunitselesai = (req, res, next) => {
                 throw error
             }
             const upd = {
-                status_revisi : 2
+                status_revisi : 3
             }
             return RkbmutPengadaanHeader.update(upd, {
                 where : {
@@ -374,7 +374,7 @@ exports.review = (req, res, next) => {
                     sbsk : item.sbsk, 
                     kebutuhan_riil : item.kebutuhan_riil,
                     keterangan : item.keterangan,
-                    status_revisi : 1, 
+                    status_revisi : 2, 
                     revisi : 1, 
                     revisi_ke : kode
                 }
@@ -391,7 +391,7 @@ exports.review = (req, res, next) => {
             }
 
             const upd = {
-                status_revisi : 0,
+                status_revisi : 2,
                 revisi_ke : kode
             }
             // Kembalikan Pada Unit
@@ -420,7 +420,7 @@ exports.review = (req, res, next) => {
 exports.reviewunit = (req, res, next) => {
     RkbmutPengadaanHeader.findAll({
         where : {
-            status_revisi : 0,
+            status_revisi : 2,
             kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
             kode_unit_kerja : req.params.kode_unit_kerja
         },
@@ -455,7 +455,7 @@ exports.reviewunit = (req, res, next) => {
                 sbsk : item.sbsk, 
                 kebutuhan_riil : item.kebutuhan_riil,
                 keterangan : item.keterangan,
-                status_revisi : 0, 
+                status_revisi : 1, 
                 revisi : item.revisi, 
                 revisi_ke : kode
             }
@@ -514,7 +514,7 @@ exports.parafapip = (req, res, next) => {
             throw error
         }
         const upd = {
-            status_revisi : 2
+            status_revisi : 3
         }
         return RkbmutPengadaanHeader.update(upd, {
             where : {
