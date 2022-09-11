@@ -1,12 +1,19 @@
 const db = require("../config/database");
 const RkbmUTPemanfaatan = require("../models/rkbmutPemanfaatan")
+const Aset = require("../models/asset")
+const {Op} = require("sequelize")
 
 //Data RKBMUT UNIT 
-exports.index = (req, res, next) => {
+exports.indexunit = (req, res, next) => {
     RkbmUTPemanfaatan.findAll({
         where : {
             kode_unit_kerja : req.params.kode_unit_kerja 
-        }
+        }, 
+        include : [
+            {
+                model : Aset
+            }
+        ]
     })
     .then((data) => {
         if(data.length === 0) {
@@ -28,6 +35,74 @@ exports.index = (req, res, next) => {
     });
 }
 
+//Data RKBMUT PPK 
+exports.indexppk = (req, res, next) => {
+    RkbmUTPemanfaatan.findAll({
+        where : {
+            kode_unit_kerja : req.params.kode_unit_kerja,
+            [Op.or] : [
+                {status_paraf : 1}, 
+                {status_paraf : 2}
+            ]
+        }, 
+        include : [
+            {
+                model : Aset
+            }
+        ]
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada");
+            error.statusCode = 422; 
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data", 
+            data : data
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    });
+}
+
+//Data RKBMUT APIP
+exports.indexapip = (req, res, next) => {
+    RkbmUTPemanfaatan.findAll({
+        where : {
+            kode_unit_kerja : req.params.kode_unit_kerja,
+            status_paraf : 2
+        }, 
+        include : [
+            {
+                model : Aset
+            }
+        ]
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422; 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan", 
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    });
+}
 
 //INSERT RKBMUT PEMANFAATAN
 exports.store = (req, res, next) => {
@@ -35,17 +110,18 @@ exports.store = (req, res, next) => {
     const split_unit = unit.split("||")
     let kode_unit = split_unit[0]
     let nama_unit = split_unit[1]
-    RkbmUTPemanfaatan.findAll({
+    RkbmUTPemanfaatan.findAll({where :
+        {
         tahun : req.body.tahun, 
         kode_unit_kerja : kode_unit, 
         status_revisi : 0, 
         nup : req.body.nup
+        }
     })
     .then((data) => {
         if(data.length !== 0){ 
             const error = new Error("Data Sudah Ada")
             error.statusCode = 422;
-            console.log("Sesuatu")
             throw error
         }
         //Pemisah Kode dan Nama Unit
@@ -86,42 +162,39 @@ exports.store = (req, res, next) => {
     });
 }
 
-//Paraf Unit Mengetahui Diajukan Ke PIP 
-exports.parafunit = (req, res, next) => {
-    RkbmUTPemanfaatan.findOne({
+//Unit Mengajukan Ke PPK 
+exports.ajukanppk = (req, res, next) => {
+    RkbmUTPemanfaatan.findAll({
         where : {
             status_revisi : 0, 
             kode_unit_kerja : req.params.kode_unit_kerja, 
-            nup : req.params.nup
+            status_paraf : 0 
         }
     })
     .then((data) => {
-        if(!data){
+        if(data.length === 0) {
             const error = new Error("Tidak Ada Data Paraf")
             error.statusCode = 422 
             throw error
         }
         const upd = {
-            status_revisi : 1
+            status_paraf : 1
         }
         return RkbmUTPemanfaatan.update(upd, {
-            where : {
-                kode_unit_kerja : req.params.kode_unit_kerja, 
-                nup : req.params.nup
-            }
+            where : {kode_unit_kerja : req.params.kode_unit_kerja}
         });
     })
-    .then((paraf) => {
-        if(!paraf){
-            const error = new Error("Gagal Paraf")
-            error.statusCode = 422 
-            throw error
+    .then((respon) => {
+        if(!respon) {
+            const error = new Error("Gagal Update Data")
+            error.statusCode = 422
+            throw error;
         }
-        res.json({
+        return res.json({
             status : "Success", 
-            message : "Berhasil Paraf Data ke APIP",
-            data : paraf
-        })
+            message : "Berhasil Diajukan Ke PPK", 
+            data : respon
+        });
     })
     .catch((err) => {
         if(!err.statusCode) {
@@ -131,41 +204,41 @@ exports.parafunit = (req, res, next) => {
     })
 }
 
-//Paraf Unit Setuju Revisi Dari APIP
-exports.parafunitselesai = (req, res, next) => {
-    RkbmUTPemanfaatan.findOne({
+//Paraf PPK Diajukan KE APIP
+exports.parafppk = (req, res, next) => {
+    RkbmUTPemanfaatan.findAll({
         where : {
+            status_revisi : 0, 
             kode_unit_kerja : req.params.kode_unit_kerja, 
-            nup : req.params.nup, 
-            status_revisi : 2
+            status_paraf : 1
         }
     })
     .then((data) => {
-        if(!data){
+        if(data.length === 0 ) {
             const error = new Error("Tidak Ada Data Paraf")
             error.statusCode = 422 
             throw error
         }
         const upd = {
-            status_revisi : 3
+            status_revisi : 1,
+            status_paraf : 2
         }
         return RkbmUTPemanfaatan.update(upd, {
             where : {
-                kode_unit_kerja : req.params.kode_unit_kerja, 
-                nup : req.params.nup
+                kode_unit_kerja : req.params.kode_unit_kerja
             }
         });
     })
-    .then((paraf) => {
-        if(!paraf) {
+    .then((respon) => {
+        if(!respon) {
             const error = new Error("Gagal Paraf")
             error.statusCode = 422 
             throw error
         }
-        res.json({
+        return res.json({
             status : "Success", 
-            message : "Berhasil Paraf Siap TTE",
-            data : paraf
+            message : "Berhasil Paraf Data Ke APIP", 
+            data : respon
         });
     })
     .catch((err) => {
@@ -176,52 +249,7 @@ exports.parafunitselesai = (req, res, next) => {
     })
 }
 
-//Paraf APIP Setuju Selesai
-exports.parafapip = (req, res, next) => {
-    RkbmUTPemanfaatan.findOne({
-        where : {
-            status_revisi : 1, 
-            kode_unit_kerja : req.params.kode_unit_kerja, 
-            nup : req.params.nup
-        }
-    })
-    .then((data) => {
-        if(!data) {
-            const error = new Error("Tidak Ada Data Paraf")
-            error.statusCode = 422 
-            throw error
-        }
-        const upd = {
-            status_revisi : 3
-        }
-        return RkbmUTPemanfaatan.update(upd, {
-            where : {
-                kode_unit_kerja : req.params.kode_unit_kerja, 
-                nup : req.params.nup
-            }
-        });
-    })
-    .then((paraf) => {
-        if(!paraf) {
-            const error = new Error("Gagal Paraf")
-            error.statusCode = 422 
-            throw error
-        }
-        res.json({
-            status : "Success", 
-            message : "Data Berhasil di Paraf",
-            data : paraf
-        });
-    })
-    .catch((err) => {
-        if(!err.statusCode) {
-            err.statusCode = 500;
-        }
-        return next(err);
-    })
-}
-
-//Revisi Dari APIP 
+//REVISI DARI APIP 
 exports.reviewapip = (req, res, next) => {
     RkbmUTPemanfaatan.findAll({
         where : {
@@ -241,7 +269,6 @@ exports.reviewapip = (req, res, next) => {
         const {revisi_ke} = data_awal[index-1]
         let kode = revisi_ke + 1
         const upd = {
-            kode_asset : req.body.kode_asset, 
             revisi_ke : kode, 
             status_revisi : 2,
             revisi_ke : kode,  
@@ -343,3 +370,96 @@ exports.reviewunit = (req, res, next) => {
         return next(err);
     })
 }
+
+//Paraf Unit Setuju Revisi Dari APIP
+exports.parafunitselesai = (req, res, next) => {
+    RkbmUTPemanfaatan.findOne({
+        where : {
+            kode_unit_kerja : req.params.kode_unit_kerja, 
+            nup : req.params.nup, 
+            status_revisi : 2
+        }
+    })
+    .then((data) => {
+        if(!data){
+            const error = new Error("Tidak Ada Data Paraf")
+            error.statusCode = 422 
+            throw error
+        }
+        const upd = {
+            status_revisi : 3
+        }
+        return RkbmUTPemanfaatan.update(upd, {
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                nup : req.params.nup
+            }
+        });
+    })
+    .then((paraf) => {
+        if(!paraf) {
+            const error = new Error("Gagal Paraf")
+            error.statusCode = 422 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Berhasil Paraf Siap TTE",
+            data : paraf
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+//Paraf APIP Setuju Selesai
+exports.parafapip = (req, res, next) => {
+    RkbmUTPemanfaatan.findOne({
+        where : {
+            status_revisi : 1, 
+            kode_unit_kerja : req.params.kode_unit_kerja, 
+            nup : req.params.nup
+        }
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Tidak Ada Data Paraf")
+            error.statusCode = 422 
+            throw error
+        }
+        const upd = {
+            status_revisi : 3
+        }
+        return RkbmUTPemanfaatan.update(upd, {
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                nup : req.params.nup
+            }
+        });
+    })
+    .then((paraf) => {
+        if(!paraf) {
+            const error = new Error("Gagal Paraf")
+            error.statusCode = 422 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil di Paraf",
+            data : paraf
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+
+

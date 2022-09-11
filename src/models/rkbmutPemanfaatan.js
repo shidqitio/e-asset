@@ -1,5 +1,6 @@
 const {DataTypes} = require("sequelize")
 const db = require("../config/database")
+const Aset = require("./asset")
 
 const RkbmUTPemanfaatan = db.define(
     "RkbmUTPemanfaatan", 
@@ -30,6 +31,10 @@ const RkbmUTPemanfaatan = db.define(
         }, 
         revisi_ke : {
             type : DataTypes.INTEGER(), 
+            allowNull : true
+        },
+        status_paraf : {
+            type : DataTypes.INTEGER(),
             allowNull : true
         },
         nama_unit_kerja : {
@@ -87,5 +92,13 @@ const RkbmUTPemanfaatan = db.define(
         updatedAt : "udch"
     }
 )
+
+Aset.hasMany(RkbmUTPemanfaatan, {
+    foreignKey : "kode_asset"
+})
+
+RkbmUTPemanfaatan.belongsTo(Aset, {
+    foreignKey : "kode_asset"
+})
 
 module.exports = RkbmUTPemanfaatan

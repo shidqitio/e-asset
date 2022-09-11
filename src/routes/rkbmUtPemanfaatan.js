@@ -2,21 +2,27 @@ const express = require("express")
 const router = express.Router()
 
 const {
-    index, 
+    indexunit, 
+    indexppk, 
+    indexapip,
     store, 
+    ajukanppk,
+    parafppk,
     reviewapip, 
     reviewunit,
-    parafunit, 
     parafunitselesai,
     parafapip, 
 } = require("../controllers/rkbmutpemanfaatanController")
 
-router.get("/index/:kode_unit_kerja", index)
+router.get("/indexunit/:kode_unit_kerja", indexunit)
+router.get("/indexppk/:kode_unit_kerja", indexppk)
+router.get("/indexapip/:kode_unit_kerja", indexapip)
 
 router.post("/", store)
+router.put("/ajukanppk/:kode_unit_kerja", ajukanppk)
+router.put("/parafppk/:kode_unit_kerja", parafppk)
 router.put("/reviewapip/:kode_unit_kerja/:nup", reviewapip)
 router.put("/reviewunit/:kode_unit_kerja/:nup", reviewunit)
-router.put("/parafunit/:kode_unit_kerja/:nup", parafunit)
 router.put("/parafapipselesai/:kode_unit_kerja/:nup", parafapip)
 router.put("/parafunitselesai/:kode_unit_kerja/:nup", parafunitselesai)
 
