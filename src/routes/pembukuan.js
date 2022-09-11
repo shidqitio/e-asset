@@ -5,7 +5,8 @@ const {
     indexdetail,
     showbykodeform,
     store,
-    antrean
+    antrean, 
+    getbarangbyunit
 } = require("../controllers/pembukuanController")
 
 router.get("/", indexdetail)
@@ -13,6 +14,8 @@ router.get("/", indexdetail)
 router.get("/antrean", antrean)
 
 router.get("/:kode_pembukuan", showbykodeform)
+
+router.get("/unit/:kode_unit", getbarangbyunit)
 
 
 

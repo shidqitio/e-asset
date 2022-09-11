@@ -1,6 +1,7 @@
 const PembukuanDetail = require("../models/pembukuan")
 const DaftarBarang = require("../models/daftarBarang")
 const Asset = require("../models/asset")
+const ruang = require("../models/ruang")
 const TrxKibTanah = require("../models/trxKibTanah")
 const TrxKibAngkutan = require("../models/trxKibAngkutan")
 const TrxKibAlatbesar = require("../models/trxKibBesar")
@@ -467,3 +468,71 @@ exports.store = (req, res, next) => {
     })
 }
 
+
+exports.getbarangbyunit = (req, res, next) => {
+    PembukuanDetail.findAll({
+        attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
+        order : [
+            ['kode_pembukuan','ASC']
+        ],
+        include : [
+            {
+                model : DaftarBarang, 
+                attributes : ["kode_pembukuan","nup", "kode_ruang", "kondisi"],
+                include : [
+                    {
+                        model : ruang, 
+                        where : {
+                            kode_unit : req.params.kode_unit
+                        }
+                    }, 
+                    n
+                ], 
+                where : {
+                    nup : {
+                        [Op.not] : null 
+                    }
+                },
+                required : false
+            }, 
+            {
+                model : TrxKibTanah, 
+                where : {
+                    kode_unit : req.params.kode_unit, 
+                    nup : {
+                        [Op.not] : null
+                    }
+                },
+                required : false
+            }, 
+            {
+                model : TrxKibAngkutan, 
+                where : {
+                    kode_unit : req.params.kode_unit, 
+                    nup : {
+                        [Op.not] : null
+                    }
+                }, 
+                required : false
+            }
+        ],
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan",
+            data : data
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
