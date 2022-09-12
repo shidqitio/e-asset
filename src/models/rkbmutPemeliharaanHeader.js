@@ -26,6 +26,18 @@ const RkbmutPemeliharaanHeader = db.define(
             type : DataTypes.STRING(255),
             allowNull : true 
         }, 
+        status_paraf : {
+            type : DataTypes.INTEGER(), 
+            allowNull : true
+        }, 
+        status_revisi : {
+            type : DataTypes.INTEGER(), 
+            allowNull : true
+        }, 
+        revisi_ke : {
+            type : DataTypes.INTEGER(), 
+            allowNull : true
+        },
         ucr: {
             type: DataTypes.STRING(100),
             allowNull: true,

@@ -162,6 +162,8 @@ exports.store = (req, res, next) => {
             const split_jenis_belanja = jenis_belanja.split("||")
             let kode_jenis_belanja = split_jenis_belanja[0]
             let nama_jenis_belanja = split_jenis_belanja[1]
+            //Pemisah Kode dan Nama Sub Kegiatan
+            
             //Insert RKBMUT Header 
             
             RkbmutPengadaanHeader.create({

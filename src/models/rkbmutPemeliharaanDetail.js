@@ -1,5 +1,6 @@
 const db = require("../config/database")
 const RkbmutPemeliharaanHeader = require("./rkbmutPemeliharaanHeader")
+const Aset = require("./asset")
 const {DataTypes} = require('sequelize')
 
 const RkbmutPemeliharaanDetail = db.define(
@@ -7,11 +8,6 @@ const RkbmutPemeliharaanDetail = db.define(
     {
         kode_unit_kerja : {
             type : DataTypes.STRING(16), 
-            allowNull : false, 
-            primaryKey : true,
-        }, 
-        tahun : {
-            type : DataTypes.STRING(4), 
             allowNull : false, 
             primaryKey : true,
         }, 
@@ -24,6 +20,10 @@ const RkbmutPemeliharaanDetail = db.define(
             type : DataTypes.STRING(2), 
             allowNull : true
         }, 
+        revisi_ke : {
+            type : DataTypes.INTEGER(11),
+            allowNull : true
+        },
         kondisi_baik : {
             type : DataTypes.INTEGER(11),
             allowNull : true
@@ -68,16 +68,17 @@ RkbmutPemeliharaanHeader.hasMany(RkbmutPemeliharaanDetail, {
     foreignKey : "kode_unit_kerja"
 })
 
-RkbmutPemeliharaanHeader.hasMany(RkbmutPemeliharaanDetail, {
-    foreignKey : "tahun"
+RkbmutPemeliharaanDetail.belongsTo(RkbmutPemeliharaanHeader, {
+    foreignKey : "kode_unit_kerja"
 })
 
-RkbmutPemeliharaanDetail.belongsTo(RkbmutPemeliharaanHeader, {
-    foreignKey : "kode_unit_kerja",
+Aset.hasMany(RkbmutPemeliharaanDetail, {
+    foreignKey : "kode_asset"
 })
 
-RkbmutPemeliharaanDetail.belongsTo(RkbmutPemeliharaanHeader, {
-    foreignKey : "tahun",
+RkbmutPemeliharaanDetail.belongsTo(Aset, {
+    foreignKey : "kode_asset"
 })
+
 
 module.exports = RkbmutPemeliharaanDetail;  
