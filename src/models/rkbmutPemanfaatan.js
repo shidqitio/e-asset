@@ -37,6 +37,14 @@ const RkbmUTPemanfaatan = db.define(
             type : DataTypes.INTEGER(),
             allowNull : true
         },
+        kode_status_pemilik : {
+            type : DataTypes.STRING(2), 
+            allowNull : true
+        }, 
+        kondisi_barang : {
+            type : DataTypes.STRING(50), 
+            allowNull : true
+        },
         nama_unit_kerja : {
             type : DataTypes.STRING(255), 
             allowNull : true

@@ -110,14 +110,19 @@ exports.store = (req, res, next) => {
     const split_unit = unit.split("||")
     let kode_unit = split_unit[0]
     let nama_unit = split_unit[1]
-    RkbmUTPemanfaatan.findAll({where :
-        {
-        tahun : req.body.tahun, 
-        kode_unit_kerja : kode_unit, 
-        status_revisi : 0, 
-        nup : req.body.nup
+    const tahun = req.body.tahun;
+    const rquest = req.body; 
+    const find = rquest.pemanfaatan.map((item) => {
+        return {
+            tahun : tahun, 
+            kode_unit_kerja : kode_unit,
+            status_revisi : 0, 
+            nup : item.nup
         }
     })
+    RkbmUTPemanfaatan.findAll(
+        {where : find}
+    )
     .then((data) => {
         if(data.length !== 0){ 
             const error = new Error("Data Sudah Ada")
@@ -130,22 +135,29 @@ exports.store = (req, res, next) => {
         let kode_unit = split_unit[0]
         let nama_unit = split_unit[1]
         //Insert RKBMUT Pemanfaatan 
-        return RkbmUTPemanfaatan.create({
-            kode_unit_kerja : kode_unit, 
-            nama_unit_kerja : nama_unit, 
-            kode_asset : req.body.kode_asset, 
-            tahun : req.body.tahun, 
-            nup : req.body.nup, 
-            revisi_ke : 0, 
-            status_revisi : 0, 
-            total_realisasi_pnpb : req.body.total_realisasi_pnpb, 
-            jumlah_item : req.body.jumlah_item, 
-            kode_bentuk_pemanfaatan : req.body.kode_bentuk_pemanfaatan, 
-            peruntukan : req.body.peruntukan,
-            jangka_waktu : req.body.jangka_waktu, 
-            potensi_pnpb : req.body.potensi_pnpb, 
-            keterangan : req.body.keterangan
-        });
+        const request = req.body; 
+        const tahun = req.body.tahun;
+        const create = request.pemanfaatan.map((item) => {
+            return {
+                kode_asset : item.kode_asset, 
+                kode_unit_kerja : kode_unit,
+                nama_unit_kerja : nama_unit,
+                tahun : tahun, 
+                nup : item.nup, 
+                revisi_ke : 0, 
+                status_revisi : 0,
+                kode_status_pemilik : item.kode_status_pemilik,
+                kondisi_barang : item.kondisi_barang, 
+                total_realisasi_pnpb : item.total_realisasi_pnpb, 
+                jumlah_item : item.jumlah_item,
+                kode_bentuk_pemanfaatan : item.kode_bentuk_pemanfaatan,
+                peruntukan : item.peruntukan, 
+                jangka_waktu : item.jangka_waktu, 
+                potensi_pnpb : item.potensi_pnpb,
+                keterangan : item.keterangan 
+            }
+        })
+        return RkbmUTPemanfaatan.bulkCreate(create);
     })
     .then((result) => {
         res.json({

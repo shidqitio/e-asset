@@ -1,13 +1,13 @@
 const PembukuanDetail = require("../models/pembukuan")
 const DaftarBarang = require("../models/daftarBarang")
 const Asset = require("../models/asset")
-const ruang = require("../models/ruang")
 const TrxKibTanah = require("../models/trxKibTanah")
 const TrxKibAngkutan = require("../models/trxKibAngkutan")
 const TrxKibAlatbesar = require("../models/trxKibBesar")
 const TrxKibBangunan = require("../models/trxKibBangunan")
 const db = require("../config/database")
 const {QueryTypes, Op} = require("sequelize")
+const Ruang = require("../models/ruang")
 
 
 
@@ -215,6 +215,7 @@ exports.store = (req, res, next) => {
                                 no_sppa : kode_pembukuan.no_sppa, 
                                 kode_unit : kode_unit, 
                                 nama_unit : nama_unit, 
+                                alamat : req.body.alamat,
                                 longitude : req.body.longitude, 
                                 latitude : req.body.latitude, 
                                 tanah_bangunan : req.body.tanah_bangunan, 
@@ -469,52 +470,24 @@ exports.store = (req, res, next) => {
 }
 
 
-exports.getbarangbyunit = (req, res, next) => {
+exports.getangkutanbyunit = (req, res, next) => {
     PembukuanDetail.findAll({
         attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
         order : [
-            ['kode_pembukuan','ASC']
+            ['udcr','ASC']
         ],
         include : [
             {
-                model : DaftarBarang, 
-                attributes : ["kode_pembukuan","nup", "kode_ruang", "kondisi"],
-                include : [
-                    {
-                        model : ruang, 
-                        where : {
-                            kode_unit : req.params.kode_unit
-                        }
-                    }, 
-                    n
-                ], 
-                where : {
-                    nup : {
-                        [Op.not] : null 
-                    }
-                },
-                required : false
-            }, 
-            {
-                model : TrxKibTanah, 
-                where : {
-                    kode_unit : req.params.kode_unit, 
-                    nup : {
-                        [Op.not] : null
-                    }
-                },
-                required : false
-            }, 
-            {
                 model : TrxKibAngkutan, 
+                attributes : ["kode_asset", "nup", "kode_status_pemilik"],
                 where : {
                     kode_unit : req.params.kode_unit, 
                     nup : {
                         [Op.not] : null
                     }
-                }, 
-                required : false
-            }
+                },
+                required : true
+            }, 
         ],
     })
     .then((data) => {
@@ -525,7 +498,91 @@ exports.getbarangbyunit = (req, res, next) => {
         }
         return res.json({
             status : "Success", 
-            message : "Data Berhasil Ditampilkan",
+            message : "Data Berhasil Ditampilkan", 
+            data : data
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+
+exports.gettanahbyunit = (req, res, next) => {
+    PembukuanDetail.findAll({
+        attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
+        order : [
+            ['udcr','ASC']
+        ],
+        include : [
+            {
+                model : TrxKibTanah, 
+                attributes : ["kode_asset", "nup", "kode_status_pemilik"],
+                where : {
+                    kode_unit : req.params.kode_unit, 
+                    nup : {
+                        [Op.not] : null
+                    }
+                },
+                required : true
+            }, 
+        ],
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan", 
+            data : data
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+
+
+
+exports.getbarangbyunit = (req, res, next) => {
+    PembukuanDetail.findAll({
+        attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
+        order : [
+            ['udcr','ASC']
+        ],
+        include : [
+            {
+                model : DaftarBarang, 
+                attributes : ["kode_asset", "nup","kondisi"],
+                include : [
+                    {
+                        model : Ruang, 
+                        where : {kode_unit : req.params.kode_unit}
+                    }
+                ],
+                required : true
+            }, 
+        ],
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan", 
             data : data
         });
     })
