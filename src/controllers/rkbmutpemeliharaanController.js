@@ -2,6 +2,7 @@ const RkbmutPemeliharaanHeader = require("../models/rkbmutPemeliharaanHeader")
 const RkbmutPemeliharaanDetail = require("../models/rkbmutPemeliharaanDetail")
 const Aset = require("../models/asset")
 const {Op} = require("sequelize")
+const db = require("../config/database")
 
 //Data RKBMUT UNIT
 exports.indexunit = (req, res, next) => {
