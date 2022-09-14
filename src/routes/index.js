@@ -15,6 +15,7 @@ const trxkibalatbesarRoutes = require("./trxKibBesar")
 const trxkibbangunanRoutes = require("./trxKibBangunan")
 const rkbmutpengadaanRoutes = require("./rkbmUtPengadaan")
 const rkbmutpemanfaatanRoutes = require("./rkbmUtPemanfaatan")
+const rkbmutpemeliharaanRoutes = require("./rkbmUtPemeliharaan")
 
 //Routing 
 router.use("/jenistrn", jenistrnRoutes)
@@ -30,5 +31,6 @@ router.use("/kibalatbesar",trxkibalatbesarRoutes)
 router.use("/kibbangunan",trxkibbangunanRoutes)
 router.use("/rkbmpengadaan", rkbmutpengadaanRoutes)
 router.use("/rkbmpemanfaatan", rkbmutpemanfaatanRoutes)
+router.use("/rkbmpemeliharaan", rkbmutpemeliharaanRoutes)
 
 module.exports = router;

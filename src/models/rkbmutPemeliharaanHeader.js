@@ -20,7 +20,8 @@ const RkbmutPemeliharaanHeader = db.define(
         }, 
         jenis_belanja : {
             type : DataTypes.STRING(6), 
-            allowNull : true,
+            allowNull : false,
+            primaryKey : true
         }, 
         nama_jenis_belanja : {
             type : DataTypes.STRING(255),
