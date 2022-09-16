@@ -12,7 +12,8 @@ const {
     reviewunit,
     parafapip,
     ajukanppk, 
-    update
+    update, 
+    destroy
 } = require("../controllers/rkmbutpengadaanController")
 
 router.get("/:kode_unit_kerja", index)
@@ -37,6 +38,7 @@ router.put("/ajukanppk/:kode_unit_kerja", ajukanppk)
 
 router.put("/parafapip/:kode_unit_kerja/:kode_kegiatan_rkt",parafapip)
 
+router.delete("/delete/:kode_unit_kerja/:kode_kegiatan_rkt", destroy)
 
 
 
