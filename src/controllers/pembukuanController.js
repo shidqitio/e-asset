@@ -472,8 +472,8 @@ exports.store = (req, res, next) => {
 
 // Get Tanah By UNit
 exports.gettanahbyunit = (req, res, next) => {
-    PembukuanDetail.findAll({
-        attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
+    Asset.findAll({
+        attributes : ["kode_asset", "nama_asset"],
         order : [
             ['udcr','ASC']
         ],
@@ -493,10 +493,6 @@ exports.gettanahbyunit = (req, res, next) => {
                         model : StatusPemilik, 
                         attributes : ["kode_status_pemilik","nama_status_pemilik"]
                     }, 
-                    {
-                        model : Asset, 
-                        attributes : ["kode_asset","nama_asset"]
-                    }
                 ]
             }, 
         ],
@@ -519,59 +515,6 @@ exports.gettanahbyunit = (req, res, next) => {
         }
         return next(err);
     })
-
-    // Asset.findAll({
-    //     include : [
-    //         {
-    //             model : PembukuanDetail, 
-    //             attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
-    //             order : [
-    //                 ['udcr','ASC']
-    //             ],
-    //             include : [
-    //                 {
-    //                     model : TrxKibTanah, 
-    //                     attributes : ["kode_asset", "nup", "kode_status_pemilik"],
-    //                     where : {
-    //                         kode_unit : req.params.kode_unit, 
-    //                         nup : {
-    //                             [Op.not] : null
-    //                         }
-    //                     },
-    //                     required : true,
-    //                     include : [
-    //                         {
-    //                             model : StatusPemilik, 
-    //                             attributes : ["kode_status_pemilik","nama_status_pemilik"]
-    //                         }, 
-    //                         // {
-    //                         //     model : Asset, 
-    //                         //     attributes : ["kode_asset","nama_asset"]
-    //                         // }
-    //                     ]
-    //                 }, 
-    //             ]
-    //         }
-    //     ],
-    // })
-    //   .then((data) => {
-    //     if(data.length === 0) {
-    //         const error = new Error("Data Tidak Ada")
-    //         error.statusCode = 422 
-    //         throw error
-    //     }
-    //     return res.json({
-    //         status : "Success", 
-    //         message : "Data Berhasil Ditampilkan", 
-    //         data : data
-    //     });
-    // })
-    // .catch((err) => {
-    //     if(!err.statusCode) {
-    //         err.statusCode = 500;
-    //     }
-    //     return next(err);
-    // })
 }
 
 
@@ -620,8 +563,8 @@ exports.getbarangbyunit = (req, res, next) => {
 
 // Get Alat Besar By UNit
 exports.getalatbesarbyunit = (req, res, next) => {
-    PembukuanDetail.findAll({
-        attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
+    Asset.findAll({
+        attributes : ["kode_asset", "nama_asset"],
         order : [
             ['udcr','ASC']
         ],
@@ -640,10 +583,6 @@ exports.getalatbesarbyunit = (req, res, next) => {
                     {
                         model : StatusPemilik, 
                         attributes : ["kode_status_pemilik","nama_status_pemilik"]
-                    },
-                    {
-                        model : Asset, 
-                        attributes : ["kode_asset","nama_asset"]
                     }
                 ]
             }, 
@@ -671,8 +610,8 @@ exports.getalatbesarbyunit = (req, res, next) => {
 
 // Get Bangunan By UNit
 exports.getbangunanbyunit = (req, res, next) => {
-    PembukuanDetail.findAll({
-        attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
+    Asset.findAll({
+        attributes : ["kode_asset", "nama_asset"],
         order : [
             ['udcr','ASC']
         ],
@@ -692,10 +631,6 @@ exports.getbangunanbyunit = (req, res, next) => {
                         model : StatusPemilik, 
                         attributes : ["kode_status_pemilik","nama_status_pemilik"]
                     },
-                    {
-                        model : Asset, 
-                        attributes : ["kode_asset","nama_asset"]
-                    }
                 ]
             }, 
         ],
@@ -722,8 +657,8 @@ exports.getbangunanbyunit = (req, res, next) => {
 
 //Get Angkutan by Unit
 exports.getangkutanbyunit = (req, res, next) => {
-    PembukuanDetail.findAll({
-        attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
+    Asset.findAll({
+        attributes : ["kode_asset", "nama_asset"],
         order : [
             ['udcr','ASC']
         ],
