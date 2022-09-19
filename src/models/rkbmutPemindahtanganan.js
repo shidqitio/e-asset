@@ -1,6 +1,6 @@
 const db = require("../config/database")
+const Aset = require("./asset")
 const {DataTypes} = require('sequelize')
-const { STRING } = require("sequelize")
 
 const RkbmutPemindahtanganan = db.define(
     "RkbmutPemindahtangan", 
@@ -88,5 +88,13 @@ const RkbmutPemindahtanganan = db.define(
         updatedAt : "udch"
     }
 )
+
+Aset.hasMany(RkbmutPemindahtanganan,{
+    foreignKey : "kode_asset"
+})
+
+RkbmutPemindahtanganan.belongsTo(Aset, {
+    foreignKey : "kode_asset"
+})
 
 module.exports = RkbmutPemindahtanganan
