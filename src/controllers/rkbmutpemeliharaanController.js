@@ -218,10 +218,114 @@ exports.store = (req, res, next) => {
 }
 
 //UNIT MENGAJUKAN KE PPK 
-
-
+exports.ajukanppk = (req, res,next) => {
+    return db.transaction()
+    .then((t) => {
+        return RkbmutPemeliharaanHeader.findAll({
+            where : {
+                status_revisi : 0, 
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_paraf : 0
+            } 
+        })
+        .then((data) => {
+            if(data.length === 0 ) {
+                const error = new Error("Tidak Ada Data Paraf")
+                error.statusCode = 422 
+                throw error
+            }
+            const upd = {
+                status_paraf : 1
+            }
+            return RkbmutPemeliharaanHeader.update(upd, {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja
+                }
+            }, {transaction : t});
+        })
+        .then((update) => {
+            if(!update) {
+                const error = new Error("gagal Paraf")
+                error.statusCode = 422 
+                throw error
+            }
+            return RkbmutPemeliharaanDetail.update(upd, {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja
+                }
+            }, {transaction : t});
+        })
+        .then(() => {
+            res.json({
+                status : "Success", 
+                message : "Berhasil Diajukan Data"
+            })
+            return t.commit()
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback();
+            return next(err);
+        })
+    })
+}
+ 
 //PPK PARAF DIAJUKAN KE APIP
-
+exports.parafppk = (req, res, next) => {
+    return db.transaction()
+    .then((t) => {
+        RkbmutPemeliharaanHeader.findAll({
+            where : {
+                status_revisi : 0, 
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                status_paraf : 1
+            }
+        })
+        .then((data) => {
+            if(data.length === 0 ) {
+                const error = new Error("Tidak Ada Data Paraf")
+                error.statusCode = 422 
+                throw error
+            }
+            const upd = {
+                status_revisi : 1,
+                status_paraf : 2
+            }
+            return RkbmutPengadaanHeader.update(upd, {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                }
+            },{transaction : t});
+        })
+        .then((update) => {
+            if(!update) {
+                const error = new Error("Gagal Paraf Header")
+                error.statusCode = 422 
+                throw error
+            }
+            return RkbmutPemeliharaanDetail.update(upd, {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja
+                }
+            });
+        })
+        .then(() => {
+            res.json({
+                status : "Success",
+                message : "Berhasil Paraf PPK " 
+            });
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback();
+            return next(err);
+        })
+    })
+}
 
 //REVIEW APIP
 
