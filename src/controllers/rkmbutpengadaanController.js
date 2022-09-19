@@ -1,7 +1,7 @@
 const RkbmutPengadaanHeader = require("../models/rkbmutPengadaanHeader");
 const RkbmutPengadaanDetail = require("../models/rkbmutPengadaanDetail");
 const db = require("../config/database");
-const {Op} = require("sequelize")
+const {Op, where} = require("sequelize")
 
 // Data RKBMUT UNIT
 exports.index = (req, res, next) => {
@@ -722,5 +722,59 @@ exports.update = (req, res, next) => {
             t.rollback()
             return next(err);
         })
+    })
+}
+
+//DELETE SEMENTARA 
+exports.destroy = (req, res, next) => {
+    RkbmutPengadaanHeader.findOne({
+        where : {
+            kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+            kode_unit_kerja : req.params.kode_unit_kerja, 
+        }
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPengadaanHeader.destroy({
+            where : {
+                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+            }
+        });
+    })
+    .then((destroy) => {
+        if(!destroy) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPengadaanDetail.destroy({
+            where : {
+                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+                kode_unit_kerja : req.params.kode_unit_kerja
+            }
+        });
+    })
+    .then((destroyall) => {
+        if(!destroyall) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Dihapus", 
+            data : destroyall
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
     })
 }

@@ -328,16 +328,234 @@ exports.parafppk = (req, res, next) => {
 }
 
 //REVIEW APIP
-
+exports.reviewapip = (req,res, next) => {
+    return db.transaction()
+    .then((t) => {
+        return RkbmutPemeliharaanHeader({
+            where : {
+                status_revisi : 1, 
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                jenis_belanja : req.params.kode_jenis_belanja
+            }
+        })
+        .then((data) => {
+            if(data.length === 0) { 
+                const error = new Error("Data Tidak Ada");
+                error.statusCode = 422; 
+                throw error
+            }
+            let data_awal = JSON.parse(JSON.stringify(data))
+            let index = data.length
+            const {revisi_ke} = data_awal[index-1]
+            let kode = revisi_ke + 1
+            const request = req.body
+            const update = request.rkbmdetail.map((item) => {
+                return {
+                    kode_asset : item.kode_asset,
+                    keterangan : item.keterangan, 
+                    status_revisi : 2, 
+                    revisi_ke : kode
+                }
+            });
+            for(let i = 0 ; i < update.length ; i ++) {
+              return RkbmutPemeliharaanDetail.update(update[i], {
+                    where : {
+                        kode_asset : update[i].kode_asset,
+                        kode_unit_kerja : req.params.kode_unit_kerja, 
+                        jenis_belanja : req.params.kode_jenis_belanja
+                    }
+                }, {transaction:t})
+            }
+        })
+        .then((data2) => {
+            if(!data2) {
+                const error = new Error("Gagal Update Data");
+                error.statusCode = 422; 
+                throw error
+            }
+            const upd = {
+                status_revisi : 2, 
+                revisi_ke : kode
+            }
+            //Kembalikan Ke Unit 
+            return RkbmutPemeliharaanHeader.update(upd, {
+                where : {
+                    kode_unit_kerja,
+                    jenis_belanja : req.params.kode_jenis_belanja 
+                }
+            });
+        })
+        .then(() => {
+            res.json({
+                status : "Success",
+                message : "Data Berhasil Diubah"
+            })
+            return t.commit()
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback()
+            return next(err);
+        })
+    })
+}
 
 //REVIEW UNIT
-
+exports.reviewunit = (req,res, next) => {
+    return db.transaction()
+    .then((t) => {
+        return RkbmutPemeliharaanHeader({
+            where : {
+                status_revisi : 2, 
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                jenis_belanja : req.params.kode_jenis_belanja
+            }
+        })
+        .then((data) => {
+            if(data.length === 0) { 
+                const error = new Error("Data Tidak Ada");
+                error.statusCode = 422; 
+                throw error
+            }
+            let data_awal = JSON.parse(JSON.stringify(data))
+            let index = data.length
+            const {revisi_ke} = data_awal[index-1]
+            let kode = revisi_ke + 1
+            const request = req.body
+            const update = request.rkbmdetail.map((item) => {
+                return {
+                    kode_asset : item.kode_asset,
+                    keterangan : item.keterangan, 
+                    status_revisi : 1, 
+                    revisi_ke : kode
+                }
+            });
+            for(let i = 0 ; i < update.length ; i ++) {
+              return RkbmutPemeliharaanDetail.update(update[i], {
+                    where : {
+                        kode_asset : update[i].kode_asset,
+                        kode_unit_kerja : req.params.kode_unit_kerja, 
+                        jenis_belanja : req.params.kode_jenis_belanja
+                    }
+                }, {transaction:t})
+            }
+        })
+        .then((data2) => {
+            if(!data2) {
+                const error = new Error("Gagal Update Data");
+                error.statusCode = 422; 
+                throw error
+            }
+            const upd = {
+                status_revisi : 1, 
+                revisi_ke : kode
+            }
+            //Kembalikan Ke Unit 
+            return RkbmutPemeliharaanHeader.update(upd, {
+                where : {
+                    kode_unit_kerja,
+                    jenis_belanja : req.params.kode_jenis_belanja 
+                }
+            });
+        })
+        .then(() => {
+            res.json({
+                status : "Success",
+                message : "Data Berhasil Diubah"
+            })
+            return t.commit()
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback()
+            return next(err);
+        })
+    })
+}
 
 //PARAF APIP SELESAI 
-
+exports.parafapip = (req, res, next) => {
+    RkbmutPengadaanHeader.findAll({
+        where : {
+            status_revisi : 1 , 
+            kode_unit_kerja : req.params.kode_unit_kerja, 
+            jenis_belanja : req.params.kode_jenis_belanja
+        }
+    })
+    .then((data) => {
+        if(data.length === 0 ) {
+            const error = new Error("Tidak Ada Data Paraf")
+            error.statusCode = 422 
+            throw error
+        }
+        const upd = {
+            status_revisi : 3
+        }
+        return RkbmutPengadaanHeader.update(upd, {
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                jenis_belanja : req.params.kode_jenis_belanja
+            }
+        })
+    })
+    .then((respon) => {
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Di Paraf", 
+            data : respon
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    });
+}
 
 //PARAF UNIT SELESAI 
-
+exports.parafunit = (req, res, next) => {
+    RkbmutPengadaanHeader.findAll({
+        where : {
+            status_revisi : 2 , 
+            kode_unit_kerja : req.params.kode_unit_kerja, 
+            jenis_belanja : req.params.kode_jenis_belanja
+        }
+    })
+    .then((data) => {
+        if(data.length === 0 ) {
+            const error = new Error("Tidak Ada Data Paraf")
+            error.statusCode = 422 
+            throw error
+        }
+        const upd = {
+            status_revisi : 3
+        }
+        return RkbmutPengadaanHeader.update(upd, {
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                jenis_belanja : req.params.kode_jenis_belanja
+            }
+        })
+    })
+    .then((respon) => {
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Di Paraf", 
+            data : respon
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    });
+}
 
 //UPDATE 
 
