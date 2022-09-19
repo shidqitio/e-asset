@@ -24,7 +24,15 @@ const RkbmutPemeliharaanDetail = db.define(
             type : DataTypes.INTEGER(11),
             allowNull : true
         },
-        kode_jenis_belanja : {
+        status_paraf : {
+            type : DataTypes.INTEGER(),
+            allowNull : true
+        },
+        status_revisi : {
+            type : DataTypes.INTEGER(), 
+            allowNull : true
+        },
+        jenis_belanja : {
             type : DataTypes.STRING(6), 
             allowNull : false, 
             primaryKey : true

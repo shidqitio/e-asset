@@ -184,7 +184,7 @@ exports.store = (req, res, next) => {
                     revisi_ke : header.revisi_ke, 
                     status_paraf : header.status_paraf, 
                     status_revisi : header.status_revisi, 
-                    kode_jenis_belanja : header.jenis_belanja,
+                    jenis_belanja : header.jenis_belanja,
                     kode_status_barang : item.kode_status_barang, 
                     kondisi_baik : kondisi_baik,
                     kondisi_rusak_ringan : kondisi_rusak_ringan, 
@@ -240,8 +240,9 @@ exports.ajukanppk = (req, res,next) => {
             return RkbmutPemeliharaanHeader.update(upd, {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja
-                }
-            }, {transaction : t});
+                }, 
+                transaction : t
+            })
         })
         .then((update) => {
             if(!update) {
@@ -249,18 +250,22 @@ exports.ajukanppk = (req, res,next) => {
                 error.statusCode = 422 
                 throw error
             }
-            return RkbmutPemeliharaanDetail.update(upd, {
+            const ubah = {
+                status_paraf : 1
+            }
+            return RkbmutPemeliharaanDetail.update(ubah, {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja
-                }
-            }, {transaction : t});
+                }, 
+                transaction : t
+            })
         })
         .then(() => {
             res.json({
                 status : "Success", 
                 message : "Berhasil Diajukan Data"
             })
-            return t.commit()
+            t.commit()
         })
         .catch((err) => {
             if(!err.statusCode) {
@@ -293,11 +298,12 @@ exports.parafppk = (req, res, next) => {
                 status_revisi : 1,
                 status_paraf : 2
             }
-            return RkbmutPengadaanHeader.update(upd, {
+            return RkbmutPemeliharaanHeader.update(upd, {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja, 
-                }
-            },{transaction : t});
+                }, 
+                transaction : t
+            });
         })
         .then((update) => {
             if(!update) {
@@ -305,10 +311,15 @@ exports.parafppk = (req, res, next) => {
                 error.statusCode = 422 
                 throw error
             }
+            const upd = {
+                status_revisi : 1,
+                status_paraf : 2
+            }
             return RkbmutPemeliharaanDetail.update(upd, {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja
-                }
+                }, 
+                transaction : t
             });
         })
         .then(() => {
@@ -316,6 +327,7 @@ exports.parafppk = (req, res, next) => {
                 status : "Success",
                 message : "Berhasil Paraf PPK " 
             });
+            return t.commit()
         })
         .catch((err) => {
             if(!err.statusCode) {
@@ -329,9 +341,8 @@ exports.parafppk = (req, res, next) => {
 
 //REVIEW APIP
 exports.reviewapip = (req,res, next) => {
-    return db.transaction()
-    .then((t) => {
-        return RkbmutPemeliharaanHeader({
+
+       RkbmutPemeliharaanHeader.findAll({
             where : {
                 status_revisi : 1, 
                 kode_unit_kerja : req.params.kode_unit_kerja, 
@@ -358,55 +369,44 @@ exports.reviewapip = (req,res, next) => {
                 }
             });
             for(let i = 0 ; i < update.length ; i ++) {
-              return RkbmutPemeliharaanDetail.update(update[i], {
+               RkbmutPemeliharaanDetail.update(update[i], {
                     where : {
                         kode_asset : update[i].kode_asset,
                         kode_unit_kerja : req.params.kode_unit_kerja, 
                         jenis_belanja : req.params.kode_jenis_belanja
-                    }
-                }, {transaction:t})
-            }
-        })
-        .then((data2) => {
-            if(!data2) {
-                const error = new Error("Gagal Update Data");
-                error.statusCode = 422; 
-                throw error
+                    },        
+                })
             }
             const upd = {
-                status_revisi : 2, 
+                status_revisi : 2,
                 revisi_ke : kode
             }
-            //Kembalikan Ke Unit 
-            return RkbmutPemeliharaanHeader.update(upd, {
+             //Kembalikan Ke Unit 
+              RkbmutPemeliharaanHeader.update(upd, {
                 where : {
-                    kode_unit_kerja,
+                    kode_unit_kerja : req.params.kode_unit_kerja,
                     jenis_belanja : req.params.kode_jenis_belanja 
-                }
-            });
-        })
-        .then(() => {
-            res.json({
-                status : "Success",
-                message : "Data Berhasil Diubah"
+                }, 
             })
-            return t.commit()
+            .then(() => {
+                res.json({
+                    status : "Success",
+                    message : "Data Berhasil Diubah"
+                })
+            })
         })
         .catch((err) => {
             if(!err.statusCode) {
                 err.statusCode = 500;
             }
-            t.rollback()
             return next(err);
         })
-    })
+    
 }
 
 //REVIEW UNIT
 exports.reviewunit = (req,res, next) => {
-    return db.transaction()
-    .then((t) => {
-        return RkbmutPemeliharaanHeader({
+     RkbmutPemeliharaanHeader.findAll({
             where : {
                 status_revisi : 2, 
                 kode_unit_kerja : req.params.kode_unit_kerja, 
@@ -433,20 +433,13 @@ exports.reviewunit = (req,res, next) => {
                 }
             });
             for(let i = 0 ; i < update.length ; i ++) {
-              return RkbmutPemeliharaanDetail.update(update[i], {
+            RkbmutPemeliharaanDetail.update(update[i], {
                     where : {
                         kode_asset : update[i].kode_asset,
                         kode_unit_kerja : req.params.kode_unit_kerja, 
                         jenis_belanja : req.params.kode_jenis_belanja
                     }
-                }, {transaction:t})
-            }
-        })
-        .then((data2) => {
-            if(!data2) {
-                const error = new Error("Gagal Update Data");
-                error.statusCode = 422; 
-                throw error
+                })
             }
             const upd = {
                 status_revisi : 1, 
@@ -455,7 +448,7 @@ exports.reviewunit = (req,res, next) => {
             //Kembalikan Ke Unit 
             return RkbmutPemeliharaanHeader.update(upd, {
                 where : {
-                    kode_unit_kerja,
+                    kode_unit_kerja : req.params.kode_unit_kerja,
                     jenis_belanja : req.params.kode_jenis_belanja 
                 }
             });
@@ -465,21 +458,19 @@ exports.reviewunit = (req,res, next) => {
                 status : "Success",
                 message : "Data Berhasil Diubah"
             })
-            return t.commit()
         })
         .catch((err) => {
             if(!err.statusCode) {
                 err.statusCode = 500;
             }
-            t.rollback()
+
             return next(err);
         })
-    })
 }
 
 //PARAF APIP SELESAI 
 exports.parafapip = (req, res, next) => {
-    RkbmutPengadaanHeader.findAll({
+    RkbmutPemeliharaanHeader.findAll({
         where : {
             status_revisi : 1 , 
             kode_unit_kerja : req.params.kode_unit_kerja, 
@@ -495,11 +486,19 @@ exports.parafapip = (req, res, next) => {
         const upd = {
             status_revisi : 3
         }
-        return RkbmutPengadaanHeader.update(upd, {
+        return RkbmutPemeliharaanHeader.update(upd, {
             where : {
                 kode_unit_kerja : req.params.kode_unit_kerja, 
                 jenis_belanja : req.params.kode_jenis_belanja
             }
+        })
+        .then(() => {
+            return RkbmutPemeliharaanDetail.update(upd, {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                    jenis_belanja : req.params.kode_jenis_belanja
+                }
+            })
         })
     })
     .then((respon) => {
@@ -519,7 +518,7 @@ exports.parafapip = (req, res, next) => {
 
 //PARAF UNIT SELESAI 
 exports.parafunit = (req, res, next) => {
-    RkbmutPengadaanHeader.findAll({
+    RkbmutPemeliharaanHeader.findAll({
         where : {
             status_revisi : 2 , 
             kode_unit_kerja : req.params.kode_unit_kerja, 
@@ -535,11 +534,19 @@ exports.parafunit = (req, res, next) => {
         const upd = {
             status_revisi : 3
         }
-        return RkbmutPengadaanHeader.update(upd, {
+        return RkbmutPemeliharaanHeader.update(upd, {
             where : {
                 kode_unit_kerja : req.params.kode_unit_kerja, 
                 jenis_belanja : req.params.kode_jenis_belanja
             }
+        })
+        .then(() => {
+            return RkbmutPemeliharaanDetail.update(upd, {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                    jenis_belanja : req.params.kode_jenis_belanja
+                }
+            })
         })
     })
     .then((respon) => {

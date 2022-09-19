@@ -4,13 +4,13 @@ const {DataTypes} = require("sequelize")
 const RkbmutPemeliharaanHeader = db.define(
     "RkbmutPemeliharaanHeader", 
     {
-        tahun : {
-            type : DataTypes.STRING(4), 
+        kode_unit_kerja : {
+            type : DataTypes.STRING(16), 
             allowNull : false, 
             primaryKey : true,
         }, 
-        kode_unit_kerja : {
-            type : DataTypes.STRING(16), 
+        tahun : {
+            type : DataTypes.STRING(4), 
             allowNull : false, 
             primaryKey : true,
         }, 
