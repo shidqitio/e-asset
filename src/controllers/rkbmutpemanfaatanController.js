@@ -283,7 +283,6 @@ exports.reviewapip = (req, res, next) => {
         const upd = {
             revisi_ke : kode, 
             status_revisi : 2,
-            revisi_ke : kode,  
             total_realisasi_pnpb : req.body.total_realisasi_pnpb, 
             jumlah_item : req.body.jumlah_item, 
             kode_bentuk_pemanfaatan : req.body.kode_bentuk_pemanfaatan, 
