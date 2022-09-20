@@ -138,9 +138,11 @@ exports.store = (req, res, next) => {
          //Insert RKBMUT Pemindahtanganan 
          const request = req.body; 
          const tahun = req.body.tahun;
+         let tahun_int = parseInt(tahun)
          const create = request.pemindahtanganan.map((item) => {
             let umur_ekonomis = item.umur_ekonomis
-            let umur = umur_ekonomis - tahun;
+            let parsein_umur = parseInt(umur_ekonomis)
+            let umur = parsein_umur - tahun_int;
             return {
                 kode_asset : item.kode_asset, 
                 kode_unit_kerja : kode_unit,
