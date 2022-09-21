@@ -29,6 +29,14 @@ const DaftarBarang = db.define(
             type : DataTypes.STRING(50), 
             allowNull : true
         },
+        merk : {
+            type : DataTypes.STRING(255), 
+            allowNull : true
+        }, 
+        tanggal_perolehan : {
+            type : DataTypes.DATE(), 
+            allowNull : true
+        },
         kode_ruang : {
             type : DataTypes.STRING(7), 
             allowNull : false, 

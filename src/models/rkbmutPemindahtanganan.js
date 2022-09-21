@@ -34,7 +34,7 @@ const RkbmutPemindahtanganan = db.define(
             allowNull : true
         }, 
         tahun_perolehan : {
-            type : DataTypes.DATE(), 
+            type : DataTypes.STRING(4), 
             allowNull : true
         }, 
         kondisi : {

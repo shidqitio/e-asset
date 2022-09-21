@@ -9,6 +9,7 @@ const db = require("../config/database")
 const {QueryTypes, Op} = require("sequelize")
 const Ruang = require("../models/ruang")
 const StatusPemilik = require("../models/statusPemilik")
+const sequelize = require("sequelize")
 
 
 
@@ -150,6 +151,8 @@ exports.store = (req, res, next) => {
                             kode_pembukuan : kode_pembukuan.kode_pembukuan,
                             kode_asset : kode_pembukuan.kode_asset, 
                             nilai_item : kode_pembukuan.nilai_item,  
+                            merk : kode_pembukuan.merk, 
+                            tanggal_perolehan : kode_pembukuan.tanggal_perolehan,
                             kode_ruang : item.kode_ruang, 
                             deskripsi : item.deskripsi, 
                             kondisi : item.kondisi, 
@@ -521,25 +524,27 @@ exports.gettanahbyunit = (req, res, next) => {
 
 //Get Barang By Unit
 exports.getbarangbyunit = (req, res, next) => {
-    PembukuanDetail.findAll({
-        attributes : ["kode_asset", "kode_pembukuan", "no_sppa", "jumlah_barang", "asal_perolehan"],
+    DaftarBarang.findAll({
+        attributes : [
+            'kode_pembukuan', 
+            'nup', 
+            'kode_asset', 
+            'merk', 
+            'udcr',
+            [sequelize.fn('date_format', sequelize.col('tanggal_perolehan'),'%Y'),'tahun_perolehan']
+        ],
         order : [
             ['udcr','ASC']
         ],
         include : [
             {
-                model : DaftarBarang, 
-                attributes : ["kode_asset", "nup","kondisi"],
-                include : [
-                    {
-                        model : Ruang, 
-                        where : {kode_unit : req.params.kode_unit}
-                    }
-                ],
-                required : true, 
-                
-            }, 
-        ],
+                model : Ruang, 
+                attributes : {exclude : ["udcr", "udch", "uch", "ucr"]}, 
+                where : {
+                    kode_unit : req.params.kode_unit
+                }
+            }
+        ]
     })
     .then((data) => {
         if(data.length === 0) {

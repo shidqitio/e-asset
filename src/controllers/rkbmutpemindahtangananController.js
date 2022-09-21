@@ -113,7 +113,7 @@ exports.store = (req, res, next) => {
     let kode_unit = split_unit[0]
     const tahun = req.body.tahun;
     const rquest = req.body; 
-    const find = rquest.pemanfaatan.map((item) => {
+    const find = rquest.pemindahtanganan.map((item) => {
         return {
             tahun : tahun, 
             kode_unit_kerja : kode_unit,
@@ -138,11 +138,7 @@ exports.store = (req, res, next) => {
          //Insert RKBMUT Pemindahtanganan 
          const request = req.body; 
          const tahun = req.body.tahun;
-         let tahun_int = parseInt(tahun)
          const create = request.pemindahtanganan.map((item) => {
-            let umur_ekonomis = item.umur_ekonomis
-            let parsein_umur = parseInt(umur_ekonomis)
-            let umur = parsein_umur - tahun_int;
             return {
                 kode_asset : item.kode_asset, 
                 kode_unit_kerja : kode_unit,
@@ -153,7 +149,7 @@ exports.store = (req, res, next) => {
                 status_revisi : 0, 
                 status_paraf : 0, 
                 merk : item.merk, 
-                umur_ekonomis : umur, 
+                umur_ekonomis : item.umur_ekonomis, 
                 tahun_perolehan : item.tahun_perolehan, 
                 kondisi : item.kondisi, 
                 nilai_perolehan : item.nilai_perolehan,
