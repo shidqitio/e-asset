@@ -235,7 +235,7 @@ exports.ajukanppk = (req, res, next) => {
             status_revisi : 1,
             status_paraf : 2
         }
-        return RkbmUTPemanfaatan.update(upd, {
+        return RkbmutPemindahtanganan.update(upd, {
             where : {
                 kode_unit_kerja : req.params.kode_unit_kerja
             }

@@ -14,6 +14,10 @@ const RkbmutPemindahtanganan = db.define(
             type : DataTypes.STRING(16), 
             allowNull : false, 
             primaryKey : true
+        },
+        nama_unit_kerja : {
+            type : DataTypes.STRING(255), 
+            allowNull : true
         }, 
         kode_asset : {
             type : DataTypes.STRING(10), 
