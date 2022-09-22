@@ -529,7 +529,8 @@ exports.getbarangbyunit = (req, res, next) => {
             'kode_pembukuan', 
             'nup', 
             'kode_asset', 
-            'merk', 
+            'merk',
+            'nilai_item', 
             'udcr',
             [sequelize.fn('date_format', sequelize.col('tanggal_perolehan'),'%Y'),'tahun_perolehan']
         ],
