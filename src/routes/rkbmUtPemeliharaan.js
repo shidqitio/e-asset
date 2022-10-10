@@ -12,7 +12,8 @@ reviewapip,
 reviewunit, 
 parafapip, 
 parafunit, 
-update
+update, 
+destroy
 } = require("../controllers/rkbmutpemeliharaanController")
 
 //Get
@@ -33,5 +34,7 @@ router.put("/reviewunit/:kode_unit_kerja/:kode_jenis_belanja", reviewunit)
 router.put("/parafapip/:kode_unit_kerja/:kode_jenis_belanja", parafapip)
 router.put("/parafunit/:kode_unit_kerja/:kode_jenis_belanja", parafunit)
 
+
+router.delete("/delete/:kode_unit_kerja/:jenis_belanja", destroy)
 
 module.exports = router
