@@ -472,5 +472,92 @@ exports.parafapip = (req, res, next) => {
     })
 }
 
+exports.update = (req, res, next) => {
+    let upd = {
+        jumlah_item : req.body.jumlah_item,
+        kode_bentuk_pemanfaatan : req.body.kode_bentuk_pemanfaatan, 
+        peruntukan : req.body.peruntukan, 
+        jangka_waktu : req.body.jangka_waktu, 
+        potensi_pnpb : req.body.potensi_pnpb
+    }
+    RkbmUTPemanfaatan.findAll({
+        where : {
+            nup : req.params.nup, 
+            status_revisi : 0, 
+            revisi_ke : 0, 
+        }
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422;
+            throw error
+        }
+        return RkbmUTPemanfaatan.update(upd, {
+            where : {
+                nup : req.params.nup, 
+                status_revisi : 0, 
+                revisi_ke : 0, 
+            }
+        })
+    })
+    .then((update) => {
+        if(!update){
+            const error = new Error("Data Gagal Update")
+            error.statusCode = 422;
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Di Update",
+            data : update
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+//Delete Sementara 
+exports.destroy = (req, res, next) => {
+    RkbmUTPemanfaatan.findOne({
+        where :{
+            nup : req.params.nup
+        }
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmUTPemanfaatan.destroy({
+            where : {
+                nup : req.params.nup
+            }
+        });
+    })
+    .then((destroy) => {
+        if(!destroy) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Dihapus",
+            data : destroy
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
 
 

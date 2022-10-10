@@ -12,6 +12,8 @@ const {
     reviewunit,
     parafunitselesai,
     parafapip, 
+    update, 
+    destroy
 } = require("../controllers/rkbmutpemanfaatanController")
 
 router.get("/indexunit/:kode_unit_kerja", indexunit)
@@ -25,6 +27,8 @@ router.put("/reviewapip/:kode_unit_kerja/:nup", reviewapip)
 router.put("/reviewunit/:kode_unit_kerja/:nup", reviewunit)
 router.put("/parafapipselesai/:kode_unit_kerja/:nup", parafapip)
 router.put("/parafunitselesai/:kode_unit_kerja/:nup", parafunitselesai)
+router.put("/update/:nup", update)
+router.delete("/delete/:nup", destroy)
 
 
 

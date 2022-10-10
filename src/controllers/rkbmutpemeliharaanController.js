@@ -565,5 +565,98 @@ exports.parafunit = (req, res, next) => {
 }
 
 //UPDATE 
-
+exports.update = (req, res, next) => {
+    //Pemisah Unit
+    let unit = req.body.unit
+    const split_unit = unit.split("||")
+    let kode_unit = split_unit[0]
+    let nama_unit = split_unit[1]
+    //Pemish Kode dan BAS 
+    let bas = req.body.bas 
+    const split_bas = bas.split("||")
+    let kode_bas = split_bas[0];
+    let nama_bas = split_bas[1];
+    return db.transaction()
+    .then((t) => {
+        return RkbmutPemeliharaanHeader.findAll({
+            where : {
+                kode_unit_kerja : kode_unit, 
+                jenis_belanja : kode_bas, 
+                status_revisi : 0, 
+                revisi_ke : 0
+            }, 
+            include : {
+                model : RkbmutPemeliharaanDetail
+            }
+        })
+        .then((head) => {
+            if(head.length === 0) {
+                const error = new Error("Data Tidak Ada")
+                error.statusCode = 422 
+                throw error
+            }
+            let index = head.length
+            let head_arr = JSON.parse(JSON.stringify(head))
+            const {jenis_belanja} = head_arr[index-1]
+            const {kode_unit_kerja} = head_arr[index-1]
+            return RkbmutPemeliharaanDetail.destroy({
+                where : {
+                    jenis_belanja : jenis_belanja, 
+                    kode_unit_kerja : kode_unit_kerja, 
+                    revisi_ke : 0,
+                    status_revisi : 0
+                },
+                transaction : t 
+            })
+            .then((destroy) => {
+                if(!destroy){
+                    const error = new Error("Data Gagal Dihapus")
+                    error.statusCode = 422 
+                    throw error
+                }
+                const request = req.body
+                const data = request.rkbmutpemeliharaan.map((item) => {
+                    let kondisi_baik = item.kondisi_baik
+                    let kondisi_rusak_ringan = item.kondisi_rusak_ringan
+                    return {
+                        kode_unit_kerja : kode_unit_kerja, 
+                        kode_asset : item.kode_asset, 
+                        revisi_ke : 0, 
+                        status_paraf : 0, 
+                        status_revisi : 0, 
+                        jenis_belanja : jenis_belanja,
+                        kode_status_barang : item.kode_status_barang, 
+                        kondisi_baik : kondisi_baik,
+                        kondisi_rusak_ringan : kondisi_rusak_ringan, 
+                        kebutuhan_pemeliharaan : kondisi_baik + kondisi_rusak_ringan,
+                        keterangan : item.keterangan
+                    }
+                });
+                return RkbmutPemeliharaanDetail.bulkCreate(data, {
+                    transaction : t
+                })
+                .then((insert) => {
+                    if(!insert) {
+                        const error = new Error("Data Gagal Dibuat")
+                        error.statusCode = 422 
+                        throw error
+                    }
+                    res.json({
+                        status : "Success", 
+                        message : "Berhasil Menambah Data",
+                        data : insert
+                    })
+                    return t.commit()
+                })
+            })
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback()
+            return next(err);
+        })
+    })
+}
 

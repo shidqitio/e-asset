@@ -1,6 +1,7 @@
 const RkbmutPenghapusan = require("../models/rkbmutPenghapusan")
 const Aset = require("../models/asset")
 const {Op} = require("sequelize")
+const path = require("path")
 
 //Data RKBMUT UNIT
 exports.indexunit = (req, res, next) => {
@@ -127,21 +128,40 @@ exports.store = (req, res, next) => {
             error.statusCode = 422; 
             throw error
         }
-        return RkbmutPenghapusan.create({
-          tahun : tahun, 
-          kode_unit_kerja : kode_unit, 
-          nup : req.body.nup, 
-          kode_asset : req.body.kode_asset, 
-          revisi_ke : 0, 
-          status_revisi : 0, 
-          status_paraf : 0, 
-          nama_unit_kerja : nama_unit, 
-          merk : req.body.merk, 
-          kondisi : req.body.kondisi, 
-          tahun_perolehan : req.body.tahun_perolehan, 
-          alasan : req.body.alasan, 
-          foto : req.body.foto
-        });
+        if(req.file){
+            const filename = path.parse(req.file.filename).base
+            return RkbmutPenghapusan.create({
+              tahun : tahun, 
+              kode_unit_kerja : kode_unit, 
+              nup : req.body.nup, 
+              kode_asset : req.body.kode_asset, 
+              revisi_ke : 0, 
+              status_revisi : 0, 
+              status_paraf : 0, 
+              nama_unit_kerja : nama_unit, 
+              merk : req.body.merk, 
+              kondisi : req.body.kondisi, 
+              tahun_perolehan : req.body.tahun_perolehan, 
+              alasan : req.body.alasan, 
+              foto : filename
+            });
+        }
+        else {
+            return RkbmutPenghapusan.create({
+                tahun : tahun, 
+                kode_unit_kerja : kode_unit, 
+                nup : req.body.nup, 
+                kode_asset : req.body.kode_asset, 
+                revisi_ke : 0, 
+                status_revisi : 0, 
+                status_paraf : 0, 
+                nama_unit_kerja : nama_unit, 
+                merk : req.body.merk, 
+                kondisi : req.body.kondisi, 
+                tahun_perolehan : req.body.tahun_perolehan, 
+                alasan : req.body.alasan, 
+              });
+        }
     })
     .then((result) => {
         if(!result) {
