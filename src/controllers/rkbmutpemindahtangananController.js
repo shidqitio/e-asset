@@ -1,5 +1,6 @@
 const RkbmutPemindahtanganan = require("../models/rkbmutPemindahtanganan")
 const Aset = require("../models/asset")
+const PindahTangan = require("../models/pindahTangan")
 const {Op} = require("sequelize")
 
 //Data RKBMUT UNIT
@@ -12,6 +13,10 @@ exports.indexunit = (req, res, next) => {
             {
                 model : Aset, 
                 attributes : ["kode_asset", "nama_asset"]
+            }, 
+            {
+                model : PindahTangan, 
+                attributes : {exclude : ["udcr", "udch", "ucr", "uch"]}
             }
         ]
     })
@@ -458,3 +463,91 @@ exports.ajukanppk = (req, res, next) => {
         return next(err);
     })
  }
+
+ //Update
+ exports.update = (req, res, next) => {
+    let upd = {
+        nilai_perolehan : req.body.nilai_perolehan, 
+        kode_pindah_tangan : req.body.kode_pindah_tangan,
+        alasan : req.body.alasan
+    }
+    RkbmutPemindahtanganan.findAll({
+        where : {
+            nup : req.params.nup, 
+            status_revisi : 0, 
+            revisi_ke : 0
+        }
+    })
+    .then((data) => {
+        if(data.length === 0 ) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422;
+            throw error
+        }
+        return RkbmutPemindahtanganan.update(upd, {
+            where : {
+                nup : req.params.nup, 
+                status_revisi : 0, 
+                revisi_ke : 0
+            }
+        })
+    })
+    .then((update) => {
+        if(!update) {
+            const error = new Error("Data Gagal Update")
+            error.statusCode = 422;
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Di Update",
+            data : update
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+ }
+
+ //Delete Sementara
+ exports.destroy = (req, res, next) => {
+    RkbmutPemindahtanganan.findOne({
+        where : {
+            nup : req.params.nup
+        }
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPemindahtanganan.destroy({
+            where : {
+                nup : req.params.nup
+            }
+        });
+    })
+    .then((destroy) => {
+        if(!destroy) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Dihapus",
+            data : destroy
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+ }
+ 
