@@ -2,6 +2,7 @@ const DaftarBarang = require("../models/daftarBarang")
 const Pembukuan = require("../models/pembukuan")
 const Ruang = require("../models/ruang")
 const {Op} = require("sequelize")
+const QrCode = require("qrcode")
 
 exports.updatenup = (req, res, next) => {
 
@@ -167,4 +168,25 @@ exports.updatenup = (req, res, next) => {
         }
         // console.log("Data : ", data)
     });
+}
+
+exports.qr = (req, res, next) => {
+    DaftarBarang.findOne({
+        where : {
+            nup : req.params.nup
+        }
+    })
+    .then((data) => {
+        let cek = JSON.stringify(data)
+        QrCode.toFile("qr.png",cek,{type: 'terminal'},
+        ((err, QrCode) => {
+            if(err) {
+                return console.log("error occured")
+            }
+            console.log(QrCode)
+        })
+        )
+    })
+    
+
 }
