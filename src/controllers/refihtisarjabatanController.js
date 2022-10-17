@@ -21,3 +21,6 @@ exports.index = (req, res, next) => {
         next(err);
     });
 }
+
+exports.store = (req, res, next) => {}
+
