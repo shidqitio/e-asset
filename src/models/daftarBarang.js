@@ -57,6 +57,10 @@ const DaftarBarang = db.define(
             type : DataTypes.STRING(255), 
             allowNull : true
         },
+        qr_kode : {
+            type : DataTypes.STRING(255), 
+            allowNull : true
+        },
         ucr: {
             type: DataTypes.STRING(100),
             allowNull: true,

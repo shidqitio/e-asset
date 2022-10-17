@@ -40,12 +40,14 @@ exports.updatenup = (req, res, next) => {
                 let daftar = JSON.parse(JSON.stringify(data_awal))
                 let awal = 1 
                 let barang = 0
+                
                 data_awal.map((barang) => {
                     tanggal_perolehan = barang.Pembukuan.tanggal_perolehan
                 })
                 data_awal.map((barang) => {
                     kode_unit = barang.Ruang.kode_unit
                 })
+                
                 let string_array = tanggal_perolehan.split('-')
                 let data_asset = data_awal[0].kode_asset
                 let cek = []
@@ -60,21 +62,21 @@ exports.updatenup = (req, res, next) => {
                             nup
                         }
                     )
-                    DaftarBarang.update(cek[i], {
-                        where : {
-                            kode_asset : req.params.kode_asset, 
-                            kode_pembukuan : req.params.kode_pembukuan,
-                            kode_barang :  cek[i].barang,
-                            kode_asset_nup : null
-                        }
-                    })
+
+                    // DaftarBarang.update(cek[i], {
+                    //     where : {
+                    //         kode_asset : req.params.kode_asset, 
+                    //         kode_pembukuan : req.params.kode_pembukuan,
+                    //         kode_barang :  cek[i].barang,
+                    //         kode_asset_nup : null
+                    //     }
+                    // })
                 }
             })
             .then((respon) => {
                 res.json({
                     status : "Success", 
                     message : "Berhasil Memberikan NUP", 
-                    data : respon
                 })
             })
             .catch((err) => {
@@ -129,7 +131,7 @@ exports.updatenup = (req, res, next) => {
                     })
                     let string_array = tanggal_perolehan.split('-')
                     let data_asset = data_lanjut[0].kode_asset
-                    console.log("Hasil: ", data_asset)
+
                     cek = []
                     let barang = 0
                     for(let i = 0 ; i < nup2.length ; i++) {
