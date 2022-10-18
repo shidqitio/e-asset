@@ -63,14 +63,14 @@ exports.updatenup = (req, res, next) => {
                         }
                     )
 
-                    // DaftarBarang.update(cek[i], {
-                    //     where : {
-                    //         kode_asset : req.params.kode_asset, 
-                    //         kode_pembukuan : req.params.kode_pembukuan,
-                    //         kode_barang :  cek[i].barang,
-                    //         kode_asset_nup : null
-                    //     }
-                    // })
+                    DaftarBarang.update(cek[i], {
+                        where : {
+                            kode_asset : req.params.kode_asset, 
+                            kode_pembukuan : req.params.kode_pembukuan,
+                            kode_barang :  cek[i].barang,
+                            kode_asset_nup : null
+                        }
+                    })
                 }
             })
             .then((respon) => {

@@ -143,7 +143,7 @@ exports.store = (req, res, next) => {
               kondisi : req.body.kondisi, 
               tahun_perolehan : req.body.tahun_perolehan, 
               alasan : req.body.alasan, 
-              foto : filename
+              foto : "https://dev-sippp.ut.ac.id:2323/public/" + filename
             });
         }
         else {
@@ -463,5 +463,34 @@ exports.parafunitselesai = (req,res, next) => {
             err.statusCode = 500;
         }
         return next(err);
+    })
+ }
+
+ //Update  
+ exports.update = (req, res, next) => {
+    let data = {
+        alasan : req.body.alasan
+    }
+    if(req.file) {
+        const filename = path.parse(req.file.filename).base;
+        data = {
+            alasan : req.body.alasan,
+            foto : "https://dev-sippp.ut.ac.id:2323/public/" + filename 
+        }
+    }
+    RkbmutPenghapusan.findOne({
+        where : {
+            nup : req.params.nup
+        }
+    })
+    .then((app) => {
+        if(req.file) {
+            if(app.foto !== null) {
+                clearImage(app.foto);
+                return RkbmutPenghapusan.update(data, {
+                    where : {nup : req.params.nup}
+                })
+            }
+        }
     })
  }

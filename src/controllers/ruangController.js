@@ -26,7 +26,11 @@ const Pembukuan = require("../models/pembukuan");
     Ruang.findAll({
         where : {
             kode_unit : req.params.kode_unit
+        },
+        include : {
+            model : DaftarBarang, 
         }
+        
     })
     .then((data) => {
         if(data.length === 0) {
@@ -42,7 +46,7 @@ const Pembukuan = require("../models/pembukuan");
     })
     .catch((err) => {
         if(!err.statusCode) {
-            err.statusCode = 500;
+            err.statusCode = 500;ya
         }
         next(err)
     });
@@ -94,7 +98,43 @@ const Pembukuan = require("../models/pembukuan");
     });
  };
 
- //kode By Per Ruang 
+ //Barang By Unit
+ exports.barangbyunit = (req, res, next) => {
+    DaftarBarang.count({
+        where : {
+            nup : {
+                [Op.not] : null
+            }
+        },
+        include : [
+            {
+                model : Ruang,
+                where : {
+                    kode_unit : req.params.kode_unit
+                }
+            }
+        ]
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data", 
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500
+        }
+        next(err)
+    });
+ }
+ 
  //kode By Per Ruang 
 exports.showruang = (req, res, next) => {
     Pembukuan.findAll({
@@ -107,6 +147,9 @@ exports.showruang = (req, res, next) => {
                         [Op.not] : null
                     }
                 }, 
+                include : {
+                    model : Ruang
+                }
             }
         ]
     })
