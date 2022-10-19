@@ -8,6 +8,7 @@ const {
     barangbyunit,
     store,
     showruang,
+    barangbyunitdata
 } = require("../controllers/ruangController")
 
 router.get("/", index)
@@ -16,7 +17,9 @@ router.get("/:kode_unit", showbyunit )
 
 router.get("/barangruang/:kode_ruang", showruang)
 
-router.get("/barangunit/:kode_unit", barangbyunit)
+router.get("/barangunit/:kode_unit/:kode_asset", barangbyunit)
+
+router.get("/barangunitdata/:kode_unit", barangbyunitdata)
 
 router.post ("/", store)
 

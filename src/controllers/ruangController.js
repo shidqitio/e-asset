@@ -2,6 +2,7 @@
  const {Op} = require("sequelize");
 const DaftarBarang = require("../models/daftarBarang");
 const Pembukuan = require("../models/pembukuan");
+const Asset = require("../models/asset")
 
 
  exports.index = (req, res, next) => {
@@ -100,11 +101,13 @@ const Pembukuan = require("../models/pembukuan");
 
  //Barang By Unit
  exports.barangbyunit = (req, res, next) => {
-    DaftarBarang.count({
+    return DaftarBarang.count({
         where : {
             nup : {
                 [Op.not] : null
-            }
+            }, 
+            kode_asset : req.params.kode_asset,
+            kondisi : "Baik"
         },
         include : [
             {
@@ -112,18 +115,84 @@ const Pembukuan = require("../models/pembukuan");
                 where : {
                     kode_unit : req.params.kode_unit
                 }
-            }
+            }, 
+        ]
+    })
+    .then((baik) => {
+        if(baik.length === 0) {
+            baik = 0
+        }
+        return DaftarBarang.count({
+            where : {
+                nup : {
+                    [Op.not] : null
+                }, 
+                kode_asset : req.params.kode_asset,
+                kondisi : "Rusak Ringan"
+            },
+            include : [
+                {
+                    model : Ruang,
+                    where : {
+                        kode_unit : req.params.kode_unit
+                    }
+                }
+            ]
+        })
+        .then((rusak) => {
+            if(rusak.length === 0) {
+                rusak = 0
+            } 
+            console.log(rusak)
+            return res.json({
+                status : "Success", 
+                message : "Berhasil Menampilkan Data",
+                data : {
+                    "Kondisi Baik" : baik,
+                    "Kondisi Rusak Ringan" : rusak
+                }
+            })
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500
+        }
+        next(err)
+    });
+ }
+
+ //Barang By Unit Data Select
+ exports.barangbyunitdata = (req, res, next) => {
+    return DaftarBarang.findAll({
+        where : {
+            nup : {
+                [Op.not] : null
+            }, 
+        },
+        attributes : ["kode_asset"],
+        include : [
+            {
+                model : Asset, 
+                attributes : ["kode_asset", "nama_asset"]
+            },
+            {
+                model : Ruang,
+                where : {
+                    kode_unit : req.params.kode_unit
+                }
+            }, 
         ]
     })
     .then((data) => {
         if(data.length === 0) {
             const error = new Error("Data Tidak Ada")
-            error.statusCode = 422 
+            error.statusCode = 422
             throw error
         }
         return res.json({
             status : "Success", 
-            message : "Berhasil Menampilkan Data", 
+            message : "Data Berhasil Ditampilkan",
             data : data
         })
     })
