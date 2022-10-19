@@ -164,24 +164,24 @@ const Asset = require("../models/asset")
 
  //Barang By Unit Data Select
  exports.barangbyunitdata = (req, res, next) => {
-    return DaftarBarang.findAll({
-        where : {
-            nup : {
-                [Op.not] : null
-            }, 
-        },
-        attributes : ["kode_asset"],
+    return Asset.findAll({
         include : [
             {
-                model : Asset, 
-                attributes : ["kode_asset", "nama_asset"]
-            },
-            {
-                model : Ruang,
+                model : DaftarBarang, 
                 where : {
-                    kode_unit : req.params.kode_unit
-                }
-            }, 
+                    nup : {
+                        [Op.not] : null
+                    },
+                },
+                include : [
+                    {
+                        model : Ruang,
+                        where : {
+                            kode_unit : req.params.kode_unit
+                        }
+                    }
+                ]
+            }
         ]
     })
     .then((data) => {
