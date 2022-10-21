@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
-
+const RkbmPengadaanSchema = require("../middlewares/request/rkbmUtPengadaan")
+const {validationResult} = require("express-validator")
 const {
     index, 
     indexapip,
@@ -22,13 +23,61 @@ router.get("/ppk/:kode_unit_kerja",indexppk)
 
 router.get("/apip/:kode_unit_kerja", indexapip)
 
-router.post("/", store)
+router.post("/", 
+RkbmPengadaanSchema.store, 
+(req, res, next) => {
+    const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error = new Error();
+            error.statusCode = 422;
+            error.message = errors.array();
+            throw error;
+          }
+          next();
+},
+store)
 
-router.post("/update", update)
+router.post("/update", 
+RkbmPengadaanSchema.store, 
+(req, res, next) => {
+    const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error = new Error();
+            error.statusCode = 422;
+            error.message = errors.array();
+            throw error;
+          }
+          next();
+},
+update)
 
-router.put("/review/:kode_unit_kerja/:kode_kegiatan_rkt", review)
+router.put("/review/:kode_unit_kerja/:kode_kegiatan_rkt", 
+RkbmPengadaanSchema.update,
+(req, res, next) => {
+    const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error = new Error();
+            error.statusCode = 422;
+            error.message = errors.array();
+            throw error;
+          }
+          next();
+},
+review)
 
-router.put("/reviewunit/:kode_unit_kerja/:kode_kegiatan_rkt", reviewunit)
+router.put("/reviewunit/:kode_unit_kerja/:kode_kegiatan_rkt", 
+RkbmPengadaanSchema.update,
+(req, res, next) => {
+    const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error = new Error();
+            error.statusCode = 422;
+            error.message = errors.array();
+            throw error;
+          }
+          next();
+},
+reviewunit)
 
 router.put("/parafunit/:kode_unit_kerja",parafunit)
 

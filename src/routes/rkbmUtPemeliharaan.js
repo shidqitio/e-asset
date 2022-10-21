@@ -16,12 +16,27 @@ update,
 destroy
 } = require("../controllers/rkbmutpemeliharaanController")
 
+const {validationResult} = require("express-validator")
+const RkbmPemeliharaanSchema = require("../middlewares/request/rkbmUtPemeliharaan")
+
 //Get
 router.get("/indexunit/:kode_unit_kerja", indexunit)
 router.get("/indexapip/:kode_unit_kerja", indexapip)
 router.get("/indexppk/:kode_unit_kerja", indexppk)
 
-router.post("/", store)
+router.post("/", 
+RkbmPemeliharaanSchema.store,
+(req, res, next) => {
+    const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error = new Error();
+            error.statusCode = 422;
+            error.message = errors.array();
+            throw error;
+          }
+          next();
+},
+store)
 router.post("/update", update)
 
 //ajukan ke ppk 
