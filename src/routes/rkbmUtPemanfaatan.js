@@ -31,7 +31,7 @@ router.post("/",
             error.statusCode = 422;
             error.message = errors.array();
             throw error;
-          }
+          }    
           next();
     },
 store)

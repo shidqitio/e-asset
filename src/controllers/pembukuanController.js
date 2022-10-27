@@ -10,6 +10,7 @@ const {QueryTypes, Op} = require("sequelize")
 const Ruang = require("../models/ruang")
 const StatusPemilik = require("../models/statusPemilik")
 const sequelize = require("sequelize")
+const DokumenTanah = require("../models/dokumenTanah")
 
 
 
@@ -496,6 +497,10 @@ exports.gettanahbyunit = (req, res, next) => {
                         model : StatusPemilik, 
                         attributes : ["kode_status_pemilik","nama_status_pemilik"]
                     }, 
+                    {
+                        model : DokumenTanah,
+                        attributes : ["kode_dokumen", "nama_dokumen"]
+                    }
                 ]
             }, 
         ],
