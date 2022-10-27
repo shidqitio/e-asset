@@ -2,6 +2,10 @@ const Ruang = require("../models/ruang")
 const {Op} = require("sequelize");
 const DaftarBarang = require("../models/daftarBarang");
 const Pembukuan = require("../models/pembukuan");
+const Asset = require("../models/asset");
+const TrxKibTanah = require("../models/trxKibTanah");
+const TrxKibAngkutan = require("../models/trxKibAngkutan");
+const TrxKibAlatbesar = require("../models/trxKibBesar");
 
 
 exports.index = (req, res, next) => {
@@ -98,44 +102,44 @@ exports.store = (req, res, next) => {
    });
 };
 
-//Barang By Unit
-exports.barangbyunit = (req, res, next) => {
-   DaftarBarang.count({
-       where : {
-           nup : {
-               [Op.not] : null
-           }
-       },
-       include : [
-           {
-               model : Ruang,
-               where : {
-                   kode_unit : req.params.kode_unit
-               }
-           }
-       ]
-   })
-   .then((data) => {
-       if(data.length === 0) {
-           const error = new Error("Data Tidak Ada")
-           error.statusCode = 422 
-           throw error
-       }
-       return res.json({
-           status : "Success", 
-           message : "Berhasil Menampilkan Data", 
-           data : data
-       })
-   })
-   .catch((err) => {
-       if(!err.statusCode) {
-           err.statusCode = 500
-       }
-       next(err)
-   });
-}
-
-//kode By Per Ruang 
+ //Barang By Unit
+ exports.barangbyunit = (req, res, next) => {
+    DaftarBarang.count({
+        where : {
+            nup : {
+                [Op.not] : null
+            }
+        },
+        include : [
+            {
+                model : Ruang,
+                where : {
+                    kode_unit : req.params.kode_unit
+                }
+            }
+        ]
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data", 
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500
+        }
+        next(err)
+    });
+ }
+ 
+ //kode By Per Ruang 
 exports.showruang = (req, res, next) => {
    Pembukuan.findAll({
        include : [
@@ -172,3 +176,85 @@ exports.showruang = (req, res, next) => {
 
 
 //Update 
+
+//Jumlah Barang By Unit 
+exports.jumlahbarangbyunit = (req, res, next) => {
+    let kode_asset = req.params.kode_asset
+    let kode_unit = req.params.kode_unit
+    return Pembukuan.findAll({
+        where : {
+            kode_asset : kode_asset
+        },
+        raw : true
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            jml = 0
+            console.log(jml)
+        }
+        if(data[0].kode_asset.match(/^2.*$/)){
+            //Kib Tanah
+            return TrxKibTanah.count({
+                where : {
+                    kode_unit : kode_unit,
+                    kode_asset : kode_asset
+                }
+            })
+            .then((jml) => {
+                if(jml.length === 0) {
+                    jml = 0
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Ditampilkan",
+                    data : {
+                        "existing_rkbmut" : jml
+                    }
+                })
+            })
+        }
+        if(data[0].kode_asset.match(/^302.*$/)){
+            //Kib Angkutan 
+            return TrxKibAngkutan.count({
+                where : {
+                    kode_unit : kode_unit, 
+                    kode_asset : kode_asset
+                }
+            })
+            .then((jml) => {
+                if(jml.length === 0) {
+                    jml = 0
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Ditampilkan",
+                    data : {
+                        "existing_rkbmut" : jml
+                    }
+                })
+            })
+        }
+        if(data[0].kode_asset.match(/^301.*$/)) {
+            //Kib Alat Besar
+            return TrxKibAlatbesar.findAll({
+                where : {
+                    kode_asset : kode_asset,
+                    kode_unit : kode_unit
+                }
+            })
+            .then((jml) => {
+                if(jml.length === 0) {
+                    jml = 0
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Ditampilkan",
+                    data : {
+                        "existing_rkbmut" : jml
+                    }
+                })
+            })
+        }
+        
+    })
+}

@@ -1,6 +1,7 @@
 const db = require("../config/database")
 const PembukuanDetail = require("./pembukuan")
 const Ruang = require("./ruang")
+const Asset = require("./asset")
 const {DataTypes} = require("sequelize")
 
 const DaftarBarang = db.define(
@@ -99,6 +100,14 @@ Ruang.hasMany(DaftarBarang, {
 
 DaftarBarang.belongsTo(Ruang, {
     foreignKey : "kode_ruang"
+})
+
+Asset.hasMany(DaftarBarang, {
+    foreignKey : "kode_asset"
+})
+
+DaftarBarang.belongsTo(Asset, {
+    foreignKey : "kode_asset"
 })
 
 module.exports = DaftarBarang

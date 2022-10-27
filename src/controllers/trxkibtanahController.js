@@ -227,14 +227,6 @@ exports.updatenuptanah = (req, res, next) => {
                                 kode_pembukuan : req.params.kode_pembukuan
                             }
                         ], 
-                        include : [
-                            {
-                                model : DokumenTanah, 
-                            }, 
-                            {
-                                model : StatusPemilik
-                            }
-                        ]
                     }
                 ]
             })
