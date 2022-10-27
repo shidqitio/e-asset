@@ -20,7 +20,7 @@ router.get("/barangruang/:kode_ruang", showruang)
 
 router.get("/barangunit/:kode_unit/:kode_asset", barangbyunit)
 
-router.get("/barangunitdata/:kode_unit", barangbyunitdata)
+// router.get("/barangunitdata/:kode_unit", barangbyunitdata)
 
 router.get("/jumlahbarangbyunit/:kode_unit/:kode_asset", jumlahbarangbyunit)
 

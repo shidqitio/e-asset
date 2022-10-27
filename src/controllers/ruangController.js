@@ -6,6 +6,7 @@ const Asset = require("../models/asset");
 const TrxKibTanah = require("../models/trxKibTanah");
 const TrxKibAngkutan = require("../models/trxKibAngkutan");
 const TrxKibAlatbesar = require("../models/trxKibBesar");
+const TrxKibBangunan = require("../models/trxKibBangunan");
 
 
 exports.index = (req, res, next) => {
@@ -213,7 +214,7 @@ exports.jumlahbarangbyunit = (req, res, next) => {
                 })
             })
         }
-        if(data[0].kode_asset.match(/^302.*$/)){
+        else if(data[0].kode_asset.match(/^302.*$/)){
             //Kib Angkutan 
             return TrxKibAngkutan.count({
                 where : {
@@ -234,9 +235,9 @@ exports.jumlahbarangbyunit = (req, res, next) => {
                 })
             })
         }
-        if(data[0].kode_asset.match(/^301.*$/)) {
+        else if(data[0].kode_asset.match(/^301.*$/)) {
             //Kib Alat Besar
-            return TrxKibAlatbesar.findAll({
+            return TrxKibAlatbesar.count({
                 where : {
                     kode_asset : kode_asset,
                     kode_unit : kode_unit
@@ -255,6 +256,65 @@ exports.jumlahbarangbyunit = (req, res, next) => {
                 })
             })
         }
-        
+        else if(data[0].kode_asset.match(/^4.*$/)) {
+            TrxKibBangunan.count({
+                where : {
+                    kode_asset : kode_asset, 
+                    kode_unit : kode_unit
+                }
+            })
+            .then((jml) => {
+                if(jml.length === 0) {
+                    jml = 0
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Ditampilkan",
+                    data : {
+                        "existing_rkbmut" : jml
+                    }
+                })
+            })
+        }
+        else {
+            return DaftarBarang.count({
+                where : {
+                    kode_asset : req.params.kode_asset,
+                },
+                include : [
+                    {
+                        model : Ruang,
+                        where : {
+                            kode_unit : req.params.kode_unit
+                        }
+                    }
+                ]
+            })
+            .then((jml) => {
+                if(jml.length === 0) {
+                    jml = 0
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Ditampilkan",
+                    data : {
+                        "existing_rkbmut" : jml
+                    }
+                })
+            })
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan",
+            data : {
+                "existing_rkbmut" : jml
+            }
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500
+        }
+        next(err)
     })
 }

@@ -103,7 +103,7 @@ exports.store = (req, res, next) => {
             }, 
             order : [
                 [
-                    "udcr","DESC"
+                    "udcr","ASC"
                 ]
             ]
         })
@@ -121,6 +121,7 @@ exports.store = (req, res, next) => {
                 hasil = parseInt(hasil);
                 let kode_akhir = hasil + 1;
                 hasil_kode = no_sppa + JSON.stringify(kode_akhir)
+                console.log("Tes Data Aja :",kode_pembukuan)
             }
             const jumlah_barang = req.body.jumlah_barang
             const nilai_item = req.body.nilai_item
@@ -143,7 +144,7 @@ exports.store = (req, res, next) => {
             },{transaction : t})
             .then((pembukuan) => {     
                 const kode_pembukuan = JSON.parse(JSON.stringify(pembukuan))
-                console.log("Coba :", kode_pembukuan.catat)
+                // console.log("Coba :", kode_pembukuan.catat)
                     if(kode_pembukuan.catat === "DBR" || kode_pembukuan.catat === "DBL") {
                     const request = req.body;
                     const data = request.barang.map((item) => {
@@ -210,7 +211,7 @@ exports.store = (req, res, next) => {
                                 const {no_asset} = kode[index-1]
                                 no_asset_tanah = no_asset + 1
                             }
-                    
+                            
                             return TrxKibTanah.create({
                                 kode_asset : req.body.kode_asset, 
                                 kode_status_pemilik : req.body.kode_status_pemilik, 
