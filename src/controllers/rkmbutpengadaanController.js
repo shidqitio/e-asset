@@ -43,6 +43,7 @@ exports.indexppk = (req, res, next) => {
         where : {
             kode_unit_kerja : req.params.kode_unit_kerja, 
             [Op.or] : [
+                {status_paraf : 0},
                 {status_paraf : 1}, 
                 {status_paraf : 2}
             ]
@@ -340,7 +341,7 @@ exports.ajukanppk = (req, res, next) => {
 }
 
 
-//Paraf PPK MENGETAHUI DIAJUKAN APIP
+//Paraf PPK 
 exports.parafunit = (req, res, next) => {
     return db.transaction()
     .then((t) => {
@@ -382,6 +383,25 @@ exports.parafunit = (req, res, next) => {
             })
         })
     }) 
+}
+
+//PPK UPDATE KOMENTAR
+exports.revisippk = (req, res, next) => {
+    let kode_unit_kerja = req.params.kode_unit_kerja
+    let kode_kegiatan_rkt = req.params.kode_kegiatan_rkt
+    return RkbmutPengadaanHeader.findAll({
+        where : {
+            status_revisi : 0,
+            status_paraf : 1,
+            kode_unit_kerja : kode_unit_kerja, 
+            kode_kegiatan_rkt : kode_kegiatan_rkt
+        }
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            
+        }
+    })
 }
 
 //Paraf Unit Setuju Revisi APIP
