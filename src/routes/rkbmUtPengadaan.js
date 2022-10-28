@@ -12,7 +12,8 @@ const {
     parafunitselesai,
     reviewunit,
     parafapip,
-    ajukanppk, 
+    ajukanppk,
+    perbaikanppk, 
     update, 
     destroy
 } = require("../controllers/rkmbutpengadaanController")
@@ -84,6 +85,8 @@ router.put("/parafunit/:kode_unit_kerja",parafunit)
 router.put("/parafunitselesai/:kode_unit_kerja/:kode_kegiatan_rkt",parafunitselesai)
 
 router.put("/ajukanppk/:kode_unit_kerja", ajukanppk)
+
+router.put("/komentarppk/:kode_kegiatan_rkt/:kode_unit_kerja", perbaikanppk)
 
 router.put("/parafapip/:kode_unit_kerja/:kode_kegiatan_rkt",parafapip)
 

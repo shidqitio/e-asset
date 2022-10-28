@@ -25,7 +25,7 @@ const RkbmutPengadaanDetail = db.define(
             allowNull : false, 
             primaryKey : true
         }, 
-        revisi : {
+        status_paraf : {
             type : DataTypes.INTEGER(),
             allowNull : true,
         },
