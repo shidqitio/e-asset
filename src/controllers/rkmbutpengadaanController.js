@@ -141,7 +141,7 @@ exports.store = (req, res, next) => {
                 const index = datum.length 
                 const {revisi_ke} = datum[index-1]
                 revisi = revisi_ke + 1
-                console.log("Jumlah Data",revisi_ke)
+                // console.log("Jumlah Data",revisi_ke)
                  //Pemisah Kode dan Nama Unit
             let unit = req.body.unit 
             const split_unit = unit.split("||")
@@ -364,67 +364,172 @@ exports.perbaikanppk = (req,res, next) => {
         status_revisi : 1 
         
     }
-    return RkbmutPengadaanHeader.findAll({
-        where : {
-            kode_kegiatan_rkt : req.params.kode_kegiatan_rkt,
-            kode_unit_kerja : req.params.kode_unit_kerja,
-            status_paraf : 1, 
-            status_revisi : 0
-        },
-        raw : true
-    })
-    .then((data) => {
-        if(data.length === 0) {
-            const error = new Error("Data Tidak Ada ")
-            error.statusCode = 422 
-            throw error
-        }
-        return RkbmutPengadaanHeader.update(upd, {
+    return db.transaction()
+    .then((t) => {
+        return RkbmutPengadaanHeader.findAll({
             where : {
-            kode_kegiatan_rkt : kode_kegiatan_rkt,
-            kode_unit_kerja : kode_unit_kerja,
-            status_paraf : 1, 
-            status_revisi : 0
-            }
-        } )
-        .then((app) => {
-            if(!app) {
-                const error = new Error("Gagal Update Header")
-                error.statusCode = 422
+                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt,
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_paraf : 1, 
+                status_revisi : 0
+            },
+            raw : true
+        })
+        .then((data) => {
+            // console.log(data)
+            if(data.length === 0) {
+                const error = new Error("Data Tidak Ada ")
+                error.statusCode = 422 
                 throw error
             }
-            return RkbmutPengadaanDetail.update({
-                status_paraf : 0,
-                status_revisi : 1 
-            }, 
-            {
+            return RkbmutPengadaanHeader.update(upd, {
+                where : {
                 kode_kegiatan_rkt : kode_kegiatan_rkt,
                 kode_unit_kerja : kode_unit_kerja,
                 status_paraf : 1, 
                 status_revisi : 0
+                },
+                transaction : t 
+            })
+            .then((app) => {
+                if(!app) {
+                    const error = new Error("Gagal Update Header")
+                    error.statusCode = 422
+                    throw error
+                }
+                return RkbmutPengadaanDetail.update({
+                    status_paraf : 0,
+                    status_revisi : 1 
+                }, 
+                {
+                    where : 
+                    {
+                    kode_kegiatan_rkt : kode_kegiatan_rkt,
+                    kode_unit_kerja : kode_unit_kerja,
+                    status_paraf : 1, 
+                    status_revisi : 0
+                    }, 
+                    transaction : t
+                })
+                .then((update) => {
+                    if(!update) {
+                        const error = new Error("Gagal Update Data")
+                        error.statusCode = 422 
+                        throw error
+                    }
+                    t.commit();
+                    return res.json({
+                        status : "Success", 
+                        message : "Berhasil Menambah Komentar",
+                        data : {
+                            "header" : app,
+                            "detail" : update 
+                        }
+                    })
+                })
             })
         })
-        .then((update) => {
-            if(!update) {
-                const error = new Error("Gagal Update Data")
-                error.statusCode = 422 
-                throw error``
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
             }
-            return res.json({
-                status : "Success", 
-                message : "Berhasil Menambah Komentar",
-                data : {
-                    "header" : app,
-                    "detail" : update 
-                }
-            })
+            t.rollback()
+            return next(err);
         })
     })
-    .catch((err) => {
-        if(!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
+}
+
+//Perbaikan Oleh Unit 
+exports.perbaikanunit = (req, res, next) => {
+    let param = {
+        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt,
+        kode_unit_kerja : req.params.kode_unit_kerja,
+    }
+    let upd = {
+        kode_skema_pengadaan : req.body.kode_skema_pengadaan,
+        kuantitas : req.body.kuantitas,
+        sbsk : req.body.sbskm,
+        kebutuhan_riil : req.body.kebutuhan_riil,
+        keterangan : req.body.keterangan
+    }
+    return db.transaction()
+    .then((t) => {
+        return RkbmutPengadaanHeader.findAll({
+            where : {
+                kode_kegiatan_rkt : param.kode_kegiatan_rkt,
+                kode_unit_kerja : param.kode_unit_kerja,
+                status_revisi : 1,
+                status_paraf : 0
+            },
+            include : {
+                model : RkbmutPengadaanDetail
+            }, 
+            raw : true
+        })
+        .then((header) => {
+            if(header.length === 0) {
+                const error = new Error("Data Tidak Ada")
+                error.statusCode = 422
+                throw error
+            }
+            let index = header.length 
+            const{revisi_ke} = header[index - 1]
+            let revisi = revisi_ke + 1
+            
+            const request = req.body
+            const update = request.rkbmdetail.map((item) => {
+                return {
+                    kode_skema_pengadaan : item.kode_skema_pengadaan,
+                    kuantitas : item.kuantitas, 
+                    kode_asset : item.kode_asset,
+                    sbsk : item.sbsk, 
+                    kebutuhan_riil : item.kebutuhan_riil,
+                    keterangan : item.keterangan,
+                    status_revisi : 0, 
+                    status_paraf : 1, 
+                    revisi_ke : revisi
+                }
+            })
+            for(let i = 0 ; i < update.length ; i++) {
+                RkbmutPengadaanDetail.update(update[i],{
+                    where : {
+                        kode_asset : update[i].kode_asset,
+                        kode_unit_kerja : param.kode_unit_kerja,
+                        kode_kegiatan_rkt : param.kode_kegiatan_rkt
+                    },
+                    transaction : t
+                })
+            }
+            //Kembalikan Pada PPK 
+            return RkbmutPengadaanHeader.update({
+                status_paraf : 1, 
+                status_revisi : 0
+            }, 
+            {
+                where : param,
+                transaction : t
+            })
+            .then((ppk) => {
+                if(!ppk) {
+                    const error = new Error("Gagal Diajukan ke PPK")
+                    error.statusCode = 422
+                    throw error
+                }
+                t.commit()
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Di Update",
+                    data : ppk
+                })
+            })
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback()
+            return next(err);
+        });
     })
 }
 
@@ -455,6 +560,13 @@ exports.parafunit = (req, res, next) => {
                     kode_unit_kerja : req.params.kode_unit_kerja, 
                 }
             })
+            .then((cek) => {
+                return RkbmutPengadaanDetail.update(upd, {
+                    where : {
+                        kode_unit_kerja : req.params.kode_unit_kerja, 
+                    }
+                })
+            })
             .then((respon) => {
                 res.json({
                     status : "Success", 
@@ -471,25 +583,6 @@ exports.parafunit = (req, res, next) => {
             })
         })
     }) 
-}
-
-//PPK UPDATE KOMENTAR
-exports.revisippk = (req, res, next) => {
-    let kode_unit_kerja = req.params.kode_unit_kerja
-    let kode_kegiatan_rkt = req.params.kode_kegiatan_rkt
-    return RkbmutPengadaanHeader.findAll({
-        where : {
-            status_revisi : 0,
-            status_paraf : 1,
-            kode_unit_kerja : kode_unit_kerja, 
-            kode_kegiatan_rkt : kode_kegiatan_rkt
-        }
-    })
-    .then((data) => {
-        if(data.length === 0) {
-            
-        }
-    })
 }
 
 //Paraf Unit Setuju Revisi APIP
