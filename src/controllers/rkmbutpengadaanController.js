@@ -485,7 +485,7 @@ exports.perbaikanunit = (req, res, next) => {
                     sbsk : item.sbsk, 
                     kebutuhan_riil : item.kebutuhan_riil,
                     keterangan : item.keterangan,
-                    status_revisi : 0, 
+                    status_revisi : 1, 
                     status_paraf : 1, 
                     revisi_ke : revisi
                 }
@@ -503,7 +503,7 @@ exports.perbaikanunit = (req, res, next) => {
             //Kembalikan Pada PPK 
             return RkbmutPengadaanHeader.update({
                 status_paraf : 1, 
-                status_revisi : 0
+                status_revisi : 1
             }, 
             {
                 where : param,
