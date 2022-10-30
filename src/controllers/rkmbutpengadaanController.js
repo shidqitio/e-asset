@@ -503,7 +503,8 @@ exports.perbaikanunit = (req, res, next) => {
             //Kembalikan Pada PPK 
             return RkbmutPengadaanHeader.update({
                 status_paraf : 1, 
-                status_revisi : 1
+                status_revisi : 1,
+                revisi_ke : revisi
             }, 
             {
                 where : param,
@@ -540,7 +541,11 @@ exports.parafunit = (req, res, next) => {
     .then((t) => {
         RkbmutPengadaanHeader.findAll({
             where : {
-                status_revisi : 0 , 
+                status_revisi : {
+                    [Op.or] : [
+                        0, 1
+                    ]
+                 }, 
                 kode_unit_kerja : req.params.kode_unit_kerja,
                 status_paraf : 1
             }
@@ -558,29 +563,32 @@ exports.parafunit = (req, res, next) => {
             return RkbmutPengadaanHeader.update(upd, {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja, 
-                }
+                }, 
+                transaction : t
             })
             .then((cek) => {
                 return RkbmutPengadaanDetail.update(upd, {
                     where : {
                         kode_unit_kerja : req.params.kode_unit_kerja, 
-                    }
+                    }, 
+                    transaction : t
                 })
             })
             .then((respon) => {
-                res.json({
+                t.commit()
+                return res.json({
                     status : "Success", 
                     message : "Berhasil Paraf Data Ke APIP", 
                     data : respon
                 })
             })
-            .catch((err) => {
-                if(!err.statusCode) {
-                    err.statusCode = 500;
-                }
-                t.rollback();
-                return next(err);
-            })
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback();
+            return next(err);
         })
     }) 
 }
@@ -589,7 +597,7 @@ exports.parafunit = (req, res, next) => {
 exports.parafunitselesai = (req, res, next) => {
     return db.transaction()
     .then((t) => {
-        RkbmutPengadaanHeader.findAll({
+        return RkbmutPengadaanHeader.findAll({
             where : {
                 status_revisi : 2 , 
                 kode_unit_kerja : req.params.kode_unit_kerja,
@@ -609,13 +617,37 @@ exports.parafunitselesai = (req, res, next) => {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja, 
                     kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
-                }
+                }, 
+                transaction : t
             })
-            .then((respon) => {
-                res.json({
+            .then((head) => {
+                if(!head) {
+                    const error = new Error("Gagal Update")
+                    error.statusCode = 422
+                    throw error
+                }
+                return RkbmutPengadaanDetail.update(upd, {
+                    where : {
+                        kode_unit_kerja : req.params.kode_unit_kerja, 
+                        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                    }, 
+                    transaction : t
+                })
+                .then((detail) => {
+                    if(!detail) {
+                        const error = new Error("Gagal Update")
+                        error.statusCode = 422
+                        throw error
+                    }
+                    t.commit()
+                    return res.json({
                     status : "Success", 
                     message : "Berhasil Paraf Data Siap TTE", 
-                    data : respon
+                    data : {
+                        "header" : head,
+                        "detail" : detail
+                    }
+                    })
                 })
             })
         })
@@ -794,42 +826,70 @@ exports.reviewunit = (req, res, next) => {
 
 //Paraf Apip Setuju Selesai
 exports.parafapip = (req, res, next) => {
-    RkbmutPengadaanHeader.findAll({
-        where : {
-            status_revisi : 1 , 
-            kode_unit_kerja : req.params.kode_unit_kerja, 
-            kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
-        }
-    })
-    .then((data) => {
-        if(data.length === 0 ) {
-            const error = new Error("Tidak Ada Data Paraf")
-            error.statusCode = 422 
-            throw error
-        }
-        const upd = {
-            status_revisi : 3
-        }
-        return RkbmutPengadaanHeader.update(upd, {
+    return db.transaction()
+    .then((t) => {
+        return RkbmutPengadaanHeader.findAll({
             where : {
-                kode_unit_kerja : req.params.kode_unit_kerja, 
+                status_revisi : 1 , 
+                kode_unit_kerja : req.params.kode_unit_kerja,
                 kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
             }
         })
-    })
-    .then((respon) => {
-        res.json({
-            status : "Success", 
-            message : "Data Berhasil Di Paraf", 
-            data : respon
+        .then((data) => {
+            if(data.length === 0 ) {
+                const error = new Error("Tidak Ada Data Paraf")
+                error.statusCode = 422 
+                throw error
+            }
+            const upd = {
+                status_revisi : 3
+            }
+            return RkbmutPengadaanHeader.update(upd, {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                    kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                }, 
+                transaction : t
+            })
+            .then((head) => {
+                if(!head) {
+                    const error = new Error("Gagal Update")
+                    error.statusCode = 422
+                    throw error
+                }
+                return RkbmutPengadaanDetail.update(upd, {
+                    where : {
+                        kode_unit_kerja : req.params.kode_unit_kerja, 
+                        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                    }, 
+                    transaction : t
+                })
+                .then((detail) => {
+                    if(!detail) {
+                        const error = new Error("Gagal Update")
+                        error.statusCode = 422
+                        throw error
+                    }
+                    t.commit()
+                    return res.json({
+                    status : "Success", 
+                    message : "Berhasil Paraf Data Siap TTE", 
+                    data : {
+                        "header" : head,
+                        "detail" : detail
+                    }
+                    })
+                })
+            })
         })
-    })
-    .catch((err) => {
-        if(!err.statusCode) {
-            err.statusCode = 500;
-        }
-        return next(err);
-    });
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback();
+            return next(err);
+        })
+    }) 
 }
 
 exports.update = (req, res, next) => {
