@@ -16,7 +16,7 @@ const RkbmutPemeliharaanDetail = db.define(
             allowNull : false, 
             primaryKey : true,
         },
-        kode_status_barang : {
+        kode_status_pemilik : {
             type : DataTypes.STRING(2), 
             allowNull : true
         }, 

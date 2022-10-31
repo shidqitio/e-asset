@@ -1,5 +1,6 @@
 const RkbmutPengadaanHeader = require("../models/rkbmutPengadaanHeader");
 const RkbmutPengadaanDetail = require("../models/rkbmutPengadaanDetail");
+const TrxRkbmutAll = require("../models/trxRkbmutAll")
 const db = require("../config/database");
 const {Op, where} = require("sequelize")
 
@@ -534,6 +535,63 @@ exports.perbaikanunit = (req, res, next) => {
     })
 }
 
+//Setuju dari PPK 
+exports.setujuppk = (req, res, next) => {
+    return db.transaction()
+    .then((t) => {
+        return RkbmutPengadaanHeader.findAll({
+            where : {
+                status_revisi : 0,
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt,
+                status_paraf : 1
+            }
+        })
+        .then((data) => {
+            if(data.length === 0 ) {
+                const error = new Error("Tidak Ada Data Paraf")
+                error.statusCode = 422 
+                throw error
+            }
+            const upd = {
+                status_revisi : 1,
+                status_paraf : 1
+            }
+            return RkbmutPengadaanHeader.update(upd, {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                    kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                }, 
+                transaction : t
+            })
+            .then((cek) => {
+                return RkbmutPengadaanDetail.update(upd, {
+                    where : {
+                        kode_unit_kerja : req.params.kode_unit_kerja, 
+                        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                    }, 
+                    transaction : t
+                })
+            })
+            .then((respon) => {
+                t.commit()
+                return res.json({
+                    status : "Success", 
+                    message : "Data Siap Paraf", 
+                    data : respon
+                })
+            })
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback();
+            return next(err);
+        })
+    })
+}
+
 
 //Paraf PPK 
 exports.parafunit = (req, res, next) => {
@@ -640,13 +698,48 @@ exports.parafunitselesai = (req, res, next) => {
                         throw error
                     }
                     t.commit()
-                    return res.json({
-                    status : "Success", 
-                    message : "Berhasil Paraf Data Siap TTE", 
-                    data : {
-                        "header" : head,
-                        "detail" : detail
-                    }
+                    return RkbmutPengadaanDetail.findAll({
+                        where : {
+                            kode_unit_kerja : req.params.kode_unit_kerja,
+                            status_revisi : {
+                                [Op.not] : 3,
+                            },
+                        }
+                    })
+                    .then((det) => {
+                        console.log(det.length)
+                        if(det.length !== 0) {
+                            status_pengadaan = 0
+                        }
+                        else {
+                            status_pengadaan = 1
+                        }
+                        return TrxRkbmutAll.update(
+                        {
+                            status_pengadaan : status_pengadaan
+                        }, 
+                        {
+                            where : {
+                                kode_unit_kerja : req.params.kode_unit_kerja, 
+                            }
+                        }
+                        )
+                        .then((trx) => {
+                            if(!trx) {
+                                const error = new Error("Data Gagal Masuk")
+                                error.statusCode = 422
+                                throw error
+                            }
+                            return res.json({
+                                status : "Success",
+                                message : "Data Berhasil Diubah",
+                                data : {
+                                    "header" : head,
+                                    "detail" : detail,
+                                    "all" : trx
+                                }
+                            })
+                        })
                     })
                 })
             })
@@ -871,13 +964,48 @@ exports.parafapip = (req, res, next) => {
                         throw error
                     }
                     t.commit()
-                    return res.json({
-                    status : "Success", 
-                    message : "Berhasil Paraf Data Siap TTE", 
-                    data : {
-                        "header" : head,
-                        "detail" : detail
-                    }
+                    return RkbmutPengadaanDetail.findAll({
+                        where : {
+                            kode_unit_kerja : req.params.kode_unit_kerja,
+                            status_revisi : {
+                                [Op.not] : 3,
+                            },
+                        }
+                    })
+                    .then((det) => {
+                        console.log(det.length)
+                        if(det.length !== 0) {
+                            status_pengadaan = 0
+                        }
+                        else {
+                            status_pengadaan = 1
+                        }
+                        return TrxRkbmutAll.update(
+                        {
+                            status_pengadaan : status_pengadaan
+                        }, 
+                        {
+                            where : {
+                                kode_unit_kerja : req.params.kode_unit_kerja, 
+                            }
+                        }
+                        )
+                        .then((trx) => {
+                            if(!trx) {
+                                const error = new Error("Data Gagal Masuk")
+                                error.statusCode = 422
+                                throw error
+                            }
+                            return res.json({
+                                status : "Success",
+                                message : "Data Berhasil Diubah",
+                                data : {
+                                    "header" : head,
+                                    "detail" : detail,
+                                    "all" : trx
+                                }
+                            })
+                        })
                     })
                 })
             })

@@ -16,6 +16,7 @@ const {
     perbaikanppk, 
     update, 
     destroy,
+    setujuppk,
     perbaikanunit
 } = require("../controllers/rkmbutpengadaanController")
 
@@ -89,9 +90,13 @@ router.put("/ajukanppk/:kode_unit_kerja", ajukanppk)
 
 router.put("/komentarppk/:kode_kegiatan_rkt/:kode_unit_kerja", perbaikanppk)
 
+
+
 router.put("/perbaikanunit/:kode_kegiatan_rkt/:kode_unit_kerja", perbaikanunit)
 
 router.put("/parafapip/:kode_unit_kerja/:kode_kegiatan_rkt",parafapip)
+
+router.put("/setujuppk/:kode_kegiatan_rkt/:kode_unit_kerja", setujuppk)
 
 router.delete("/delete/:kode_unit_kerja/:kode_kegiatan_rkt", destroy)
 
