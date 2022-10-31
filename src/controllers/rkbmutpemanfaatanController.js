@@ -1,6 +1,7 @@
 const db = require("../config/database");
 const RkbmUTPemanfaatan = require("../models/rkbmutPemanfaatan")
 const Aset = require("../models/asset")
+const TrxRkbmutAll = require("../models/trxRkbmutAll")
 const {Op} = require("sequelize")
 
 //Data RKBMUT UNIT 
@@ -413,11 +414,48 @@ exports.parafunitselesai = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        res.json({
-            status : "Success", 
-            message : "Berhasil Paraf Siap TTE",
-            data : paraf
-        });
+        return RkbmUTPemanfaatan.findAll({
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_revisi : {
+                    [Op.not] : 3,
+                },
+            }
+        })
+        .then((det) => {
+            console.log(det.length)
+            if(det.length !== 0) {
+                status_pemanfaatan = 0
+            }
+            else {
+                status_pemanfaatan = 1
+            }
+            return TrxRkbmutAll.update(
+            {
+                status_pemanfaatan : status_pemanfaatan
+            }, 
+            {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                }
+            }
+            )
+            .then((trx) => {
+                if(!trx) {
+                    const error = new Error("Data Gagal Masuk")
+                    error.statusCode = 422
+                    throw error
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Diubah",
+                    data : {
+                        "pemanfaatan" : paraf,
+                        "all" : trx
+                    }
+                })
+            })
+        })
     })
     .catch((err) => {
         if(!err.statusCode) {
@@ -429,6 +467,9 @@ exports.parafunitselesai = (req, res, next) => {
 
 //Paraf APIP Setuju Selesai
 exports.parafapip = (req, res, next) => {
+    const upd = {
+        status_revisi : 3
+    }
     RkbmUTPemanfaatan.findOne({
         where : {
             status_revisi : 1, 
@@ -442,8 +483,19 @@ exports.parafapip = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        const upd = {
-            status_revisi : 3
+        
+        return RkbmUTPemanfaatan.update(upd, {
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                nup : req.params.nup
+            }
+        });
+    })
+    .then((paraf) => {
+        if(!paraf) {
+            const error = new Error("Gagal Paraf")
+            error.statusCode = 422 
+            throw error
         }
         return RkbmUTPemanfaatan.update(upd, {
             where : {
@@ -458,11 +510,48 @@ exports.parafapip = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        res.json({
-            status : "Success", 
-            message : "Data Berhasil di Paraf",
-            data : paraf
-        });
+        return RkbmUTPemanfaatan.findAll({
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_revisi : {
+                    [Op.not] : 3,
+                },
+            }
+        })
+        .then((det) => {
+            console.log(det.length)
+            if(det.length !== 0) {
+                status_pemanfaatan = 0
+            }
+            else {
+                status_pemanfaatan = 1
+            }
+            return TrxRkbmutAll.update(
+            {
+                status_pemanfaatan : status_pemanfaatan
+            }, 
+            {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                }
+            }
+            )
+            .then((trx) => {
+                if(!trx) {
+                    const error = new Error("Data Gagal Masuk")
+                    error.statusCode = 422
+                    throw error
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Diubah",
+                    data : {
+                        "pemanfaatan" : paraf,
+                        "all" : trx
+                    }
+                })
+            })
+        })
     })
     .catch((err) => {
         if(!err.statusCode) {
