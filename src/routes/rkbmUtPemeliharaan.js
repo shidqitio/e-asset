@@ -12,6 +12,9 @@ reviewapip,
 reviewunit, 
 parafapip, 
 parafunit, 
+perbaikanppk,
+perbaikanunit,
+setujuppk,
 update, 
 destroy
 } = require("../controllers/rkbmutpemeliharaanController")
@@ -41,6 +44,16 @@ router.post("/update", update)
 
 //ajukan ke ppk 
 router.put("/ajukanppk/:kode_unit_kerja",ajukanppk)
+
+//Perbaikan PPK
+router.put("/komentarppk/:jenis_belanja/:kode_unit_kerja", perbaikanppk)
+
+//PPK Setuju Pengisian Unit
+router.put("/setujuppk/:jenis_belanja/:kode_unit_kerja", setujuppk)
+
+//Perbaikan Unit 
+router.put("/perbaikanunit/:jenis_belanja/:kode_unit_kerja", perbaikanunit)
+
 //paraf ppk
 router.put("/parafppk/:kode_unit_kerja", parafppk)
 
