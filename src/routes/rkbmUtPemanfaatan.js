@@ -39,8 +39,31 @@ store)
 
 router.put("/ajukanppk/:kode_unit_kerja", ajukanppk)
 router.put("/parafppk/:kode_unit_kerja", parafppk)
-router.put("/reviewapip/:kode_unit_kerja/:nup", reviewapip)
-router.put("/reviewunit/:kode_unit_kerja/:nup", reviewunit)
+router.put("/reviewapip/:kode_unit_kerja/:nup", 
+RkbmPemanfaatanSchema.update,
+(req, res, next) => {
+   const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+       const error = new Error();
+       error.statusCode = 422;
+       error.message = errors.array();
+       throw error;
+     }    
+     next();
+},
+reviewapip)
+router.put("/reviewunit/:kode_unit_kerja/:nup", 
+RkbmPemanfaatanSchema.update,
+(req, res, next) => {
+   const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+       const error = new Error();
+       error.statusCode = 422;
+       error.message = errors.array();
+       throw error;
+     }    
+     next();
+}, reviewunit)
 router.put("/parafapipselesai/:kode_unit_kerja/:nup", parafapip)
 router.put("/parafunitselesai/:kode_unit_kerja/:nup", parafunitselesai)
 router.put("/update/:nup", update)
