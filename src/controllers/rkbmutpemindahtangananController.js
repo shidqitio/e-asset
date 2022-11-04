@@ -2,6 +2,7 @@ const RkbmutPemindahtanganan = require("../models/rkbmutPemindahtanganan")
 const Aset = require("../models/asset")
 const PindahTangan = require("../models/pindahTangan")
 const {Op} = require("sequelize")
+const TrxRkbmutAll = require("../models/trxRkbmutAll")
 
 //Data RKBMUT UNIT
 exports.indexunit = (req, res, next) => {
@@ -405,11 +406,48 @@ exports.ajukanppk = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        res.json({
-            status : "Success", 
-            message : "Berhasil Paraf Siap TTE",
-            data : paraf
-        });
+        return RkbmutPemindahtanganan.findAll({
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_revisi : {
+                    [Op.not] : 3,
+                },
+            }
+        })
+        .then((det) => {
+            console.log(det.length)
+            if(det.length !== 0) {
+                status_pemindahtanganan = 0
+            }
+            else {
+                status_pemindahtanganan = 1
+            }
+            return TrxRkbmutAll.update(
+            {
+                status_pemindahtanganan : status_pemindahtanganan
+            }, 
+            {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                }
+            }
+            )
+            .then((trx) => {
+                if(!trx) {
+                    const error = new Error("Data Gagal Masuk")
+                    error.statusCode = 422
+                    throw error
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Diubah",
+                    data : {
+                        "pemanfaatan" : paraf,
+                        "all" : trx
+                    }
+                })
+            })
+        })
     })
     .catch((err) => {
         if(!err.statusCode) {
@@ -450,11 +488,48 @@ exports.ajukanppk = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        res.json({
-            status : "Success", 
-            message : "Data Berhasil di Paraf",
-            data : paraf
-        });
+        return RkbmutPemindahtanganan.findAll({
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_revisi : {
+                    [Op.not] : 3,
+                },
+            }
+        })
+        .then((det) => {
+            console.log(det.length)
+            if(det.length !== 0) {
+                status_pemindahtanganan = 0
+            }
+            else {
+                status_pemindahtanganan = 1
+            }
+            return TrxRkbmutAll.update(
+            {
+                status_pemindahtanganan : status_pemindahtanganan
+            }, 
+            {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                }
+            }
+            )
+            .then((trx) => {
+                if(!trx) {
+                    const error = new Error("Data Gagal Masuk")
+                    error.statusCode = 422
+                    throw error
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Diubah",
+                    data : {
+                        "pemanfaatan" : paraf,
+                        "all" : trx
+                    }
+                })
+            })
+        })
     })
     .catch((err) => {
         if(!err.statusCode) {
