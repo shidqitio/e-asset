@@ -7,6 +7,7 @@ const TrxKibTanah = require("../models/trxKibTanah");
 const TrxKibAngkutan = require("../models/trxKibAngkutan");
 const TrxKibAlatbesar = require("../models/trxKibBesar");
 const TrxKibBangunan = require("../models/trxKibBangunan");
+const RkbmutPemeliharaanDetail = require("../models/rkbmutPemeliharaanDetail")
 
 
 exports.index = (req, res, next) => {
@@ -389,5 +390,71 @@ exports.jumlahbarangbyunit = (req, res, next) => {
             err.statusCode = 500
         }
         next(err)
+    })
+}
+
+//Get Barang By Unit Filter
+exports.getbarangbyunitfilter = (req, res, next) => {
+    let p = []
+    return RkbmutPemeliharaanDetail.findAll({
+        where : {
+            kode_unit_kerja : req.params.kode_unit
+        },
+        raw : true
+    })
+    .then((cek) => {
+        if (cek.length !== 0){
+            const pemeliharaan = cek.map((item) => {
+                 return {
+                     kode_asset : item.kode_asset
+                 }
+             })
+             
+             console.log(pemeliharaan[0].kode_asset)
+             for (let i = 0 ; pemeliharaan.length > i ; i++) {
+                 let pem = pemeliharaan[i].kode_asset 
+                 p.push({
+                     kode_asset : {
+                         [Op.not] : pemeliharaan[i].kode_asset
+                     }
+                 })
+             }
+        } 
+        p.push()
+        return Asset.findAll({
+            where : p,
+            include : [
+                {
+                    model : DaftarBarang, 
+                    where : p, 
+                    include : [
+                        {
+                            model : Ruang,
+                            where : {
+                                kode_unit : req.params.kode_unit
+                            }
+                        }
+                    ]
+                }
+            ]
+        })
+        .then((data) => {
+            if(data.length === 0) {
+                const error = new Error("Data Tidak Ada")
+                error.statusCode = 422 
+                throw error
+            }
+            return res.json({
+                status : "Success", 
+                message : "Data Berhasil Ditampilkan", 
+                data : data
+            });
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            return next(err);
+        })
     })
 }
