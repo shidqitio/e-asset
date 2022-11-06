@@ -2,7 +2,7 @@ const RkbmutPengadaanHeader = require("../models/rkbmutPengadaanHeader");
 const RkbmutPengadaanDetail = require("../models/rkbmutPengadaanDetail");
 const TrxRkbmutAll = require("../models/trxRkbmutAll")
 const db = require("../config/database");
-const {Op, where} = require("sequelize")
+const {Op} = require("sequelize")
 
 // Data RKBMUT UNIT
 exports.index = (req, res, next) => {
@@ -167,7 +167,7 @@ exports.store = (req, res, next) => {
             //Pemisah Kode dan Nama Sub Kegiatan
             
             //Insert RKBMUT Header  
-            RkbmutPengadaanHeader.create({
+            return RkbmutPengadaanHeader.create({
                 kode_unit_kerja : kode_unit, 
                 nama_unit_kerja : nama_unit, 
                 kode_kegiatan_rkt : kode_kegiatan_rkt, 
@@ -1145,6 +1145,69 @@ exports.destroy = (req, res, next) => {
             where : {
                 kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
                 kode_unit_kerja : req.params.kode_unit_kerja
+            } .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+        });
+    })
+    .then((destroyall) => {
+        if(!destroyall) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Dihapus", 
+            data : destroyall
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+//Hapus Header
+exports.destroyfromhead = (req, res, next) => {
+    RkbmutPengadaanHeader.findOne({
+        where : {
+            kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+            kode_unit_kerja : req.params.kode_unit_kerja, 
+            status_revisi : 0, 
+            status_paraf : 0
+        }
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPengadaanHeader.destroy({
+            where : {
+                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+                kode_unit_kerja : req.params.kode_unit_kerja, 
+                status_revisi : 0, 
+                status_paraf : 0
+            }
+        });
+    })
+    .then((destroy) => {
+        if(!destroy) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPengadaanDetail.destroy({
+            where : {
+                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+                kode_unit_kerja : req.params.kode_unit_kerja
             }
         });
     })
@@ -1159,6 +1222,43 @@ exports.destroy = (req, res, next) => {
             message : "Data Berhasil Dihapus", 
             data : destroyall
         });
+    })
+   
+}
+
+//Hapus Detail
+exports.destroyfromdetail = (req, res, next) => {
+    let param = {
+        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        kode_asset : req.params.kode_asset,
+        status_revisi : 0, 
+        status_paraf : 0
+    }
+    return RkbmutPengadaanDetail.findOne({
+        where  : param
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return RkbmutPengadaanDetail.destroy({
+            where : param
+        })
+    })
+    .then((destroy) => {
+        if(!destroy) {
+            const error = new Error("Data Gagal Hapus")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Dihapus", 
+            data : destroy 
+        })
     })
     .catch((err) => {
         if(!err.statusCode) {

@@ -1042,3 +1042,100 @@ exports.destroy = (req, res, next) => {
         return next(err);
     })
 } 
+
+//Hapus Header
+exports.destroyfromhead = (req, res, next) => {
+    RkbmutPemeliharaanHeader.findOne({
+        where : {
+            jenis_belanja : jenis_belanja, 
+            kode_unit_kerja : kode_unit_kerja, 
+            revisi_ke : 0,
+            status_revisi : 0
+        }
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPemeliharaanHeader.destroy({
+            where : {
+            jenis_belanja : jenis_belanja, 
+            kode_unit_kerja : kode_unit_kerja, 
+            revisi_ke : 0,
+            status_revisi : 0
+            }
+        });
+    })
+    .then((destroy) => {
+        if(!destroy) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPemeliharaanDetail.destroy({
+            where : {
+            jenis_belanja : jenis_belanja, 
+            kode_unit_kerja : kode_unit_kerja, 
+            revisi_ke : 0,
+            status_revisi : 0
+            }
+        });
+    })
+    .then((destroyall) => {
+        if(!destroyall) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Dihapus", 
+            data : destroyall
+        });
+    })
+   
+}
+
+//Hapus Detail
+exports.destroyfromdetail = (req, res, next) => {
+    let param = {
+        jenis_belanja : req.params.jenis_belanja, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        revisi_ke : 0,
+        status_revisi : 0,
+        kode_asset : req.params.kode_asset,
+    }
+    return RkbmutPemeliharaanDetail.findOne({
+        where  : param
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return RkbmutPemeliharaanDetail.destroy({
+            where : param
+        })
+    })
+    .then((destroy) => {
+        if(!destroy) {
+            const error = new Error("Data Gagal Hapus")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Dihapus", 
+            data : destroy 
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}

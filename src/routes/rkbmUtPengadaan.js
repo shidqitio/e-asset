@@ -16,6 +16,8 @@ const {
     perbaikanppk, 
     update, 
     destroy,
+    destroyfromhead, 
+    destroyfromdetail,
     setujuppk,
     perbaikanunit
 } = require("../controllers/rkmbutpengadaanController")
@@ -112,6 +114,9 @@ router.put("/setujuppk/:kode_kegiatan_rkt/:kode_unit_kerja", setujuppk)
 
 router.delete("/delete/:kode_unit_kerja/:kode_kegiatan_rkt", destroy)
 
+router.delete("/delete/header/:kode_unit_kerja/:kode_kegiatan_rkt", destroyfromhead)
+
+router.delete("/delete/detail/:kode_unit_kerja/:kode_kegiatan_rkt/:kode_asset", destroyfromdetail)
 
 
 module.exports = router
