@@ -55,14 +55,20 @@ exports.updatenup = (req, res, next) => {
                     kode_asset_nup = awal++ 
                     barang = barang + 1
                     let nup = kode_unit + "." + string_array[0] + "." + data_asset + "." + kode_asset_nup 
+                    let save = kode_unit + "-" + string_array[0] + "-" + data_asset + "-" + kode_asset_nup 
+                    const simpan_file =`localhost:3000/public/qrcode/${save}.png`
                     cek.push(
                         {
                             kode_asset_nup : kode_asset_nup,
                             barang, 
-                            nup
+                            nup, 
+                            qr_kode : simpan_file
                         }
                     )
+                    let tes = JSON.stringify(cek[i])
 
+                    const filename = `./src/public/qrcode/${save}.png`
+                    QrCode.toFile(filename, tes)
                     DaftarBarang.update(cek[i], {
                         where : {
                             kode_asset : req.params.kode_asset, 
@@ -138,11 +144,19 @@ exports.updatenup = (req, res, next) => {
                         kode_asset_nup = nup_akhir++
                         barang = barang+1
                         let nup = kode_unit + "." + string_array[0] + "." + data_asset + "." + kode_asset_nup
+                        const simpan_file =`/src/public/qrcode/${nup}.png`
                         cek.push({
                             kode_asset_nup : kode_asset_nup,
                             barang,
-                            nup
+                            nup, 
+                            qr_kode : simpan_file
                         })
+
+                        let tes = JSON.stringify(cek[i])
+
+                        const filename = `./src/public/qrcode/${nup}.png`
+                        QrCode.toFile(filename, tes)
+
                         DaftarBarang.update(cek[i], {
                             where : {
                                 kode_asset : req.params.kode_asset, 
