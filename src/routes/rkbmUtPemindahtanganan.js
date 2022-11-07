@@ -13,7 +13,8 @@ const {
     parafapipselesai, 
     parafunitselesai, 
     update, 
-    destroy
+    destroy,
+    destroypemindahtanganan
 } = require("../controllers/rkbmutpemindahtangananController")
 
 const {validationResult} = require("express-validator")
@@ -49,5 +50,6 @@ router.put("/update/:nup", update)
 
 //delete 
 router.delete("/delete/:nup", destroy)
+router.delete("/deletepindahtangan/:nup", destroypemindahtanganan)
 
 module.exports = router

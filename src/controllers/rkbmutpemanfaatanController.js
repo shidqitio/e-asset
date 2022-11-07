@@ -217,6 +217,170 @@ exports.ajukanppk = (req, res, next) => {
     })
 }
 
+//Komentar PPK 
+exports.perbaikanppk = (req, res, next) => {
+    let nup = req.params.nup
+    let kode_unit_kerja = req.params.kode_unit_kerja
+
+    let upd = {
+        komentar : req.body.komentar, 
+        status_paraf : 0, 
+        status_revisi : 1
+    }
+
+    return RkbmUTPemanfaatan.findAll({
+        where : {
+            nup : nup, 
+            kode_unit_kerja : kode_unit_kerja,
+            status_paraf : 1, 
+            status_revisi : 0
+        }, 
+        raw : true
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada ")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmUTPemanfaatan.update(upd, {
+            where : {
+            nup : nup, 
+            kode_unit_kerja : kode_unit_kerja,
+            status_paraf : 1, 
+            status_revisi : 0
+            }
+        })
+    })
+    .then((app) => {
+        if(!app) {
+            const error = new Error("Gagal Update Header")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menambah Komentar", 
+            data : app
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+//PPK SETUJU DENGAN UNIT
+exports.setujuppk = (req, res, next) => {
+    let nup = req.params.nup
+    let kode_unit_kerja = req.params.kode_unit_kerja
+
+    let upd = { 
+        status_paraf : 1, 
+        status_revisi : 1
+    }
+
+    return RkbmUTPemanfaatan.findAll({
+        where : {
+            nup : nup, 
+            kode_unit_kerja : kode_unit_kerja,
+            status_paraf : 1, 
+            status_revisi : 0
+        }, 
+        raw : true
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada ")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmUTPemanfaatan.update(upd, {
+            where : {
+            nup : nup, 
+            kode_unit_kerja : kode_unit_kerja,
+            status_paraf : 1, 
+            status_revisi : 0
+            }
+        })
+    })
+    .then((app) => {
+        if(!app) {
+            const error = new Error("Gagal Update Header")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menambah Komentar", 
+            data : app
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        t.rollback()
+        return next(err);
+    })
+}
+
+//Perbaikan unit 
+exports.perbaikanunit = (req, res, next) => {
+    let param = {
+        nup : req.params.nup, 
+        kode_unit_kerja : req.params.kode_unit_kerja,
+        status_paraf : 0,
+        status_revisi : 1
+    }
+    let upd = {
+        jumlah_item : req.body.jumlah_item,
+        kode_bentuk_pemanfaatan : req.body.kode_bentuk_pemanfaatan, 
+        peruntukan : req.body.peruntukan, 
+        jangka_waktu : req.body.jangka_waktu, 
+        potensi_pnpb : req.body.potensi_pnpb, 
+        kode_status_pemilik : req.body.kode_status_pemilik, 
+        kondisi_barang : req.body.kondisi_barang, 
+        total_realisasi_pnpb : req.body.total_realisasi_pnpb,
+        keterangan : req.body.keterangan, 
+    }
+    return RkbmUTPemanfaatan.findAll({
+        where : param, 
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        let index = data.length; 
+        const {revisi_ke} = data[index-1]
+        let revisi = revisi_ke + 1
+        return RkbmUTPemanfaatan.update(upd, param)
+    })
+    .then((up) => {
+        if(!up) {
+            const error = new Error("Gagal Diajukan ke PPK")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Update", 
+            data : up
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        t.rollback()
+        return next(err);
+    });
+}
+
 //Paraf PPK Diajukan KE APIP
 exports.parafppk = (req, res, next) => {
     RkbmUTPemanfaatan.findAll({
@@ -567,7 +731,8 @@ exports.update = (req, res, next) => {
         kode_bentuk_pemanfaatan : req.body.kode_bentuk_pemanfaatan, 
         peruntukan : req.body.peruntukan, 
         jangka_waktu : req.body.jangka_waktu, 
-        potensi_pnpb : req.body.potensi_pnpb
+        potensi_pnpb : req.body.potensi_pnpb, 
+        keterangan : keterangan
     }
     RkbmUTPemanfaatan.findAll({
         where : {
@@ -649,4 +814,46 @@ exports.destroy = (req, res, next) => {
     })
 }
 
+//Delete Pemanfaatan Sebelum Paraf 
+exports.destroymanfaat = (req, res, next) => {
+    RkbmUTPemanfaatan.findOne({
+        where :{
+            nup : req.params.nup, 
+            status_paraf : 0, 
+            status_revisi : 0
+        }
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmUTPemanfaatan.destroy({
+            where : {
+                nup : req.params.nup,
+                status_paraf : 0, 
+                status_revisi : 0
+            }
+        });
+    })
+    .then((destroy) => {
+        if(!destroy) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Dihapus",
+            data : destroy
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
 

@@ -222,6 +222,105 @@ exports.ajukanppk = (req, res, next) => {
     })
 }
 
+//Komentar PPK 
+exports.perbaikanppk = (req, res, next) => {
+    let param = {
+        nup : req.params.nup, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        status_paraf : 1, 
+        status_revisi : 0
+    }
+
+    let upd = {
+        komentar : req.body.komentar, 
+        status_paraf : 0, 
+        status_revisi : 1
+    }
+
+    return RkbmutPemindahtanganan.findAll({
+        where : param, 
+        raw : true
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada ")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPemindahtanganan.update(upd, {
+            where : param
+        })
+    })
+    .then((app) => {
+        if(!app) {
+            const error = new Error("Gagal Update Header")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menambah Komentar", 
+            data : app
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+//PPK SETUJU DENGAN UNIT
+exports.setujuppk = (req, res, next) => {
+    let param = {
+        nup : req.params.nup, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        status_paraf : 1, 
+        status_revisi : 0
+    }
+    
+    let upd = {
+        status_paraf : 1, 
+        status_revisi : 1
+    }
+    
+    return RkbmutPemindahtanganan.findAll({
+        where : param, 
+        raw : true
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada ")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPemindahtanganan.update(upd, {
+            where : param
+        })
+    })
+    .then((app) => {
+        if(!app) {
+            const error = new Error("Gagal Update Header")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Mengajukan Siap Paraf", 
+            data : app
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        t.rollback()
+        return next(err);
+    })
+}
+
+
 //Paraf PPK Diajukan ke APIP 
  exports.parafppk = (req, res, next) => {
     RkbmutPemindahtanganan.findAll({
@@ -626,3 +725,45 @@ exports.ajukanppk = (req, res, next) => {
     })
  }
  
+ //Delete Pemindahtanganan
+ exports.destroypemindahtanganan = (req, res, next) => {
+    RkbmutPemindahtanganan.findOne({
+        where : {
+            nup : req.params.nup,
+            status_paraf : 0, 
+            status_revisi : 0
+        }
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPemindahtanganan.destroy({
+            where : {
+                nup : req.params.nup,
+                status_paraf : 0, 
+                status_revisi : 0
+            }
+        });
+    })
+    .then((destroy) => {
+        if(!destroy) {
+            const error = new Error("Data Gagal Dihapus")
+            error.statusCode = 422 
+            throw error
+        }
+        res.json({
+            status : "Success", 
+            message : "Data Berhasil Dihapus",
+            data : destroy
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+ }

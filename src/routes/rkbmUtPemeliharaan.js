@@ -17,8 +17,7 @@ perbaikanunit,
 setujuppk,
 update, 
 destroy, 
-destroyfromhead, 
-destroyfromdetail
+destroyfromhead
 } = require("../controllers/rkbmutpemeliharaanController")
 
 const {validationResult} = require("express-validator")
@@ -67,6 +66,6 @@ router.put("/parafunit/:kode_unit_kerja/:kode_jenis_belanja", parafunit)
 
 router.delete("/delete/:kode_unit_kerja/:jenis_belanja", destroy)
 router.delete("/delete/head/:kode_unit_kerja/:jenis_belanja", destroyfromhead)
-router.delete("/delete/detail/:kode_unit_kerja/:jenis_belanja/:kode_asset", destroyfromdetail)
+
 
 module.exports = router

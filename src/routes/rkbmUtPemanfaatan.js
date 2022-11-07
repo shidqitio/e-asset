@@ -13,7 +13,8 @@ const {
     parafunitselesai,
     parafapip, 
     update, 
-    destroy
+    destroy,
+    destroymanfaat
 } = require("../controllers/rkbmutpemanfaatanController")
 const {validationResult} = require("express-validator")
 const RkbmPemanfaatanSchema = require("../middlewares/request/rkbmUtPemanfaatan")
@@ -67,8 +68,9 @@ RkbmPemanfaatanSchema.update,
 router.put("/parafapipselesai/:kode_unit_kerja/:nup", parafapip)
 router.put("/parafunitselesai/:kode_unit_kerja/:nup", parafunitselesai)
 router.put("/update/:nup", update)
-router.delete("/delete/:nup", destroy)
 
+router.delete("/delete/:nup", destroy)
+router.delete("/deletepemanfaatan/:nup", destroymanfaat)
 
 
 
