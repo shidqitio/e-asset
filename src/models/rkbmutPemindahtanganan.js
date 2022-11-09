@@ -70,6 +70,10 @@ const RkbmutPemindahtanganan = db.define(
             type : DataTypes.INTEGER(), 
             allowNull : true
         }, 
+        komentar : {
+            type : DataTypes.STRING(255), 
+            allowNull : true
+        },
         ucr: {
             type: DataTypes.STRING(100),
             allowNull: true,

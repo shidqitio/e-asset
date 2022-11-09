@@ -314,7 +314,7 @@ exports.setujuppk = (req, res, next) => {
         }
         return res.json({
             status : "Success", 
-            message : "Berhasil Menambah Komentar", 
+            message : "Berhasil Menambah Data Siap Paraf", 
             data : app
         })
     })
@@ -322,7 +322,6 @@ exports.setujuppk = (req, res, next) => {
         if(!err.statusCode) {
             err.statusCode = 500;
         }
-        t.rollback()
         return next(err);
     })
 }
@@ -334,17 +333,6 @@ exports.perbaikanunit = (req, res, next) => {
         kode_unit_kerja : req.params.kode_unit_kerja,
         status_paraf : 0,
         status_revisi : 1
-    }
-    let upd = {
-        jumlah_item : req.body.jumlah_item,
-        kode_bentuk_pemanfaatan : req.body.kode_bentuk_pemanfaatan, 
-        peruntukan : req.body.peruntukan, 
-        jangka_waktu : req.body.jangka_waktu, 
-        potensi_pnpb : req.body.potensi_pnpb, 
-        kode_status_pemilik : req.body.kode_status_pemilik, 
-        kondisi_barang : req.body.kondisi_barang, 
-        total_realisasi_pnpb : req.body.total_realisasi_pnpb,
-        keterangan : req.body.keterangan, 
     }
     return RkbmUTPemanfaatan.findAll({
         where : param, 
@@ -358,7 +346,21 @@ exports.perbaikanunit = (req, res, next) => {
         let index = data.length; 
         const {revisi_ke} = data[index-1]
         let revisi = revisi_ke + 1
-        return RkbmUTPemanfaatan.update(upd, param)
+        return RkbmUTPemanfaatan.update({
+            jumlah_item : req.body.jumlah_item,
+            kode_bentuk_pemanfaatan : req.body.kode_bentuk_pemanfaatan, 
+            peruntukan : req.body.peruntukan, 
+            jangka_waktu : req.body.jangka_waktu, 
+            potensi_pnpb : req.body.potensi_pnpb, 
+            kode_status_pemilik : req.body.kode_status_pemilik, 
+            kondisi_barang : req.body.kondisi_barang, 
+            total_realisasi_pnpb : req.body.total_realisasi_pnpb,
+            keterangan : req.body.keterangan, 
+            revisi : revisi,
+            status_revisi : 1, 
+            status_paraf : 0
+        }, 
+        {where : param})
     })
     .then((up) => {
         if(!up) {
@@ -376,7 +378,6 @@ exports.perbaikanunit = (req, res, next) => {
         if(!err.statusCode) {
             err.statusCode = 500;
         }
-        t.rollback()
         return next(err);
     });
 }
@@ -385,7 +386,7 @@ exports.perbaikanunit = (req, res, next) => {
 exports.parafppk = (req, res, next) => {
     RkbmUTPemanfaatan.findAll({
         where : {
-            status_revisi : 0, 
+            status_revisi : 1, 
             kode_unit_kerja : req.params.kode_unit_kerja, 
             status_paraf : 1
         }

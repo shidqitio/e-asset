@@ -520,7 +520,7 @@ exports.perbaikanunit = (req, res, next) => {
                 return {
                     kode_asset : item.kode_asset,
                     keterangan : item.keterangan,
-                    status_revisi : 1, 
+                    status_revisi : 0, 
                     status_paraf : 1, 
                     revisi_ke : revisi
                 }

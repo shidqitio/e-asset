@@ -3,6 +3,7 @@ const Aset = require("../models/asset")
 const PindahTangan = require("../models/pindahTangan")
 const {Op} = require("sequelize")
 const TrxRkbmutAll = require("../models/trxRkbmutAll")
+const token = require("../controllers/authController/authorizationController")
 
 //Data RKBMUT UNIT
 exports.indexunit = (req, res, next) => {
@@ -27,6 +28,7 @@ exports.indexunit = (req, res, next) => {
             error.statusCode = 422; 
             throw error
         }
+        console.log(token)
         res.json({
             status : "Success", 
             message : "Data Berhasil Ditampilkan", 
@@ -315,17 +317,81 @@ exports.setujuppk = (req, res, next) => {
         if(!err.statusCode) {
             err.statusCode = 500;
         }
-        t.rollback()
         return next(err);
     })
 }
+//Perbaikan Unit
+exports.perbaikanunit = (req, res, next) =>{
+    let param = {
+        nup : req.params.nup, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        status_paraf : 0, 
+        status_revisi : 1
+    }
 
+    let upd = {
+        merk : req.body.merk, 
+        umur_ekonomis : req.body.umur_ekonomis, 
+        tahun_perolehan : req.body.tahun_perolehan, 
+        kondisi : req.body.kondisi, 
+        nilai_perolehan : req.body.nilai_perolehan, 
+        kode_pindah_tangan : req.body.kode_pindah_tangan, 
+        alasan : req.body.alasan, 
+        status_revisi : 1, 
+        status_paraf : 1
+    }
+    return RkbmutPemindahtanganan.findAll({
+        where : param
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        let index = data.length; 
+        const {revisi_ke} = data[index-1]
+        let revisi = revisi_ke + 1
+        return RkbmutPemindahtanganan.update({
+            merk : req.body.merk, 
+            umur_ekonomis : req.body.umur_ekonomis, 
+            tahun_perolehan : req.body.tahun_perolehan, 
+            kondisi : req.body.kondisi, 
+            nilai_perolehan : req.body.nilai_perolehan, 
+            kode_pindah_tangan : req.body.kode_pindah_tangan, 
+            alasan : req.body.alasan, 
+            status_revisi : 0, 
+            status_paraf : 1, 
+            revisi_ke : revisi
+        }, {
+        where : param
+        })
+    })
+    .then((up) => {
+        if(!up) {
+            const error = new Error("Gagal Diajukan ke PPK")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Update", 
+            data : up
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    });
+}
 
 //Paraf PPK Diajukan ke APIP 
  exports.parafppk = (req, res, next) => {
     RkbmutPemindahtanganan.findAll({
         where : {
-            status_revisi : 0, 
+            status_revisi : 1, 
             kode_unit_kerja : req.params.kode_unit_kerja, 
             status_paraf : 1
         }

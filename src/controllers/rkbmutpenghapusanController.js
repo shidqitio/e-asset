@@ -183,6 +183,98 @@ exports.store = (req, res, next) => {
     });
 }
 
+//Komentar PPK 
+exports.perbaikanppk = (req, res, next) => {
+    let param = {
+        nup : req.params.nup, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        status_paraf : 1, 
+        status_revisi : 0
+    }
+
+    return RkbmutPenghapusan.findAll({
+        where : param, 
+        raw : true
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return RkbmutPenghapusan.update({
+            komentar : req.body.komentar
+        }, {
+            where : param
+        })
+    })
+    .then((komentar) => {
+        if(!komentar) {
+            const error = new Error("Komentar Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menambah Komentar", 
+            data : komentar
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+//PPK Setuju dengan Unit 
+exports.setujuppk = (req, res, next) => {
+    let param = {
+        nup : req.params.nup, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        status_paraf : 1, 
+        status_revisi : 0
+    }
+
+    let upd = {
+        status_paraf : 1, 
+        status_revisi : 1
+    }
+
+    return RkbmutPenghapusan.findAll({
+        where : param, 
+        raw : true
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada ")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPenghapusan.update(upd, {
+            where : param
+        })
+    })
+    .then((app) => {
+        if(!app) {
+            const error = new Error("Gagal Update Header")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Mengajukan Siap Paraf", 
+            data : app
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
 
 //Ajukan PPK RKBMUT PENGHAPUSAN
 exports.ajukanppk = (req, res, next) => {
