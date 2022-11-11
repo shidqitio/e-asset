@@ -9,11 +9,16 @@ const {
     indexapip,
     store, 
     ajukanppk,
+    perbaikanppk,
+    setujuppk,
+    perbaikanunit,
     parafppk,
     reviewapip, 
     reviewunit,
     parafunitselesai,
-    parafapipselesai, 
+    parafapipselesai,
+    destroy,
+    update, 
 } = require("../controllers/rkbmutpenghapusanController")
 
 const path = require("path")
@@ -65,13 +70,48 @@ router.post("/",
         next();
       }, 
 store)
+
+router.put("/update/:kode_unit_kerja/:nup", 
+[
+    uploadImage.single("foto")
+],
+(req, res, next) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()) {
+      const filename = path.parse(req.file.filename).base;
+      const filePath = path.join(
+        __dirname,
+        "..",
+        "..", 
+        "public",
+        "images",
+        "foto_barang_rusak",
+        filename,
+      );
+      fs.unlink(filePath, (err) => {
+        console.log("Unlink Error", err);
+      });
+      const error = new Error();
+      error.statusCode = 422;
+      error.message = errors.array();
+      throw error;
+    }
+    next()
+}, 
+update
+)
+
 router.put("/ajukanppk/:kode_unit_kerja", ajukanppk)
 router.put("/parafppk/:kode_unit_kerja", parafppk)
+router.put("/perbaikanunit/:kode_unit_kerja/:nup", perbaikanunit)
+router.put("/komentarppk/:kode_unit_kerja/:nup",perbaikanppk)
+router.put("/setujuppk/:kode_unit_kerja/:nup",setujuppk)
 router.put("/reviewapip/:kode_unit_kerja/:nup", reviewapip)
 router.put("/reviewunit/:kode_unit_kerja/:nup", reviewunit)
 router.put("/parafapipselesai/:kode_unit_kerja/:nup", parafapipselesai)
 router.put("/parafunitselesai/:kode_unit_kerja/:nup", parafunitselesai)
 
+router.delete("/deletedata/:kode_unit_kerja/:nup", destroy)
 
 
 

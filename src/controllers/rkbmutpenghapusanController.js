@@ -1,7 +1,9 @@
 const RkbmutPenghapusan = require("../models/rkbmutPenghapusan")
 const Aset = require("../models/asset")
+const TrxRkbmutAll = require("../models/trxRkbmutAll")
 const {Op} = require("sequelize")
 const path = require("path")
+const fs = require("fs")
 
 //Data RKBMUT UNIT
 exports.indexunit = (req, res, next) => {
@@ -131,19 +133,20 @@ exports.store = (req, res, next) => {
         if(req.file){
             const filename = path.parse(req.file.filename).base
             return RkbmutPenghapusan.create({
-              tahun : tahun, 
-              kode_unit_kerja : kode_unit, 
-              nup : req.body.nup, 
-              kode_asset : req.body.kode_asset, 
-              revisi_ke : 0, 
-              status_revisi : 0, 
-              status_paraf : 0, 
-              nama_unit_kerja : nama_unit, 
-              merk : req.body.merk, 
-              kondisi : req.body.kondisi, 
-              tahun_perolehan : req.body.tahun_perolehan, 
-              alasan : req.body.alasan, 
-              foto : "https://dev-sippp.ut.ac.id:2323/public/" + filename
+                tahun : tahun, 
+                kode_unit_kerja : kode_unit, 
+                nup : req.body.nup, 
+                kode_asset : req.body.kode_asset, 
+                revisi_ke : 0, 
+                status_revisi : 0, 
+                status_paraf : 0, 
+                nama_unit_kerja : nama_unit, 
+                merk : req.body.merk, 
+                kondisi : req.body.kondisi, 
+                tahun_perolehan : req.body.tahun_perolehan, 
+                nilai_perolehan : req.body.nilai_perolehan,
+                alasan : req.body.alasan, 
+                foto : "https://dev-sippp.ut.ac.id:2323/public/foto_barang_rusak/" + filename
             });
         }
         else {
@@ -159,6 +162,7 @@ exports.store = (req, res, next) => {
                 merk : req.body.merk, 
                 kondisi : req.body.kondisi, 
                 tahun_perolehan : req.body.tahun_perolehan, 
+                nilai_perolehan : req.body.nilai_perolehan,
                 alasan : req.body.alasan, 
               });
         }
@@ -318,11 +322,162 @@ exports.ajukanppk = (req, res, next) => {
     })
 }
 
+//Komentar PPK 
+exports.perbaikanppk = (req, res, next) => {
+    let param = {
+        nup : req.params.nup, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        status_paraf : 1, 
+        status_revisi : 0
+    }
+
+    let upd = {
+        komentar : req.body.komentar, 
+        status_paraf : 0, 
+        status_revisi : 1
+    }
+
+    return RkbmutPenghapusan.findAll({
+        where : param, 
+        raw : true
+    })
+    .then((data) => {
+        if(data.length === 0 ) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return RkbmutPenghapusan.update(upd, {
+            where : param
+        })
+    })
+    .then((app) => {
+        if(!app) {
+            const error = new Error("Gagal Update Header")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menambah Komentar", 
+            data : app
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+} 
+
+//PPK SETUJU DENGAN UNIT
+exports.setujuppk = (req, res, next) => {
+    let param = {
+        nup : req.params.nup, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        status_paraf : 1, 
+        status_revisi : 0
+    }
+    
+    let upd = {
+        status_paraf : 1, 
+        status_revisi : 1
+    }
+    
+    return RkbmutPenghapusan.findAll({
+        where : param, 
+        raw : true
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada ")
+            error.statusCode = 422 
+            throw error
+        }
+        return RkbmutPenghapusan.update(upd, {
+            where : param
+        })
+    })
+    .then((app) => {
+        if(!app) {
+            const error = new Error("Gagal Update Header")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Mengajukan Siap Paraf", 
+            data : app
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+//Perbaikan Unit
+exports.perbaikanunit = (req, res, next) =>{
+    let param = {
+        nup : req.params.nup, 
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        status_paraf : 0, 
+        status_revisi : 1
+    }
+
+    return RkbmutPenghapusan.findAll({
+        where : param
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        let index = data.length; 
+        const {revisi_ke} = data[index-1]
+        let revisi = revisi_ke + 1
+        return RkbmutPenghapusan.update({
+            merk : req.body.merk, 
+            tahun_perolehan : req.body.tahun_perolehan, 
+            kondisi : req.body.kondisi, 
+            nilai_perolehan : req.body.nilai_perolehan, 
+            alasan : req.body.alasan, 
+            status_revisi : 0, 
+            status_paraf : 1, 
+            revisi_ke : revisi
+        }, {
+        where : param
+        })
+    })
+    .then((up) => {
+        if(!up) {
+            const error = new Error("Gagal Diajukan ke PPK")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Update", 
+            data : up
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    });
+}
+
 //Paraf PPK Setuju Ajukan Ke APIP
 exports.parafppk = (req, res, next) => {
     RkbmutPenghapusan.findAll({
         where : {
-            status_revisi : 0, 
+            status_revisi : 1, 
             kode_unit_kerja : req.params.kode_unit_kerja, 
             status_paraf : 1
         }
@@ -498,11 +653,48 @@ exports.parafapipselesai = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        res.json({
-            status : "Success", 
-            message : "Data Berhasil di Paraf",
-            data : paraf
-        });
+        return RkbmutPenghapusan.findAll({
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_revisi : {
+                    [Op.not] : 3,
+                },
+            }
+        })
+        .then((det) => {
+            console.log(det.length)
+            if(det.length !== 0) {
+                status_penghapusan = 0
+            }
+            else {
+                status_penghapusan = 1
+            }
+            return TrxRkbmutAll.update(
+            {
+                status_penghapusan : status_penghapusan
+            }, 
+            {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                }
+            }
+            )
+            .then((trx) => {
+                if(!trx) {
+                    const error = new Error("Data Gagal Masuk")
+                    error.statusCode = 422
+                    throw error
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Diubah",
+                    data : {
+                        "penghapusan" : paraf,
+                        "all" : trx
+                    }
+                })
+            })
+        })
     })
     .catch((err) => {
         if(!err.statusCode) {
@@ -544,11 +736,48 @@ exports.parafunitselesai = (req,res, next) => {
             error.statusCode = 422 
             throw error
         }
-        res.json({
-            status : "Success", 
-            message : "Berhasil Paraf Siap TTE",
-            data : paraf
-        });
+        return RkbmutPenghapusan.findAll({
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja,
+                status_revisi : {
+                    [Op.not] : 3,
+                },
+            }
+        })
+        .then((det) => {
+            console.log(det.length)
+            if(det.length !== 0) {
+                status_penghapusan = 0
+            }
+            else {
+                status_penghapusan = 1
+            }
+            return TrxRkbmutAll.update(
+            {
+                status_penghapusan : status_penghapusan
+            }, 
+            {
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja, 
+                }
+            }
+            )
+            .then((trx) => {
+                if(!trx) {
+                    const error = new Error("Data Gagal Masuk")
+                    error.statusCode = 422
+                    throw error
+                }
+                return res.json({
+                    status : "Success",
+                    message : "Data Berhasil Diubah",
+                    data : {
+                        "penghapusan" : paraf,
+                        "all" : trx
+                    }
+                })
+            })
+        })
     })
     .catch((err) => {
         if(!err.statusCode) {
@@ -563,26 +792,127 @@ exports.parafunitselesai = (req,res, next) => {
     let data = {
         alasan : req.body.alasan
     }
+
+    let param = {
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        nup : req.params.nup, 
+        status_revisi : 0, 
+        status_paraf : 0
+    }
     if(req.file) {
         const filename = path.parse(req.file.filename).base;
         data = {
             alasan : req.body.alasan,
-            foto : "https://dev-sippp.ut.ac.id:2323/public/" + filename 
+            foto : "https://dev-sippp.ut.ac.id:2323/public/foto_barang_rusak/" + filename 
         }
     }
+
     RkbmutPenghapusan.findOne({
-        where : {
-            nup : req.params.nup
-        }
+        where : param
     })
     .then((app) => {
         if(req.file) {
             if(app.foto !== null) {
-                clearImage(app.foto);
+                
+                let cek = app.foto 
+                let split_foto = cek.split("/")
+                clearImage(split_foto[5]);
                 return RkbmutPenghapusan.update(data, {
-                    where : {nup : req.params.nup}
+                    where : param
+                })
+            }
+            else if(app.foto === null){
+                
+                return RkbmutPenghapusan.update(data, {
+                    where : param
                 })
             }
         }
+        else {
+            return RkbmutPenghapusan.update({
+                alasan : req.body.alasan
+            }, {
+                where : param
+            })
+        }
+
+        if(!app) {
+            const error = new Error("NIP Tidak Ada");
+            error.statusCode = 422;
+            throw error;
+        }
+    })
+    .then((finis) => {
+        res.json({
+            status : "Success", 
+            message : "Berhasil Memperbarui Data", 
+            data : finis
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    });
+ }
+
+ //Destroy
+ exports.destroy = (req, res, next) => {
+    let param = {
+        kode_unit_kerja : req.params.kode_unit_kerja, 
+        nup : req.params.nup, 
+        status_revisi : 0, 
+        status_paraf : 0
+    }
+    RkbmutPenghapusan.findOne({
+        where : param
+    })
+    .then((data) => {
+        if(!data) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        if(data.foto == null){
+            return RkbmutPenghapusan.destroy({
+                where : param
+            })
+        }
+        else {
+            let cek = data.foto 
+            let split_foto = cek.split("/")
+            clearImage(split_foto[5]);
+            if(!clearImage) {
+                const error = new Error("Gagal Hapus Gambar")
+                error.statusCode = 422 
+                throw error
+            }
+            else {
+                return RkbmutPenghapusan.destroy({
+                    where : param
+                });   
+            }
+        }
+    })
+    .then((respons) => {
+        res.json({
+            status : "Success", 
+            message : "Berhasil Menghapus Data", 
+            data : respons
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    });
+ }
+
+ const clearImage = (filePath) => {
+    filePath = path.join(__dirname,"..","..","public","images","foto_barang_rusak",filePath);
+    fs.unlink(filePath, (err) => {
+        console.log("Unlink error", err)
     })
  }
