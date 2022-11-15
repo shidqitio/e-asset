@@ -7,7 +7,7 @@ const BentukPemanfaatan = db.define(
         kode_bentuk_pemanfaatan : {
             type : DataTypes.STRING(1), 
             primaryKey : true, 
-            allowNull : false
+            allowNull : false, 
         }, 
         nama_bentuk_pemanfaatan : {
             type : DataTypes.STRING(255), 

@@ -43,6 +43,7 @@ exports.indexppk = (req, res, next) => {
         where : {
             kode_unit_kerja : req.params.kode_unit_kerja,
             [Op.or] : [
+                {status_paraf : 0},
                 {status_paraf : 1}, 
                 {status_paraf : 2}
             ]

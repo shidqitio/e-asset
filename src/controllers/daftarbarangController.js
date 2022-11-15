@@ -3,6 +3,7 @@ const Pembukuan = require("../models/pembukuan")
 const Ruang = require("../models/ruang")
 const {Op} = require("sequelize")
 const QrCode = require("qrcode")
+const path = require('path')
 
 exports.updatenup = (req, res, next) => {
 
@@ -55,20 +56,20 @@ exports.updatenup = (req, res, next) => {
                     kode_asset_nup = awal++ 
                     barang = barang + 1
                     let nup = kode_unit + "." + string_array[0] + "." + data_asset + "." + kode_asset_nup 
-                    let save = kode_unit + "-" + string_array[0] + "-" + data_asset + "-" + kode_asset_nup 
-                    // const simpan_file =`localhost:3000/public/qrcode/${save}.png`
+                    const simpan_file =`https://dev-sippp.ut.ac.id:2323/public/qrcode/${nup}.png`
                     cek.push(
                         {
                             kode_asset_nup : kode_asset_nup,
                             barang, 
                             nup, 
-                            // qr_kode : simpan_file
+                            qr_kode : simpan_file
                         }
                     )
-                    // let tes = JSON.stringify(cek[i])
+                    let tes = "http://localhost:3011/detail/" + nup
 
-                    // const filename = `./src/public/qrcode/${save}.png`
-                    // QrCode.toFile(filename, tes)
+                    const filename = path.join('.','public','images','qrcode',`${nup}.png`)
+                    console.log(nup)
+                    QrCode.toFile(filename, tes)
                     
                     DaftarBarang.update(cek[i], {
                         where : {
@@ -145,18 +146,19 @@ exports.updatenup = (req, res, next) => {
                         kode_asset_nup = nup_akhir++
                         barang = barang+1
                         let nup = kode_unit + "." + string_array[0] + "." + data_asset + "." + kode_asset_nup
-                        // const simpan_file =`/src/public/qrcode/${nup}.png`
+                        const simpan_file =`https://dev-sippp.ut.ac.id:2323/public/qrcode/${nup}.png`
                         cek.push({
                             kode_asset_nup : kode_asset_nup,
                             barang,
                             nup, 
-                            // qr_kode : simpan_file
+                            qr_kode : simpan_file
                         })
 
-                        let tes = JSON.stringify(cek[i])
+                        let tes = "http://localhost:3011/detail/" + nup
 
-                        // const filename = `./src/public/qrcode/${nup}.png`
-                        // QrCode.toFile(filename, tes)
+                        const filename = path.join('.','public','images','qrcode',`${nup}.png`)
+                        
+                        QrCode.toFile(filename, tes)
 
                         DaftarBarang.update(cek[i], {
                             where : {
@@ -187,23 +189,55 @@ exports.updatenup = (req, res, next) => {
     });
 }
 
-exports.qr = (req, res, next) => {
-    DaftarBarang.findOne({
-        where : {
-            nup : req.params.nup
-        }
-    })
-    .then((data) => {
-        let cek = JSON.stringify(data)
-        QrCode.toFile("qr.png",cek,{type: 'terminal'},
-        ((err, QrCode) => {
-            if(err) {
-                return console.log("error occured")
-            }
-            console.log(QrCode)
-        })
-        )
-    })
+// exports.qr = (req, res, next) => {
+//     DaftarBarang.findOne({
+//         where : {
+//             nup : req.params.nup
+//         }
+//     })
+//     .then((data) => {
+//         let cek = JSON.stringify(data)
+//         QrCode.toFile("qr.png",cek,{type: 'terminal'},
+//         ((err, QrCode) => {
+//             if(err) {
+//                 return console.log("error occured")
+//             }
+//             console.log(QrCode)
+//         })
+//         )
+//     })
     
 
+// }
+
+exports.getbynup = (req, res, next) => {
+    let nup = req.params.nup
+    return Pembukuan.findAll({
+        include : [
+            {
+                model : DaftarBarang,
+                where : {
+                    nup : nup
+                }
+            }
+        ]
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success",
+            message : "Data Berhasil Ditampilkan",
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    });
 }

@@ -4,7 +4,10 @@ const session = require('express-session')
 
 const token = (req, res, next) => {
     let token = req.body.token 
+    let user_id = req.body.id_user
+    let kode_group = req.body.kode_group
     global._token = token
+
     return res.json({
         status : "Success", 
         message : "Token Berhasil Disimpan", 
