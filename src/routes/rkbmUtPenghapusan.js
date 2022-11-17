@@ -3,6 +3,8 @@ const router = express.Router()
 
 const {validationResult} = require("express-validator")
 
+const RkbmPenghapusanSchema = require("../middlewares/request/rkbmUtPenghapusan")
+
 const {
     indexunit, 
     indexppk, 
@@ -59,6 +61,7 @@ router.post("/",
     [
         uploadImage.single("foto")
     ],
+    RkbmPenghapusanSchema.store,
     (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {

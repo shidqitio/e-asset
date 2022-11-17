@@ -13,6 +13,12 @@ const {
     getbarangbyunitfilter
 } = require("../controllers/ruangController")
 
+const {validationResult} = require('express-validator')
+
+const RuangSchema = require("../middlewares/request/ruang")
+
+const timeout = require('connect-timeout')
+
 router.get("/", index)
 
 router.get("/:kode_unit", showbyunit )
@@ -27,6 +33,18 @@ router.get("/existing-bmut/:kode_unit/:kode_asset", jumlahbarangbyunit)
 
 router.get("/get-barang-pemeliharaan/:kode_unit", getbarangbyunitfilter)
 
-router.post ("/", store)
+router.post ("/",timeout('5s'), 
+RuangSchema.store,
+(req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const error = new Error();
+        error.statusCode = 422;
+        error.message = errors.array();
+        throw error;
+      }
+      next();
+},
+store)
 
 module.exports = router

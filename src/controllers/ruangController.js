@@ -8,6 +8,7 @@ const TrxKibAngkutan = require("../models/trxKibAngkutan");
 const TrxKibAlatbesar = require("../models/trxKibBesar");
 const TrxKibBangunan = require("../models/trxKibBangunan");
 const RkbmutPemeliharaanDetail = require("../models/rkbmutPemeliharaanDetail")
+const timeout = require('connect-timeout')
 
 
 exports.index = (req, res, next) => {
