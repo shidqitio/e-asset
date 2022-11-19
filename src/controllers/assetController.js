@@ -1,5 +1,6 @@
 const Asset = require("../models/asset")
 const {Op} = require("sequelize")
+const {logger} = require("../helpers/log")
 
 exports.index = (req, res, next) => {
     Asset.findAll()
@@ -11,6 +12,7 @@ exports.index = (req, res, next) => {
         });
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500;
         }
@@ -38,6 +40,7 @@ exports.show = (req, res, next) => {
         });
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500
         }
