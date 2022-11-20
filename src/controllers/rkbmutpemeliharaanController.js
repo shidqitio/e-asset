@@ -187,6 +187,7 @@ exports.store = (req, res, next) => {
                     status_paraf : header.status_paraf, 
                     status_revisi : header.status_revisi, 
                     jenis_belanja : header.jenis_belanja,
+                    tahun : header.tahun,
                     kode_status_barang : item.kode_status_barang, 
                     kondisi_baik : kondisi_baik,
                     kondisi_rusak_ringan : kondisi_rusak_ringan, 
@@ -928,6 +929,7 @@ exports.update = (req, res, next) => {
             let head_arr = JSON.parse(JSON.stringify(head))
             const {jenis_belanja} = head_arr[index-1]
             const {kode_unit_kerja} = head_arr[index-1]
+            const {tahun} = head_arr[index-1]
             return RkbmutPemeliharaanDetail.destroy({
                 where : {
                     jenis_belanja : jenis_belanja, 
@@ -954,6 +956,7 @@ exports.update = (req, res, next) => {
                         status_paraf : 0, 
                         status_revisi : 0, 
                         jenis_belanja : jenis_belanja,
+                        tahun : tahun,
                         kode_status_barang : item.kode_status_barang, 
                         kondisi_baik : kondisi_baik,
                         kondisi_rusak_ringan : kondisi_rusak_ringan, 
