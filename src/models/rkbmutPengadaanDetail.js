@@ -24,6 +24,11 @@ const RkbmutPengadaanDetail = db.define(
             type : DataTypes.INTEGER(11),
             allowNull : false, 
             primaryKey : true
+        },
+        tahun : {
+            type : DataTypes.STRING(4),
+            allowNull : false, 
+            primaryKey : true
         }, 
         status_paraf : {
             type : DataTypes.INTEGER(),
@@ -89,17 +94,18 @@ RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
     foreignKey : "kode_kegiatan_rkt"
 })
 
-// RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
-//     foreignKey : "kode_unit_kerja"
-// })
-
-// RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
-//     foreignKey : "kode_unit_kerja"
-// })
-
 RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
     foreignKey : "kode_kegiatan_rkt"
 })
+
+RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
+    foreignKey : "kode_unit_kerja"
+})
+
+RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
+    foreignKey : "kode_unit_kerja"
+})
+
 
 
 
