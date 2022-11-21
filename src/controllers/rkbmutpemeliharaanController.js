@@ -1006,7 +1006,7 @@ exports.destroy = (req, res, next) => {
             error.statusCode = 422
             throw error
         }
-        return RkbmutPemeliharaanHeader.destroy({
+        return RkbmutPemeliharaanDetail.destroy({
             where : {
                 kode_unit_kerja : req.params.kode_unit_kerja, 
                 jenis_belanja : req.params.jenis_belanja
@@ -1019,7 +1019,7 @@ exports.destroy = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        return RkbmutPemeliharaanDetail.destroy({
+        return RkbmutPemeliharaanHeader.destroy({
             where : {
                 kode_unit_kerja : req.params.kode_unit_kerja, 
                 jenis_belanja : req.params.jenis_belanja
@@ -1062,7 +1062,7 @@ exports.destroyfromhead = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        return RkbmutPemeliharaanHeader.destroy({
+        return RkbmutPemeliharaanDetail.destroy({
             where : {
             jenis_belanja : jenis_belanja, 
             kode_unit_kerja : kode_unit_kerja, 
@@ -1077,7 +1077,7 @@ exports.destroyfromhead = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        return RkbmutPemeliharaanDetail.destroy({
+        return RkbmutPemeliharaanHeader.destroy({
             where : {
             jenis_belanja : jenis_belanja, 
             kode_unit_kerja : kode_unit_kerja, 
