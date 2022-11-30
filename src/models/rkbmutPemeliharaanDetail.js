@@ -20,6 +20,11 @@ const RkbmutPemeliharaanDetail = db.define(
             type : DataTypes.STRING(2), 
             allowNull : true
         }, 
+        tahun : {
+            type : DataTypes.STRING(4), 
+            allowNull : false, 
+            primaryKey : true
+        },
         revisi_ke : {
             type : DataTypes.INTEGER(11),
             allowNull : true

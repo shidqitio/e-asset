@@ -9,7 +9,7 @@ const TrxKibAlatbesar = require("../models/trxKibBesar");
 const TrxKibBangunan = require("../models/trxKibBangunan");
 const RkbmutPemeliharaanDetail = require("../models/rkbmutPemeliharaanDetail")
 const RkbmutPenghapusan = require("../models/rkbmutPenghapusan")
-const timeout = require('connect-timeout')
+const {logger} = require("../helpers/log")
 
 
 exports.index = (req, res, next) => {
@@ -22,6 +22,7 @@ exports.index = (req, res, next) => {
        });
    })
    .catch((err) => {
+    logger(err)
        if(!err.statusCode) {
            err.statusCode = 500;
        }
@@ -53,6 +54,7 @@ exports.showbyunit = (req,res,next) => {
        });
    })
    .catch((err) => {
+    logger(err)
        if(!err.statusCode) {
            err.statusCode = 500;ya
        }
@@ -99,6 +101,7 @@ exports.store = (req, res, next) => {
        });
    })
    .catch((err) => {
+    logger(err)
        if(!err.statusCode) {
            err.statusCode = 500
        }
@@ -164,6 +167,7 @@ exports.store = (req, res, next) => {
         })
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500
         }
@@ -199,6 +203,7 @@ exports.showruang = (req, res, next) => {
        });
    })
    .catch((err) => {
+        logger(err)
        if(!err.statusCode) {
            err.statusCode = 500;
        }
@@ -388,6 +393,7 @@ exports.jumlahbarangbyunit = (req, res, next) => {
         
     })
     .catch((err) => {
+        logger(err)
         if(!err.statusCode) {
             err.statusCode = 500
         }
@@ -453,6 +459,7 @@ exports.getbarangbyunitfilter = (req, res, next) => {
             });
         })
         .catch((err) => {
+            logger(err)
             if(!err.statusCode) {
                 err.statusCode = 500;
             }

@@ -440,6 +440,7 @@ exports.store = (req, res, next) => {
                                 luas_dasar_bangunan : req.body.luas_dasar_bangunan, 
                                 jumlah_lantai : req.body.jumlah_lantai, 
                                 type : req.body.type, 
+                                lokasi_bangunan : req.body.lokasi_bangunan,
                                 tahun_bangun : req.body.tahun_bangun, 
                                 tahun_guna : req.body.tahun_bangun,
                                 pdf : req.body.pdf,

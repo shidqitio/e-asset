@@ -190,6 +190,7 @@ exports.store = (req, res, next) => {
                         kode_asset : item.kode_asset, 
                         kode_unit_kerja : head.kode_unit_kerja, 
                         kode_kegiatan_rkt : head.kode_kegiatan_rkt, 
+                        tahun : head.tahun,
                         kuantitas : item.kuantitas, 
                         sbsk : item.sbsk, 
                         existing_bmut : item.existing_bmut, 
@@ -263,6 +264,7 @@ exports.store = (req, res, next) => {
                         kode_asset : item.kode_asset, 
                         kode_unit_kerja : head.kode_unit_kerja, 
                         kode_kegiatan_rkt : head.kode_kegiatan_rkt, 
+                        tahun : head.tahun,
                         kuantitas : item.kuantitas, 
                         sbsk : item.sbsk, 
                         existing_bmut : item.existing_bmut, 
@@ -1054,6 +1056,7 @@ exports.update = (req, res, next) => {
             let head_arr = JSON.parse(JSON.stringify(head))
             const {kode_kegiatan_rkt} = head_arr[index - 1]
             const {kode_unit_kerja} = head_arr[index - 1]
+            const {tahun} = head_arr[index-1]
             return RkbmutPengadaanDetail.destroy({
                 where : {
                     kode_kegiatan_rkt : kode_kegiatan_rkt, 
@@ -1077,6 +1080,7 @@ exports.update = (req, res, next) => {
                         kode_asset : item.kode_asset, 
                         kode_unit_kerja : kode_unit_kerja, 
                         kode_kegiatan_rkt : kode_kegiatan_rkt, 
+                        tahun : tahun,
                         kuantitas : item.kuantitas, 
                         sbsk : item.sbsk, 
                         existing_bmut : item.existing_bmut, 
@@ -1189,7 +1193,7 @@ exports.destroyfromhead = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        return RkbmutPengadaanHeader.destroy({
+        return RkbmutPengadaanDetail.destroy({
             where : {
                 kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
                 kode_unit_kerja : req.params.kode_unit_kerja, 
@@ -1204,7 +1208,7 @@ exports.destroyfromhead = (req, res, next) => {
             error.statusCode = 422 
             throw error
         }
-        return RkbmutPengadaanDetail.destroy({
+        return RkbmutPengadaanHeader.destroy({
             where : {
                 kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
                 kode_unit_kerja : req.params.kode_unit_kerja
@@ -1222,6 +1226,12 @@ exports.destroyfromhead = (req, res, next) => {
             message : "Data Berhasil Dihapus", 
             data : destroyall
         });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
     })
    
 }
