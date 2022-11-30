@@ -8,6 +8,7 @@ const TrxKibAngkutan = require("../models/trxKibAngkutan");
 const TrxKibAlatbesar = require("../models/trxKibBesar");
 const TrxKibBangunan = require("../models/trxKibBangunan");
 const RkbmutPemeliharaanDetail = require("../models/rkbmutPemeliharaanDetail")
+const RkbmutPenghapusan = require("../models/rkbmutPenghapusan")
 const timeout = require('connect-timeout')
 
 
@@ -394,7 +395,7 @@ exports.jumlahbarangbyunit = (req, res, next) => {
     })
 }
 
-//Get Barang By Unit Filter
+//Get Barang By Unit Filter PEMELIHARAAN
 exports.getbarangbyunitfilter = (req, res, next) => {
     let p = []
     return RkbmutPemeliharaanDetail.findAll({
@@ -448,6 +449,71 @@ exports.getbarangbyunitfilter = (req, res, next) => {
             return res.json({
                 status : "Success", 
                 message : "Data Berhasil Ditampilkan", 
+                data : data
+            });
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            return next(err);
+        })
+    })
+}
+
+//Get Barang By Unit Filter PENGHAPUSAN
+exports.getbarangbyunitpenghapusan = (req, res, next) => {
+    let p = []
+    return RkbmutPenghapusan.findAll({
+        where : {
+            kode_unit_kerja : req.params.kode_unit
+        }, 
+        raw : true
+    })
+    .then((cek) => {
+        if(cek.length !== 0) {
+            const penghapusan = cek.map((item) => {
+                return {
+                    nup : item.nup
+                }
+            })
+            console.log(penghapusan[0].nup)
+            for(let i = 0 ; penghapusan.length > i ; i++) {
+                p.push({
+                    nup : {
+                        [Op.not] : penghapusan[i].nup
+                    }
+                })
+            }
+        }
+        p.push()
+        return DaftarBarang.findAll({
+            where : [
+                p, 
+                {
+                    nup : {
+                        [Op.not] : null
+                     }
+                }
+            ],
+            include : [
+                {
+                    model : Ruang, 
+                    where : {
+                        kode_unit : req.params.kode_unit
+                    }
+                }
+            ]
+        })
+        .then((data) => {
+            if(data.length === 0) {
+                const error = new Error("Data Tidak Ada")
+                error.statusCode = 422 
+                throw error
+            }
+            return res.json({
+                status : "Success", 
+                message : "Data Berhasil Ditampilkan",
                 data : data
             });
         })

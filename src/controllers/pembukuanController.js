@@ -782,3 +782,57 @@ exports.getangkutanbyunit = (req, res, next) => {
         return next(err);
     })
 }
+
+// exports.storefrompromise = (req, res, next) => {
+//     let no_sppa = req.body.no_sppa
+//     let kode_asset = req.body.kode_asset
+//     let jumlah_barang = req.body.jumlah_barang
+//     let asal_perolehan = req.body.asal_perolehan
+//     let no_bukti_perolehan = req.body.no_bukti_perolehan
+
+//     return db.transaction()
+//     .then((t) => { 
+//         return PembukuanDetail.findAll({
+//             where  : {
+//                 no_sppa : no_sppa
+//             }, 
+//             order : [ 
+//                 ['udcr', 'ASC']
+//             ],
+//             raw : true, 
+//         })
+//         .then((data) => {
+//             let kode = JSON.stringify(data)
+//             let index = data.length
+//             if(data.length === 0) {
+//                 hasil_kode = no_sppa + 1
+//             }
+//             else{
+//                 const {kode_pembukuan} = kode[index-1];
+//                 let hasil = kode_pembukuan.substring(5);
+//                 hasil = parseInt(hasil)
+//                 let kode_akhir = hasil + 1
+//                 hasil_kode = no_sppa + JSON.stringify(kode_akhir)
+//                 console.log("Tes Data :", kode_pembukuan)
+//             }
+//             return PembukuanDetail.create({
+//                 kode_asset : kode_asset, 
+//                 jumlah_barang : jumlah_barang, 
+//                 asal_perolehan : asal_perolehan, 
+//                 no_bukti_perolehan : no_bukti_perolehan
+//             }, {transaction : t})
+//             .then((insert) => {
+//                 if(!insert) {
+//                     const error = new Error("Data Gagal Masuk")
+//                     error.statusCode = 422
+//                     throw error
+//                 }
+//                 let arr_dafbar = [] 
+//                 let barang = 1
+//                 for(i = 1 ; i < jumlah_barang ; i++) {
+//                     kode_barang = 
+//                 }
+//             })
+//         })
+//     })
+// }

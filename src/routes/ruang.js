@@ -10,7 +10,8 @@ const {
     showruang,
     barangbyunitdata,
     jumlahbarangbyunit, 
-    getbarangbyunitfilter
+    getbarangbyunitfilter, 
+    getbarangbyunitpenghapusan
 } = require("../controllers/ruangController")
 
 const {validationResult} = require('express-validator')
@@ -46,5 +47,7 @@ RuangSchema.store,
       next();
 },
 store)
+
+router.get("/get-barang-penghapusan/:kode_unit", getbarangbyunitpenghapusan)
 
 module.exports = router

@@ -8,5 +8,4 @@ exports.store = [
     check("nilai_perolehan").notEmpty().withMessage("Nilai Perolehan Tidak Boleh Kosong"),
     check("nilai_perolehan").isNumeric().withMessage("Nilai Perolehan Harus Angka"),
     check("alasan").notEmpty().withMessage("Alasan Tidak Boleh Kosong"),
-
 ]

@@ -147,6 +147,10 @@ exports.store = (req, res, next) => {
          const request = req.body; 
          const tahun = req.body.tahun;
          const create = request.pemindahtanganan.map((item) => {
+            let tahun_perolehan = item.tahun_perolehan 
+            const split_tanggal = tahun_perolehan.split("-")
+            let tanggal_perolehan = split_tanggal[2]
+            console.log(split_tanggal)
             return {
                 kode_asset : item.kode_asset, 
                 kode_unit_kerja : kode_unit,
@@ -158,7 +162,7 @@ exports.store = (req, res, next) => {
                 status_paraf : 0, 
                 merk : item.merk, 
                 umur_ekonomis : item.umur_ekonomis, 
-                tahun_perolehan : item.tahun_perolehan, 
+                tahun_perolehan : tanggal_perolehan, 
                 kondisi : item.kondisi, 
                 nilai_perolehan : item.nilai_perolehan,
                 kode_pindah_tangan : item.kode_pindah_tangan, 
