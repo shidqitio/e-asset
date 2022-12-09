@@ -20,7 +20,7 @@ const RkbmutPengadaanDetail = db.define(
             allowNull : true, 
             primaryKey : true,
         },
-        kode_kegiatan_rkt : {
+        kode_output : {
             type : DataTypes.INTEGER(11),
             allowNull : false, 
             primaryKey : true
@@ -91,11 +91,11 @@ const RkbmutPengadaanDetail = db.define(
 
 //JOIN Header to Detail
 RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
-    foreignKey : "kode_kegiatan_rkt"
+    foreignKey : "kode_output"
 })
 
 RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
-    foreignKey : "kode_kegiatan_rkt"
+    foreignKey : "kode_output"
 })
 
 RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {

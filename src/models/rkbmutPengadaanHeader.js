@@ -4,11 +4,11 @@ const {DataTypes} = require("sequelize")
 const RkbmutPengadaanHeader = db.define(
     "RkbmutPengadaanHeader",
     {
-        kode_kegiatan_rkt : {
-            type : DataTypes.INTEGER(11),
+        kode_output : {
+            type : DataTypes.INTEGER(11), 
             allowNull : false, 
             primaryKey : true
-        }, 
+        },
         kode_unit_kerja : {
             type : DataTypes.STRING(16), 
             allowNull : false, 
@@ -19,6 +19,14 @@ const RkbmutPengadaanHeader = db.define(
             allowNull : false, 
             primaryKey : true,
         }, 
+        kode_kegiatan_rkt : {
+            type : DataTypes.INTEGER(11),
+            allowNull : false, 
+        }, 
+        nama_output : {
+            type : DataTypes.STRING(255), 
+            allowNull : true
+        },
         status_revisi : {
             type : DataTypes.INTEGER(11), 
             allowNull : false, 

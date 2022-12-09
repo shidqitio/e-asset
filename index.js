@@ -4,6 +4,7 @@ const db = require("./src/config/database");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
+const {Server} = require("socket.io")
 
 const http = require("http");
 const server = http.createServer(app);
@@ -19,9 +20,28 @@ app.use(express.json());
 app.use(cors());
 
 
+//SOCKET IO CONNECTION
+const io = new Server(server, {
+  cors: {
+    origin : "http://localhost:3000",
+    methods : ["GET","POST"]
+  }
+})
+
+// io.on("connection", (socket) => {
+//   const SocketIo = require("./src/config/socket");
+//   global.read_socket = new SocketIo(socket);
+
+// })
+io.on("connection", (socket) => {
+  console.log(`User Connected : ${socket.id}`)
+})
+
+
 app.use(require("./src/routes"));
 
 app.use(require("./src/middlewares/errorHandler"));
+
 
 
 db.sync()
