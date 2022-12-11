@@ -116,8 +116,13 @@ exports.indexapip = (req, res, next) => {
 
 
 
-//Imsert RKBMUT Pengadaan
+//Insert RKBMUT Pengadaan
 exports.store = (req, res, next) => {
+     //Pemisah Kode dan Nama Output
+     let output = req.body.output
+     const split_output = output.split("||")
+     let kode_output = parseInt(split_output[0])
+     let nama_output = split_output[1]
     return db.transaction()
     .then((t) => {
         //Pemisah Kode dan Nama Unit
@@ -125,102 +130,19 @@ exports.store = (req, res, next) => {
         const split_unit = unit.split("||")
         let kode_unit = split_unit[0]
         let nama_unit = split_unit[1]
-        //Pemisah Kode dan Nama RKT
-        let kegiatan_rkt = req.body.kegiatan_rkt
-        const split_rkt = kegiatan_rkt.split("||")
-        let kode_kegiatan_rkt = parseInt(split_rkt[0])
         RkbmutPengadaanHeader.findAll({where  : {
             tahun : req.body.tahun, 
             kode_unit_kerja : kode_unit, 
-            kode_kegiatan_rkt : kode_kegiatan_rkt,
+            kode_output : kode_output,
             status_revisi : 0, 
         }
         })
         .then((data) => {
             if(data.length !== 0){
-                let datum = JSON.parse(JSON.stringify(data))
-                const index = datum.length 
-                const {revisi_ke} = datum[index-1]
-                revisi = revisi_ke + 1
-                // console.log("Jumlah Data",revisi_ke)
-                 //Pemisah Kode dan Nama Unit
-            let unit = req.body.unit 
-            const split_unit = unit.split("||")
-            
-            let kode_unit = split_unit[0]
-            let nama_unit = split_unit[1]
-            //Pemisah Kode dan Nama RKT
-            let kegiatan_rkt = req.body.kegiatan_rkt
-            const split_rkt = kegiatan_rkt.split("||")
-            let kode_kegiatan_rkt = parseInt(split_rkt[0])
-            let nama_kegiatan_rkt = split_rkt[1]
-            //Pemisah Kode dan Nama Program RSB
-            let program_rsb = req.body.program_rsb
-            const split_rsb = program_rsb.split("||")
-            let kode_rsb = split_rsb[0]
-            let nama_rsb = split_rsb[1]
-            //Pemisah Kode dan Nama Jenis Belanja
-            let jenis_belanja = req.body.jenis_belanja
-            const split_jenis_belanja = jenis_belanja.split("||")
-            let kode_jenis_belanja = split_jenis_belanja[0]
-            let nama_jenis_belanja = split_jenis_belanja[1]
-            //Pemisah Kode dan Nama Sub Kegiatan
-            
-            //Insert RKBMUT Header  
-            return RkbmutPengadaanHeader.create({
-                kode_unit_kerja : kode_unit, 
-                nama_unit_kerja : nama_unit, 
-                kode_kegiatan_rkt : kode_kegiatan_rkt, 
-                nama_kegiatan_rkt : nama_kegiatan_rkt, 
-                kode_program_rsb : kode_rsb, 
-                nama_program_rsb : nama_rsb, 
-                kode_jenis_belanja : kode_jenis_belanja, 
-                nama_jenis_belanja : nama_jenis_belanja, 
-                tahun : req.body.tahun, 
-                status_revisi : 0, 
-                revisi_ke : revisi, 
-                status_paraf : 0
-            },{transaction : t})
-            .then((header) => {
-                const head = JSON.parse(JSON.stringify(header))
-                const request = req.body
-                const data = request.rkbmutpengadaandetail.map((item) => {
-                    return {
-                        kode_skema_pengadaan : item.kode_skema_pengadaan,                         
-                        kode_asset : item.kode_asset, 
-                        kode_unit_kerja : head.kode_unit_kerja, 
-                        kode_kegiatan_rkt : head.kode_kegiatan_rkt, 
-                        tahun : head.tahun,
-                        kuantitas : item.kuantitas, 
-                        sbsk : item.sbsk, 
-                        existing_bmut : item.existing_bmut, 
-                        kebutuhan_riil : item.kebutuhan_riil, 
-                        keterangan : item.keterangan,
-                        revisi_ke : head.revisi_ke,
-                        status_revisi : 0
-                    }
-                })
-                return RkbmutPengadaanDetail.bulkCreate(data, {transaction : t})
-                .then(() => {
-                    return t.commit()
-                })
-                .then((respon) => {
-                    res.json({
-                        status : "Success", 
-                        message : "Berhasil Menambah Data", 
-                        data : respon
-                    })
-                })
-                .catch((err) => {
-                    if(!err.statusCode) {
-                        err.statusCode = 500;
-                    }
-                    t.rollback();
-                    return next(err);
-                })
-            })
+                const error = new Error("Data Sudah Ada")
+                error.statusCode = 422
+                throw error
             }
-            else{
             //Pemisah Kode dan Nama Unit
             let unit = req.body.unit 
             const split_unit = unit.split("||")
@@ -247,6 +169,8 @@ exports.store = (req, res, next) => {
                 nama_unit_kerja : nama_unit, 
                 kode_kegiatan_rkt : kode_kegiatan_rkt, 
                 nama_kegiatan_rkt : nama_kegiatan_rkt, 
+                kode_output : kode_output,
+                nama_output : nama_output,
                 kode_program_rsb : kode_rsb, 
                 nama_program_rsb : nama_rsb, 
                 kode_jenis_belanja : kode_jenis_belanja, 
@@ -256,6 +180,7 @@ exports.store = (req, res, next) => {
                 revisi_ke : 0
             },{transaction : t})
             .then((header) => {
+                console.log(header)
                 const head = JSON.parse(JSON.stringify(header))
                 const request = req.body
                 const data = request.rkbmutpengadaandetail.map((item) => {
@@ -263,7 +188,7 @@ exports.store = (req, res, next) => {
                         kode_skema_pengadaan : item.kode_skema_pengadaan,                         
                         kode_asset : item.kode_asset, 
                         kode_unit_kerja : head.kode_unit_kerja, 
-                        kode_kegiatan_rkt : head.kode_kegiatan_rkt, 
+                        kode_output : head.kode_output, 
                         tahun : head.tahun,
                         kuantitas : item.kuantitas, 
                         sbsk : item.sbsk, 
@@ -274,6 +199,7 @@ exports.store = (req, res, next) => {
                         revisi_ke : 0
                     }
                 })
+                console.log(data)
                 return RkbmutPengadaanDetail.bulkCreate(data, {transaction : t})
                 .then(() => {
                     return t.commit()
@@ -285,15 +211,14 @@ exports.store = (req, res, next) => {
                         data : respon
                     })
                 })
-                .catch((err) => {
-                    if(!err.statusCode) {
-                        err.statusCode = 500;
-                    }
-                    t.rollback();
-                    return next(err);
-                })
             })
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
             }
+            t.rollback();
+            return next(err);
         })
     })
 }
@@ -358,7 +283,7 @@ exports.ajukanppk = (req, res, next) => {
 
 //Perbaikan PPK 
 exports.perbaikanppk = (req,res, next) => {
-    let kode_kegiatan_rkt = req.params.kode_kegiatan_rkt
+    let kode_output = req.params.kode_output
     let kode_unit_kerja = req.params.kode_unit_kerja
 
     let upd = {
@@ -371,7 +296,7 @@ exports.perbaikanppk = (req,res, next) => {
     .then((t) => {
         return RkbmutPengadaanHeader.findAll({
             where : {
-                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt,
+                kode_kegiatan_rkt : req.params.kode_output,
                 kode_unit_kerja : req.params.kode_unit_kerja,
                 status_paraf : 1, 
                 status_revisi : 0
@@ -387,7 +312,7 @@ exports.perbaikanppk = (req,res, next) => {
             }
             return RkbmutPengadaanHeader.update(upd, {
                 where : {
-                kode_kegiatan_rkt : kode_kegiatan_rkt,
+                kode_output : kode_output,
                 kode_unit_kerja : kode_unit_kerja,
                 status_paraf : 1, 
                 status_revisi : 0
@@ -407,7 +332,7 @@ exports.perbaikanppk = (req,res, next) => {
                 {
                     where : 
                     {
-                    kode_kegiatan_rkt : kode_kegiatan_rkt,
+                    kode_output : kode_output,
                     kode_unit_kerja : kode_unit_kerja,
                     status_paraf : 1, 
                     status_revisi : 0
@@ -445,7 +370,7 @@ exports.perbaikanppk = (req,res, next) => {
 //Perbaikan Oleh Unit 
 exports.perbaikanunit = (req, res, next) => {
     let param = {
-        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt,
+        kode_output : req.params.kode_output,
         kode_unit_kerja : req.params.kode_unit_kerja,
     }
     let upd = {
@@ -459,7 +384,7 @@ exports.perbaikanunit = (req, res, next) => {
     .then((t) => {
         return RkbmutPengadaanHeader.findAll({
             where : {
-                kode_kegiatan_rkt : param.kode_kegiatan_rkt,
+                kode_output : param.kode_output,
                 kode_unit_kerja : param.kode_unit_kerja,
                 status_revisi : 1,
                 status_paraf : 0
@@ -498,7 +423,7 @@ exports.perbaikanunit = (req, res, next) => {
                     where : {
                         kode_asset : update[i].kode_asset,
                         kode_unit_kerja : param.kode_unit_kerja,
-                        kode_kegiatan_rkt : param.kode_kegiatan_rkt
+                        kode_output : param.kode_output
                     },
                     transaction : t
                 })
@@ -545,7 +470,7 @@ exports.setujuppk = (req, res, next) => {
             where : {
                 status_revisi : 0,
                 kode_unit_kerja : req.params.kode_unit_kerja,
-                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt,
+                kode_output : req.params.kode_output,
                 status_paraf : 1
             }
         })
@@ -562,7 +487,7 @@ exports.setujuppk = (req, res, next) => {
             return RkbmutPengadaanHeader.update(upd, {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja, 
-                    kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                    kode_output : req.params.kode_output
                 }, 
                 transaction : t
             })
@@ -570,7 +495,7 @@ exports.setujuppk = (req, res, next) => {
                 return RkbmutPengadaanDetail.update(upd, {
                     where : {
                         kode_unit_kerja : req.params.kode_unit_kerja, 
-                        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                        kode_output : req.params.kode_output
                     }, 
                     transaction : t
                 })
@@ -661,7 +586,7 @@ exports.parafunitselesai = (req, res, next) => {
             where : {
                 status_revisi : 2 , 
                 kode_unit_kerja : req.params.kode_unit_kerja,
-                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                kode_output : req.params.kode_output
             }
         })
         .then((data) => {
@@ -676,7 +601,7 @@ exports.parafunitselesai = (req, res, next) => {
             return RkbmutPengadaanHeader.update(upd, {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja, 
-                    kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                    kode_output : req.params.kode_output
                 }, 
                 transaction : t
             })
@@ -689,7 +614,7 @@ exports.parafunitselesai = (req, res, next) => {
                 return RkbmutPengadaanDetail.update(upd, {
                     where : {
                         kode_unit_kerja : req.params.kode_unit_kerja, 
-                        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                        kode_output : req.params.kode_output
                     }, 
                     transaction : t
                 })
@@ -761,7 +686,7 @@ exports.review = (req, res, next) => {
         RkbmutPengadaanHeader.findAll({
             where : {
                 status_revisi : 1,
-                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+                kode_output : req.params.kode_output, 
                 kode_unit_kerja : req.params.kode_unit_kerja
             },
             include : [
@@ -806,7 +731,7 @@ exports.review = (req, res, next) => {
                     where : {
                         kode_asset : update[i].kode_asset, 
                         kode_unit_kerja : req.params.kode_unit_kerja,
-                        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                        kode_output : req.params.kode_output
                     }
                 })
             }
@@ -842,7 +767,7 @@ exports.reviewunit = (req, res, next) => {
     RkbmutPengadaanHeader.findAll({
         where : {
             status_revisi : 2,
-            kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+            kode_output : req.params.kode_output, 
             kode_unit_kerja : req.params.kode_unit_kerja
         },
         include : [
@@ -887,7 +812,7 @@ exports.reviewunit = (req, res, next) => {
                 where : {
                     kode_asset : update[i].kode_asset, 
                     kode_unit_kerja : req.params.kode_unit_kerja,
-                    kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                    kode_output : req.params.kode_output
                 }
             })
         }
@@ -899,7 +824,7 @@ exports.reviewunit = (req, res, next) => {
         // Kembalikan Pada Unit
         return RkbmutPengadaanHeader.update(upd, {
             where : {
-                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+                kode_output : req.params.kode_output, 
                 kode_unit_kerja : req.params.kode_unit_kerja
             }
         })
@@ -927,7 +852,7 @@ exports.parafapip = (req, res, next) => {
             where : {
                 status_revisi : 1 , 
                 kode_unit_kerja : req.params.kode_unit_kerja,
-                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                kode_output : req.params.kode_output
             }
         })
         .then((data) => {
@@ -942,7 +867,7 @@ exports.parafapip = (req, res, next) => {
             return RkbmutPengadaanHeader.update(upd, {
                 where : {
                     kode_unit_kerja : req.params.kode_unit_kerja, 
-                    kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                    kode_output : req.params.kode_output
                 }, 
                 transaction : t
             })
@@ -955,7 +880,7 @@ exports.parafapip = (req, res, next) => {
                 return RkbmutPengadaanDetail.update(upd, {
                     where : {
                         kode_unit_kerja : req.params.kode_unit_kerja, 
-                        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt
+                        kode_output : req.params.kode_output
                     }, 
                     transaction : t
                 })
@@ -1030,13 +955,13 @@ exports.update = (req, res, next) => {
             const split_unit = unit.split("||")
             let kode_unit = split_unit[0]
              //Pemisah Kode dan Nama RKT
-             let kegiatan_rkt = req.body.kegiatan_rkt
-             const split_rkt = kegiatan_rkt.split("||")
-             let kode_kegiatan_rkt = parseInt(split_rkt[0])
+             let output = req.body.output
+             const split_output = output.split("||")
+             let kode_output = parseInt(split_output[0])
         return RkbmutPengadaanHeader.findAll({
             where : {
                 kode_unit_kerja : kode_unit, 
-                kode_kegiatan_rkt : kode_kegiatan_rkt, 
+                kode_output : kode_output, 
                 status_revisi : 0, 
                 revisi_ke : 0
             },
@@ -1054,12 +979,12 @@ exports.update = (req, res, next) => {
             }
             let index = head.length
             let head_arr = JSON.parse(JSON.stringify(head))
-            const {kode_kegiatan_rkt} = head_arr[index - 1]
+            const {kode_output} = head_arr[index - 1]
             const {kode_unit_kerja} = head_arr[index - 1]
             const {tahun} = head_arr[index-1]
             return RkbmutPengadaanDetail.destroy({
                 where : {
-                    kode_kegiatan_rkt : kode_kegiatan_rkt, 
+                    kode_output : kode_output, 
                     kode_unit_kerja : kode_unit_kerja, 
                     revisi_ke : 0, 
                     status_revisi : 0
@@ -1079,7 +1004,7 @@ exports.update = (req, res, next) => {
                         kode_skema_pengadaan : item.kode_skema_pengadaan,                         
                         kode_asset : item.kode_asset, 
                         kode_unit_kerja : kode_unit_kerja, 
-                        kode_kegiatan_rkt : kode_kegiatan_rkt, 
+                        kode_output : kode_output, 
                         tahun : tahun,
                         kuantitas : item.kuantitas, 
                         sbsk : item.sbsk, 
@@ -1181,7 +1106,7 @@ exports.destroy = (req, res, next) => {
 exports.destroyfromhead = (req, res, next) => {
     RkbmutPengadaanHeader.findOne({
         where : {
-            kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+            kode_output : req.params.kode_output, 
             kode_unit_kerja : req.params.kode_unit_kerja, 
             status_revisi : 0, 
             status_paraf : 0
@@ -1195,7 +1120,7 @@ exports.destroyfromhead = (req, res, next) => {
         }
         return RkbmutPengadaanDetail.destroy({
             where : {
-                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+                kode_output : req.params.kode_output, 
                 kode_unit_kerja : req.params.kode_unit_kerja, 
                 status_revisi : 0, 
                 status_paraf : 0
@@ -1210,7 +1135,7 @@ exports.destroyfromhead = (req, res, next) => {
         }
         return RkbmutPengadaanHeader.destroy({
             where : {
-                kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+                kode_output : req.params.kode_output, 
                 kode_unit_kerja : req.params.kode_unit_kerja
             }
         });

@@ -21,7 +21,7 @@ const RkbmutPengadaanHeader = db.define(
         }, 
         kode_kegiatan_rkt : {
             type : DataTypes.INTEGER(11),
-            allowNull : false, 
+            allowNull : true, 
         }, 
         nama_output : {
             type : DataTypes.STRING(255), 
