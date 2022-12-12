@@ -356,7 +356,7 @@ exports.ajukanppk = (req, res, next) => {
     }) 
 }
 
-//Perbaikan PPK 
+//Perbaikan PPK Berupa Komentar
 exports.perbaikanppk = (req,res, next) => {
     let kode_kegiatan_rkt = req.params.kode_kegiatan_rkt
     let kode_unit_kerja = req.params.kode_unit_kerja
@@ -537,7 +537,7 @@ exports.perbaikanunit = (req, res, next) => {
     })
 }
 
-//Setuju dari PPK 
+//Setuju dari PPK Perubahan Unit
 exports.setujuppk = (req, res, next) => {
     return db.transaction()
     .then((t) => {
