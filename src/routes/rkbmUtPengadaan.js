@@ -56,7 +56,7 @@ RkbmPengadaanSchema.store,
 },
 update)
 
-router.put("/review/:kode_unit_kerja/:kode_kegiatan_rkt", 
+router.put("/review/:kode_unit_kerja/:kode_output", 
 RkbmPengadaanSchema.update,
 (req, res, next) => {
     const errors = validationResult(req);
@@ -70,7 +70,7 @@ RkbmPengadaanSchema.update,
 },
 review)
 
-router.put("/reviewunit/:kode_unit_kerja/:kode_kegiatan_rkt", 
+router.put("/reviewunit/:kode_unit_kerja/:kode_output", 
 RkbmPengadaanSchema.update,
 (req, res, next) => {
     const errors = validationResult(req);
@@ -86,15 +86,15 @@ reviewunit)
 
 router.put("/parafunit/:kode_unit_kerja",parafunit)
 
-router.put("/parafunitselesai/:kode_unit_kerja/:kode_kegiatan_rkt",parafunitselesai)
+router.put("/parafunitselesai/:kode_unit_kerja/:kode_output",parafunitselesai)
 
 router.put("/ajukanppk/:kode_unit_kerja", ajukanppk)
 
-router.put("/komentarppk/:kode_kegiatan_rkt/:kode_unit_kerja", perbaikanppk)
+router.put("/komentarppk/:kode_output/:kode_unit_kerja", perbaikanppk)
 
 
 
-router.put("/perbaikanunit/:kode_kegiatan_rkt/:kode_unit_kerja", 
+router.put("/perbaikanunit/:kode_output/:kode_unit_kerja", 
 RkbmPengadaanSchema.updateunit,
 (req, res, next) => {
     const errors = validationResult(req);
@@ -108,15 +108,15 @@ RkbmPengadaanSchema.updateunit,
 },
 perbaikanunit)
 
-router.put("/parafapip/:kode_unit_kerja/:kode_kegiatan_rkt",parafapip)
+router.put("/parafapip/:kode_unit_kerja/:kode_output",parafapip)
 
-router.put("/setujuppk/:kode_kegiatan_rkt/:kode_unit_kerja", setujuppk)
+router.put("/setujuppk/:kode_output/:kode_unit_kerja", setujuppk)
 
-router.delete("/delete/:kode_unit_kerja/:kode_kegiatan_rkt", destroy)
+router.delete("/delete/:kode_unit_kerja/:kode_output", destroy)
 
-router.delete("/delete/header/:kode_unit_kerja/:kode_kegiatan_rkt", destroyfromhead)
+router.delete("/delete/header/:kode_unit_kerja/:kode_output", destroyfromhead)
 
-router.delete("/delete/detail/:kode_unit_kerja/:kode_kegiatan_rkt/:kode_asset", destroyfromdetail)
+router.delete("/delete/detail/:kode_unit_kerja/:kode_output/:kode_asset", destroyfromdetail)
 
 
 module.exports = router
