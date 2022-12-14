@@ -6,7 +6,7 @@ const TrxKibAngkutan = require("../models/trxKibAngkutan")
 const TrxKibAlatbesar = require("../models/trxKibBesar")
 const TrxKibBangunan = require("../models/trxKibBangunan")
 const db = require("../config/database")
-const {QueryTypes, Op} = require("sequelize")
+const {QueryTypes, Op, where} = require("sequelize")
 const Ruang = require("../models/ruang")
 const StatusPemilik = require("../models/statusPemilik")
 const sequelize = require("sequelize")
@@ -145,7 +145,20 @@ exports.store = (req, res, next) => {
             },{transaction : t})
             .then((pembukuan) => {     
                 const kode_pembukuan = JSON.parse(JSON.stringify(pembukuan))
-                // console.log("Coba :", kode_pembukuan.catat)
+                // console.log("Coba :", kode_pembukuan.kode_asset)
+                return Asset.findAll({
+                    where : {
+                        kode_asset : kode_pembukuan.kode_asset
+                    },
+                    raw : true
+                })
+                .then((ass) => {
+                  if(ass.length === 0) {
+                    const error = new Error("Data Tidak Ada")
+                    error.statusCode = 422
+                    throw error
+                  }  
+                  
                     if(kode_pembukuan.catat === "DBR" || kode_pembukuan.catat === "DBL") {
                     const request = req.body;
                     const data = request.barang.map((item) => {
@@ -263,8 +276,8 @@ exports.store = (req, res, next) => {
                             })
                         })
                     }
-                    else if(kode_pembukuan.kode_asset.match(/^302.*$/)) {
-                        //Jika Kib Angkutan
+                    else if(kode_pembukuan.kode_asset.match(/^302.*$/) && ass[0].kode_kartu == 3) {
+                    //Jika Kib Angkutan
                     TrxKibAngkutan.findAll()
                     .then((data) => {
                     //Pemisah Kode dan Nama Unit
@@ -335,79 +348,79 @@ exports.store = (req, res, next) => {
                             return next(err);
                         })
                     }
-                    else if(kode_pembukuan.kode_asset.match(/^301.*$/)) {
-                        //Jika Kib Alat  Besar
-                        TrxKibAlatbesar.findAll()
-                        .then((data) => {
-                            //Pemisah Kode dan Nama Unit
-                            let unit = req.body.unit 
-                            const split = unit.split("||")
-                            let kode_unit = split[0]
-                            let nama_unit = split[1]
+                    // else if(kode_pembukuan.kode_asset.match(/^301.*$/)) {
+                    //     //Jika Kib Alat  Besar
+                    //     TrxKibAlatbesar.findAll()
+                    //     .then((data) => {
+                    //         //Pemisah Kode dan Nama Unit
+                    //         let unit = req.body.unit 
+                    //         const split = unit.split("||")
+                    //         let kode_unit = split[0]
+                    //         let nama_unit = split[1]
 
-                            //perhitungan kode
-                            if(data.length === 0) {
-                                no_asset_alatbesar = 1
-                            }
-                            else {
-                                //KODE
-                                let kode = JSON.parse(JSON.stringify(data))
-                                let index = data.length
-                                const {no_asset} = kode[index-1]
-                                no_asset_alatbesar = no_asset + 1
-                            }
+                    //         //perhitungan kode
+                    //         if(data.length === 0) {
+                    //             no_asset_alatbesar = 1
+                    //         }
+                    //         else {
+                    //             //KODE
+                    //             let kode = JSON.parse(JSON.stringify(data))
+                    //             let index = data.length
+                    //             const {no_asset} = kode[index-1]
+                    //             no_asset_alatbesar = no_asset + 1
+                    //         }
 
-                            return TrxKibAlatbesar.create({
-                                kode_asset : kode_pembukuan.kode_asset, 
-                                kode_status_pemilik : req.body.kode_status_pemilik, 
-                                kode_unit : kode_unit, 
-                                nama_unit : nama_unit,
-                                no_asset : no_asset_alatbesar, 
-                                kode_pembukuan : kode_pembukuan.kode_pembukuan, 
-                                merk : kode_pembukuan.merk, 
-                                type : req.body.type, 
-                                tahun_pembuatan : req.body.tahun_pembuatan,
-                                pabrik : req.body.pabrik, 
-                                perakitan : req.body.perakitan, 
-                                negara : req.body.negara,
-                                kapasitas : req.body.kapasitas, 
-                                sistem_pendingin : req.body.sistem_pendingin,
-                                sistem_operasi : req.body.sistem_operasi, 
-                                sistem_pembakar : req.body.sistem_pembakar, 
-                                dudukan_peralatan : req.body.dudukan_peralatan, 
-                                power_train : req.body.power_train, 
-                                no_mesin : req.body.no_mesin, 
-                                no_rangka : req.body.no_rangka, 
-                                perlengkapan1 : req.body.perlengkapan1,
-                                perlengkapan2 : req.body.perlengkapan2,
-                                perlengkapan3 : req.body.perlengkapan3,
-                                sumber_dana : req.body.sumber_dana,
-                                no_dana : req.body.no_dana, 
-                                tanggal_dana : req.body.tanggal_dana, 
-                                harga_wajar : req.body.harga_wajar, 
-                                catatan : req.body.catatan
-                            },{transaction : t})
-                        })
-                        .then(() => {
-                            return t.commit()
-                        })
-                        .then((respons) => {
-                            res.json({
-                                status : "Success", 
-                                message : "Berhasil Menambah Data", 
-                                data : respons
-                            })
-                        })
-                        .catch((err) => {
-                            if(!err.statusCode) {
-                                err.statusCode = 500;
-                            }
-                            t.rollback();
-                            return next(err);
-                        })
-                    }
+                    //         return TrxKibAlatbesar.create({
+                    //             kode_asset : kode_pembukuan.kode_asset, 
+                    //             kode_status_pemilik : req.body.kode_status_pemilik, 
+                    //             kode_unit : kode_unit, 
+                    //             nama_unit : nama_unit,
+                    //             no_asset : no_asset_alatbesar, 
+                    //             kode_pembukuan : kode_pembukuan.kode_pembukuan, 
+                    //             merk : kode_pembukuan.merk, 
+                    //             type : req.body.type, 
+                    //             tahun_pembuatan : req.body.tahun_pembuatan,
+                    //             pabrik : req.body.pabrik, 
+                    //             perakitan : req.body.perakitan, 
+                    //             negara : req.body.negara,
+                    //             kapasitas : req.body.kapasitas, 
+                    //             sistem_pendingin : req.body.sistem_pendingin,
+                    //             sistem_operasi : req.body.sistem_operasi, 
+                    //             sistem_pembakar : req.body.sistem_pembakar, 
+                    //             dudukan_peralatan : req.body.dudukan_peralatan, 
+                    //             power_train : req.body.power_train, 
+                    //             no_mesin : req.body.no_mesin, 
+                    //             no_rangka : req.body.no_rangka, 
+                    //             perlengkapan1 : req.body.perlengkapan1,
+                    //             perlengkapan2 : req.body.perlengkapan2,
+                    //             perlengkapan3 : req.body.perlengkapan3,
+                    //             sumber_dana : req.body.sumber_dana,
+                    //             no_dana : req.body.no_dana, 
+                    //             tanggal_dana : req.body.tanggal_dana, 
+                    //             harga_wajar : req.body.harga_wajar, 
+                    //             catatan : req.body.catatan
+                    //         },{transaction : t})
+                    //     })
+                    //     .then(() => {
+                    //         return t.commit()
+                    //     })
+                    //     .then((respons) => {
+                    //         res.json({
+                    //             status : "Success", 
+                    //             message : "Berhasil Menambah Data", 
+                    //             data : respons
+                    //         })
+                    //     })
+                    //     .catch((err) => {
+                    //         if(!err.statusCode) {
+                    //             err.statusCode = 500;
+                    //         }
+                    //         t.rollback();
+                    //         return next(err);
+                    //     })
+                    // }
                     //JIKA KIB BANGUNAN
-                    else if(kode_pembukuan.kode_asset.match(/^4.*$/)) {
+                    else if(kode_pembukuan.kode_asset.match(/^4.*$/) || kode_pembukuan.kode_asset.match(/^503.*$/) || kode_pembukuan.kode_asset.match(/^504.*$/)) {
                         TrxKibBangunan.findAll()
                         .then((data) => {
                             //Pemisah Kode dan Nama Unit
@@ -462,17 +475,23 @@ exports.store = (req, res, next) => {
                                 data : respons
                             })
                         })
-                        .catch((err) => {
-                            if(!err.statusCode) {
-                                err.statusCode = 500;
-                            }
-                            t.rollback();
-                            return next(err);
-                        })
                     }
-                }
+                    else{
+                        const error = new Error("Data Tidak Terdaftar")
+                        error.statusCode = 422
+                        throw error
+                    }
+                }  
             })
         })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        t.rollback();
+        return next(err);
+    })
       
     })
 }

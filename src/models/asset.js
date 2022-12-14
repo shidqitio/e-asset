@@ -14,6 +14,14 @@ const Asset = db.define(
             primaryKey : true, 
             allowNull : false,
         }, 
+        kode_bidang : {
+          type : DataTypes.STRING(3), 
+          allowNull : true
+        }, 
+        kode_kartu : {
+          type : DataTypes.STRING(1), 
+          allowNull : true
+        },
         ucr: {
             type: DataTypes.STRING(100),
             allowNull: true,
