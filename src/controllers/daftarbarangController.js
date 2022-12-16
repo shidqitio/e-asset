@@ -1,7 +1,7 @@
 const DaftarBarang = require("../models/daftarBarang")
 const Pembukuan = require("../models/pembukuan")
 const Ruang = require("../models/ruang")
-const {Op} = require("sequelize")
+const {Op, where} = require("sequelize")
 const QrCode = require("qrcode")
 const path = require('path')
 
@@ -239,5 +239,46 @@ exports.getbynup = (req, res, next) => {
             err.statusCode = 500;
         }
         next(err)
+    });
+}
+
+exports.ubahkondisi = (req, res, next) => {
+    let nup = req.params.nup
+    return DaftarBarang.findAll({
+        where : {
+            nup : nup
+        }
+    })
+    .then((app) => {
+        if(app.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return DaftarBarang.update({
+            kondisi : req.body.kondisi
+        }, {
+            where : {
+                nup : nup
+            }
+        })
+        .then((update) => {
+            if(!update) {
+            const error = new Error("Data Gagal Update")
+            error.statusCode = 422
+            throw error
+            }
+            return res.json({
+                status : "Success", 
+                message : "Berhasil Mengubah Data",
+                data : app
+            })
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
     });
 }

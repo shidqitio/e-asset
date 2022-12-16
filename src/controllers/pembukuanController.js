@@ -5,6 +5,7 @@ const TrxKibTanah = require("../models/trxKibTanah")
 const TrxKibAngkutan = require("../models/trxKibAngkutan")
 const TrxKibAlatbesar = require("../models/trxKibBesar")
 const TrxKibBangunan = require("../models/trxKibBangunan")
+const TrxKibBangunanAir = require("../models/trxKibBangunanAir")
 const db = require("../config/database")
 const {QueryTypes, Op, where} = require("sequelize")
 const Ruang = require("../models/ruang")
@@ -476,6 +477,62 @@ exports.store = (req, res, next) => {
                             })
                         })
                     }
+                    else if(kode_pembukuan.kode_asset.match(/^502.*$/)) {
+                        TrxKibBangunan.findAll()
+                        .then((data) => {
+                            //Pemisah Kode dan Nama Unit
+                            let unit = req.body.unit 
+                            const split = unit.split("||")
+                            let kode_unit = split[0]
+                            let nama_unit = split[1]
+
+                            //perhitungan kode
+                            if(data.length === 0) {
+                                no_asset_bangunan = 1
+                            }
+                            else {
+                                //KODE
+                                let kode = JSON.parse(JSON.stringify(data))
+                                let index = data.length
+                                const {no_asset} = kode[index-1]
+                                no_asset_bangunan = no_asset + 1
+                            }
+
+                            return TrxKibBangunanAir.create({
+                                kode_asset : kode_pembukuan.kode_asset, 
+                                kode_status_pemilik : req.body.kode_status_pemilik, 
+                                kode_unit : kode_unit, 
+                                nama_unit : nama_unit, 
+                                no_asset : no_asset_bangunan, 
+                                nup_tanah : req.body.nup_tanah,
+                                kode_pembukuan : kode_pembukuan.kode_pembukuan, 
+                                luas_bangunan : req.body.luas_bangunan, 
+                                luas_dasar_bangunan : req.body.luas_dasar_bangunan, 
+                                kapasitas : req.body.kapasitas, 
+                                kuantitas : req.body.kuantitas, 
+                                lokasi_bangunan : req.body.lokasi_bangunan,
+                                tahun_bangun : req.body.tahun_bangun, 
+                                tahun_guna : req.body.tahun_bangun,
+                                pdf : req.body.pdf,
+                                sumber_dana : req.body.sumber_dana,
+                                no_dana : req.body.no_dana, 
+                                tanggal_dana : req.body.tanggal_dana,
+                                nilai_wajar : req.body.nilai_wajar,
+                                njop : req.body.njop,
+                                catatan : req.body.catatan
+                            },{transaction : t})
+                        })
+                        .then(() => {
+                            return t.commit()
+                        })
+                        .then((respons) => {
+                            res.json({
+                                status : "Success", 
+                                message : "Berhasil Menambah Data", 
+                                data : respons
+                            })
+                        })
+                    }
                     else{
                         const error = new Error("Data Tidak Terdaftar")
                         error.statusCode = 422
@@ -780,6 +837,52 @@ exports.getangkutanbyunit = (req, res, next) => {
                     }
                 },
                 required : true
+            }, 
+        ],
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan", 
+            data : data
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    })
+}
+
+exports.getbangunanairbyunit = (req, res, next) => {
+    Asset.findAll({
+        attributes : ["kode_asset", "nama_asset"],
+        order : [
+            ['udcr','ASC']
+        ],
+        include : [
+            {
+                model : TrxKibBangunanAir, 
+                attributes : ["kode_asset", "nup", "kode_status_pemilik"],
+                where : {
+                    kode_unit : req.params.kode_unit, 
+                    nup : {
+                        [Op.not] : null
+                    }
+                },
+                required : true,
+                include : [
+                    {
+                        model : StatusPemilik, 
+                        attributes : ["kode_status_pemilik","nama_status_pemilik"]
+                    },
+                ]
             }, 
         ],
     })

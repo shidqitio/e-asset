@@ -13,7 +13,8 @@ const {
     getbarangbyunit,
     getalatbesarbyunit,
     getbangunanbyunit,
-    getbarangbyunitfilter
+    getbarangbyunitfilter,
+    getbangunanairbyunit
 } = require("../controllers/pembukuanController")
 
 const pembukuanSchema = require("../middlewares/request/pembukuan")
@@ -36,6 +37,8 @@ router.get("/angkutan/:kode_unit",getangkutanbyunit )
 router.get("/alatbesar/:kode_unit",getalatbesarbyunit )
 
 router.get("/bangunan/:kode_unit",getbangunanbyunit )
+
+router.get("/bangunan-air/:kode_unit", getbangunanairbyunit)
 
 
 router.post("/", 
