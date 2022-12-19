@@ -14,7 +14,8 @@ const {
     getalatbesarbyunit,
     getbangunanbyunit,
     getbarangbyunitfilter,
-    getbangunanairbyunit
+    getbangunanairbyunit, 
+    storefrompromise
 } = require("../controllers/pembukuanController")
 
 const pembukuanSchema = require("../middlewares/request/pembukuan")
@@ -55,5 +56,7 @@ router.post("/",
           next();
     },
 store)
+
+router.post("/tes", storefrompromise)
 
 module.exports = router

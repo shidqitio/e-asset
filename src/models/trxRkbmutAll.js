@@ -39,6 +39,15 @@ const TrxRkbmutAll = db.define(
             allowNull : true, 
             defaultValue : 0
         },
+        pdf : {
+            type : DataTypes.STRING(255), 
+            allowNull : true
+        },
+        status_rkbmutall : {
+            type : DataTypes.SMALLINT(),
+            allowNull : true,
+            defaultValue : 0
+        },
         ucr: {
             type: DataTypes.STRING(100),
             allowNull: true,

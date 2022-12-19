@@ -906,56 +906,100 @@ exports.getbangunanairbyunit = (req, res, next) => {
     })
 }
 
-// exports.storefrompromise = (req, res, next) => {
-//     let no_sppa = req.body.no_sppa
-//     let kode_asset = req.body.kode_asset
-//     let jumlah_barang = req.body.jumlah_barang
-//     let asal_perolehan = req.body.asal_perolehan
-//     let no_bukti_perolehan = req.body.no_bukti_perolehan
+exports.storefrompromise = (req, res, next) => {
+    let no_sppa = req.body.no_sppa
+    let kode_asset = req.body.kode_asset
+    let jumlah_barang = req.body.jumlah_barang
+    let asal_perolehan = req.body.asal_perolehan
+    let no_bukti_perolehan = req.body.no_bukti_perolehan
+    let merk = req.body.merk
 
-//     return db.transaction()
-//     .then((t) => { 
-//         return PembukuanDetail.findAll({
-//             where  : {
-//                 no_sppa : no_sppa
-//             }, 
-//             order : [ 
-//                 ['udcr', 'ASC']
-//             ],
-//             raw : true, 
-//         })
-//         .then((data) => {
-//             let kode = JSON.stringify(data)
-//             let index = data.length
-//             if(data.length === 0) {
-//                 hasil_kode = no_sppa + 1
-//             }
-//             else{
-//                 const {kode_pembukuan} = kode[index-1];
-//                 let hasil = kode_pembukuan.substring(5);
-//                 hasil = parseInt(hasil)
-//                 let kode_akhir = hasil + 1
-//                 hasil_kode = no_sppa + JSON.stringify(kode_akhir)
-//                 console.log("Tes Data :", kode_pembukuan)
-//             }
-//             return PembukuanDetail.create({
-//                 kode_asset : kode_asset, 
-//                 jumlah_barang : jumlah_barang, 
-//                 asal_perolehan : asal_perolehan, 
-//                 no_bukti_perolehan : no_bukti_perolehan
-//             }, {transaction : t})
-//             .then((insert) => {
-//                 if(!insert) {
-//                     const error = new Error("Data Gagal Masuk")
-//                     error.statusCode = 422
-//                     throw error
-//                 }
-//                 let arr_dafbar = [] 
-//                 let barang = 1
-//                 for(i = 1 ; i < jumlah_barang ; i++) {
-//                     kode_barang = 
-//                 }
-//             })
-//         })
-//     })
-// }
+    return db.transaction()
+    .then((t) => { 
+        return PembukuanDetail.findAll({
+            where  : {
+                no_sppa : no_sppa
+            }, 
+            order : [ 
+                ['udcr', 'ASC']
+            ],
+            raw : true, 
+        })
+        .then((data) => {
+            let kode = JSON.parse(JSON.stringify(data))
+            let index = data.length
+            if(data.length === 0) {
+                hasil_kode = no_sppa + 1
+            }
+            else{
+                const {kode_pembukuan} = kode[index-1];
+                let hasil = kode_pembukuan.substring(5);
+                hasil = parseInt(hasil)
+                
+                let kode_akhir = hasil + 1
+                hasil_kode = no_sppa + JSON.stringify(kode_akhir)
+                console.log("Tes Data :", kode_pembukuan)
+            }
+            return PembukuanDetail.create({
+                no_sppa : no_sppa,
+                kode_asset : kode_asset, 
+                kode_pembukuan : hasil_kode,
+                jumlah_barang : jumlah_barang, 
+                asal_perolehan : asal_perolehan, 
+                no_bukti_perolehan : no_bukti_perolehan, 
+                merk : merk
+            }, {transaction : t})
+            .then((insert) => {
+                if(!insert) {
+                    const error = new Error("Data Gagal Masuk")
+                    error.statusCode = 422
+                    throw error
+                }
+                const pembukuan = JSON.parse(JSON.stringify(insert))
+                console.log("Kode Asset : ", pembukuan.jumlah_barang)
+                let jmlbarang = pembukuan.jumlah_barang
+                let arr_dafbar = [] 
+                let barang = 1
+                for(i = 1 ; i <= jmlbarang ; i++) {
+                    let kode_barang = i
+                    let deskripsi = pembukuan.merk + i
+                    // console.log("Deskripsi : ", deskripsi)
+                    arr_dafbar.push({
+                        kode_barang : kode_barang, 
+                        kode_asset : pembukuan.kode_asset,
+                        kode_pembukuan : pembukuan.kode_pembukuan,
+                        deskripsi : deskripsi, 
+                        merk : pembukuan.merk,
+                        kondisi : "Baik"
+                    })
+                }
+                // console.log(arr_dafbar)
+                return DaftarBarang.bulkCreate(arr_dafbar,
+                    {transaction : t})
+                .then((bcreate) => {
+                    if(!bcreate) {
+                        const error = new Error("Data Gagal Insert")
+                        error.statusCode = 422
+                        throw error
+                    }
+                    t.commit()
+                    return res.json({
+                        status : "Success", 
+                        message : "Data Berhasil Masuk", 
+                        data : {
+                            "pembukuan" : insert,
+                            "daftar_barang" : bcreate
+                        }
+                    })
+                })
+            })
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback()
+            return next(err);
+        });
+    })
+}
