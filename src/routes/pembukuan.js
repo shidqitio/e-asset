@@ -57,6 +57,6 @@ router.post("/",
     },
 store)
 
-router.post("/tes", storefrompromise)
+router.post("/store-promise", storefrompromise)
 
 module.exports = router

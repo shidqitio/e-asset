@@ -913,6 +913,9 @@ exports.storefrompromise = (req, res, next) => {
     let asal_perolehan = req.body.asal_perolehan
     let no_bukti_perolehan = req.body.no_bukti_perolehan
     let merk = req.body.merk
+    let ruang = req.body.ruang
+    const split_ruang = ruang.split("-")
+    const kode_ruang = parseInt(split_ruang[1])
 
     return db.transaction()
     .then((t) => { 
@@ -966,6 +969,7 @@ exports.storefrompromise = (req, res, next) => {
                     // console.log("Deskripsi : ", deskripsi)
                     arr_dafbar.push({
                         kode_barang : kode_barang, 
+                        kode_ruang : kode_ruang,
                         kode_asset : pembukuan.kode_asset,
                         kode_pembukuan : pembukuan.kode_pembukuan,
                         deskripsi : deskripsi, 
