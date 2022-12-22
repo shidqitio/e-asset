@@ -43,7 +43,7 @@ const TrxKibBangunanAir = db.define(
             allowNull : true
         }, 
         kuantitas : {
-            type : DataTypes.DECIMAL(20,2), 
+            type : DataTypes.STRING(2555), 
             allowNull : true
         }, 
         kapasitas : {

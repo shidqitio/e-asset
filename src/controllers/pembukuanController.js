@@ -914,6 +914,8 @@ exports.storefrompromise = (req, res, next) => {
     let no_bukti_perolehan = req.body.no_bukti_perolehan
     let merk = req.body.merk
     let ruang = req.body.ruang
+    let metode_penyusutan = req.body.metode_penyusutan
+    let dasar_harga = req.body.dasar_harga
     const split_ruang = ruang.split("-")
     const kode_ruang = parseInt(split_ruang[1])
 
@@ -950,6 +952,8 @@ exports.storefrompromise = (req, res, next) => {
                 jumlah_barang : jumlah_barang, 
                 asal_perolehan : asal_perolehan, 
                 no_bukti_perolehan : no_bukti_perolehan, 
+                metode_penyusutan : metode_penyusutan,
+                dasar_harga : dasar_harga,
                 merk : merk
             }, {transaction : t})
             .then((insert) => {
@@ -1007,3 +1011,5 @@ exports.storefrompromise = (req, res, next) => {
         });
     })
 }
+
+

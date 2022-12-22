@@ -1,11 +1,18 @@
 const db = require("../config/database")
 const RkbmutPengadaanHeader = require("./rkbmutPengadaanHeader")
 const Asset = require("./asset")
+const SkemaPengadaan = require("./skemaPengadaan")
 const {DataTypes} = require("sequelize")
 
 const RkbmutPengadaanDetail = db.define(
     "RkbmutPengadaanDetail", 
     {
+        
+        kode_kegiatan_rkt : {
+            type : DataTypes.INTEGER(11),
+            allowNull : false, 
+            primaryKey : true
+        }, 
         kode_skema_pengadaan : {
             type : DataTypes.STRING(10),
             allowNull : true, 
@@ -15,21 +22,12 @@ const RkbmutPengadaanDetail = db.define(
             allowNull : false, 
             primaryKey : true,
         }, 
+       
         kode_unit_kerja : {
             type : DataTypes.STRING(16), 
-            allowNull : true, 
+            allowNull : false, 
             primaryKey : true,
         },
-        kode_output : {
-            type : DataTypes.INTEGER(11),
-            allowNull : false, 
-            primaryKey : true
-        },
-        tahun : {
-            type : DataTypes.STRING(4),
-            allowNull : false, 
-            primaryKey : true
-        }, 
         status_paraf : {
             type : DataTypes.INTEGER(),
             allowNull : true,
@@ -44,7 +42,7 @@ const RkbmutPengadaanDetail = db.define(
             allowNull : true
         },
         kuantitas : {
-            type : DataTypes.INTEGER(11), 
+            type : DataTypes.STRING(255), 
             allowNull : true,
         }, 
         sbsk : {
@@ -91,21 +89,24 @@ const RkbmutPengadaanDetail = db.define(
 
 //JOIN Header to Detail
 RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
-    foreignKey : "kode_output"
+    foreignKey : "kode_kegiatan_rkt"
 })
 
 RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
-    foreignKey : "kode_output"
+    foreignKey : "kode_kegiatan_rkt", 
 })
 
-RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
-    foreignKey : "kode_unit_kerja"
-})
 
-RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
-    foreignKey : "kode_unit_kerja"
-})
+// RkbmutPengadaanHeader.hasMany(RkbmutPengadaanDetail, {
+//     foreignKey : "kode_unit_kerja", 
+ 
+// })
 
+
+// RkbmutPengadaanDetail.belongsTo(RkbmutPengadaanHeader, {
+//     foreignKey : "kode_unit_kerja", 
+
+// })
 
 
 
@@ -117,6 +118,15 @@ Asset.hasMany(RkbmutPengadaanDetail, {
 
 RkbmutPengadaanDetail.belongsTo(Asset, {
     foreignKey : "kode_asset"
+})
+
+//Skema Pengadaan 
+SkemaPengadaan.hasMany(RkbmutPengadaanDetail, {
+    foreignKey : "kode_skema_pengadaan"
+})
+
+RkbmutPengadaanDetail.belongsTo(SkemaPengadaan, {
+    foreignKey : "kode_skema_pengadaan"
 })
 
 module.exports = RkbmutPengadaanDetail
