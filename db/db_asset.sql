@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `log_rkbmut_pengadaan` (
   `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `udcr` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`kode_log_rkbmut_pengadaan`)
-) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.log_rkbmut_pengadaan: ~46 rows (approximately)
 INSERT INTO `log_rkbmut_pengadaan` (`kode_log_rkbmut_pengadaan`, `kode_skema_pengadaan`, `kode_kegiatan_rkt`, `kode_unit_kerja`, `kode_asset`, `kuantitas`, `sbsk`, `existing_bmut`, `kebutuhan_riil`, `revisi_ke`, `status_paraf`, `status_revisi`, `event_trigger`, `keterangan`, `ucr`, `uch`, `udch`, `udcr`) VALUES
@@ -116,7 +116,9 @@ INSERT INTO `log_rkbmut_pengadaan` (`kode_log_rkbmut_pengadaan`, `kode_skema_pen
 	(59, 1, 2, 'UN31.UPBJ', '3100102002', 0, 15, 15, 15, 0, 0, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-11-21 01:59:17'),
 	(60, 1, 2, 'UN31.UPBJ', '3100102009', 0, 15, 15, 15, 0, 0, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-11-21 01:59:17'),
 	(61, 1, 2, 'UN31.UPBJ', '3100102002', 0, 15, 15, 15, 0, 0, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-11-21 08:28:36'),
-	(62, 1, 2, 'UN31.UPBJ', '3100102009', 0, 15, 15, 15, 0, 0, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-11-21 08:28:36');
+	(62, 1, 2, 'UN31.UPBJ', '3100102009', 0, 15, 15, 15, 0, 0, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-11-21 08:28:36'),
+	(63, 1, 5, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, NULL, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-12-22 04:11:53'),
+	(64, 1, 5, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, NULL, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-12-22 04:11:53');
 
 -- Dumping structure for table db_asset.ref_asset
 CREATE TABLE IF NOT EXISTS `ref_asset` (
@@ -767,7 +769,7 @@ CREATE TABLE IF NOT EXISTS `ref_bidang` (
   PRIMARY KEY (`kode_bidang`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table db_asset.ref_bidang: ~0 rows (approximately)
+-- Dumping data for table db_asset.ref_bidang: ~39 rows (approximately)
 INSERT INTO `ref_bidang` (`kode_golongan`, `kode_bidang`, `jenis_bidang`, `ucr`, `uch`, `udcr`, `udch`) VALUES
 	('1', '101', 'Barang Pakai Habis', NULL, NULL, '2022-12-14 05:01:07', NULL),
 	('1', '102', 'Barang Tak Habis Pakai', NULL, NULL, '2022-12-14 05:01:25', NULL),
@@ -851,12 +853,7 @@ CREATE TABLE IF NOT EXISTS `ref_daftar_barang` (
   PRIMARY KEY (`kode_barang`,`kode_pembukuan`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table db_asset.ref_daftar_barang: ~4 rows (approximately)
-INSERT INTO `ref_daftar_barang` (`kode_barang`, `kode_pembukuan`, `kode_asset_nup`, `nup`, `kode_asset`, `merk`, `tanggal_perolehan`, `qr_kode`, `kode_ruang`, `deskripsi`, `nilai_item`, `kondisi`, `optional_key`, `ucr`, `uch`, `udcr`, `udch`) VALUES
-	(1, 'A04221', 1, 'UN31.2022.3100102009.1', '3100102009', 'Lenovo', '2022-05-06', '/src/public/images/qrcode/UN31.2022.3100102009.1.png', '1', 'Laptop1', 2000000.00, 'Baik', NULL, NULL, NULL, '2022-11-15 09:06:11', '2022-11-15 09:36:52'),
-	(1, 'A04222', 3, 'UN31.2022.3100102009.3', '3100102009', 'Lenovo', '2022-05-06', '/src/public/images/qrcode/UN31.2022.3100102009.3.png', '1', 'Laptop1', 2000000.00, 'Baik', NULL, NULL, NULL, '2022-11-15 09:40:36', '2022-11-15 09:40:45'),
-	(2, 'A04221', 2, 'UN31.2022.3100102009.2', '3100102009', 'Lenovo', '2022-05-06', '/src/public/images/qrcode/UN31.2022.3100102009.2.png', '1', 'Laptop2', 2000000.00, 'Baik', NULL, NULL, NULL, '2022-11-15 09:06:11', '2022-11-15 09:36:52'),
-	(2, 'A04222', 4, 'UN31.2022.3100102009.4', '3100102009', 'Lenovo', '2022-05-06', '/src/public/images/qrcode/UN31.2022.3100102009.4.png', '1', 'Laptop2', 2000000.00, 'Baik', NULL, NULL, NULL, '2022-11-15 09:40:36', '2022-11-15 09:40:45');
+-- Dumping data for table db_asset.ref_daftar_barang: ~0 rows (approximately)
 
 -- Dumping structure for table db_asset.ref_dokumen_pemilik
 CREATE TABLE IF NOT EXISTS `ref_dokumen_pemilik` (
@@ -893,7 +890,7 @@ CREATE TABLE IF NOT EXISTS `ref_golongan` (
   PRIMARY KEY (`kode_golongan`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table db_asset.ref_golongan: ~0 rows (approximately)
+-- Dumping data for table db_asset.ref_golongan: ~8 rows (approximately)
 INSERT INTO `ref_golongan` (`kode_golongan`, `nama_golongan`, `ucr`, `uch`, `udcr`, `udch`) VALUES
 	('1', 'Persediaan', NULL, NULL, '2022-12-14 04:49:12', NULL),
 	('2', 'Tanah', NULL, NULL, '2022-12-14 04:49:17', NULL),
@@ -903,6 +900,102 @@ INSERT INTO `ref_golongan` (`kode_golongan`, `nama_golongan`, `ucr`, `uch`, `udc
 	('6', 'Aset Tetap Lainnya', NULL, NULL, '2022-12-14 04:50:09', NULL),
 	('7', 'Konstruksti Dalam Pengerjaan', NULL, NULL, '2022-12-14 04:50:27', NULL),
 	('8', 'Aset Tak Berwujud', NULL, NULL, '2022-12-14 04:50:37', NULL);
+
+-- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_1
+CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_1` (
+  `kode_kegiatan_rkt` int(11) NOT NULL,
+  `kode_asset` char(10) NOT NULL,
+  `waktu_pemanfaatan` int(11) DEFAULT NULL,
+  `perkiaraan_pengadaan` int(11) DEFAULT NULL,
+  `pihak_pengguna` varchar(255) DEFAULT NULL,
+  `e-katalog` enum('Y','N') DEFAULT NULL,
+  `tingkat_prioritas` enum('tinggi','sedang','kecil') DEFAULT NULL,
+  `perkiraan_biaya` decimal(12,2) DEFAULT NULL,
+  `komentar` varchar(255) DEFAULT NULL,
+  `ucr` varchar(100) DEFAULT NULL,
+  `uch` varchar(100) DEFAULT NULL,
+  `udcr` timestamp NULL DEFAULT current_timestamp(),
+  `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`kode_kegiatan_rkt`,`kode_asset`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Dumping data for table db_asset.ref_identifikasi_kebutuhan_1: ~0 rows (approximately)
+
+-- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_2
+CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_2` (
+  `kode_kegiatan_rkt` int(11) NOT NULL,
+  `kode_asset` char(10) NOT NULL,
+  `jumlah_pegawai` int(11) DEFAULT NULL,
+  `tingkat_beban_tugas` enum('tinggi','sedang','kecil') DEFAULT NULL,
+  `jumlah_barang_tersedia` enum('ya','tidak') DEFAULT NULL,
+  `komentar` varchar(255) DEFAULT NULL,
+  `ucr` varchar(100) DEFAULT NULL,
+  `uch` varchar(100) DEFAULT NULL,
+  `udcr` timestamp NULL DEFAULT current_timestamp(),
+  `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`kode_kegiatan_rkt`,`kode_asset`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Dumping data for table db_asset.ref_identifikasi_kebutuhan_2: ~0 rows (approximately)
+
+-- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_3
+CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_3` (
+  `kode_kegiatan_rkt` int(11) NOT NULL,
+  `kode_asset` char(10) NOT NULL,
+  `existing_bmut` int(11) DEFAULT NULL,
+  `kondisi_baik` int(11) DEFAULT NULL,
+  `kondisi_rusak_ringan` int(11) DEFAULT NULL,
+  `kondisi_rusak_berat` int(11) DEFAULT NULL,
+  `pnbp` decimal(12,2) DEFAULT NULL,
+  `rm` decimal(12,2) DEFAULT NULL,
+  `komentar` varchar(255) DEFAULT NULL,
+  `uch` varchar(100) DEFAULT NULL,
+  `udcr` timestamp NULL DEFAULT current_timestamp(),
+  `ucr` varchar(100) DEFAULT NULL,
+  `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`kode_kegiatan_rkt`,`kode_asset`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Dumping data for table db_asset.ref_identifikasi_kebutuhan_3: ~0 rows (approximately)
+
+-- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_4
+CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_4` (
+  `kode_kegiatan_rkt` int(11) NOT NULL,
+  `kode_asset` char(10) NOT NULL,
+  `barang_pasar` enum('ya','tidak') DEFAULT NULL,
+  `produsen_syarat` enum('banyak','terbatas') DEFAULT NULL,
+  `persyaratan_barang` enum('iya','tidak') DEFAULT NULL,
+  `sedikit_tkdn` decimal(12,2) DEFAULT NULL,
+  `komentar` varchar(255) DEFAULT NULL,
+  `uch` varchar(100) DEFAULT NULL,
+  `udcr` timestamp NULL DEFAULT current_timestamp(),
+  `ucr` varchar(100) DEFAULT NULL,
+  `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`kode_kegiatan_rkt`,`kode_asset`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Dumping data for table db_asset.ref_identifikasi_kebutuhan_4: ~0 rows (approximately)
+
+-- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_5
+CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_5` (
+  `kode_kegiatan_rkt` int(11) NOT NULL,
+  `kode_asset` char(10) NOT NULL,
+  `cara_pengiriman` varchar(255) DEFAULT NULL,
+  `cara_pengakuan` varchar(255) DEFAULT NULL,
+  `cara_pemasangan` varchar(255) DEFAULT NULL,
+  `cara_penimbunan` varchar(255) DEFAULT NULL,
+  `cara_pengoperasian` varchar(255) DEFAULT NULL,
+  `kebutuhan_pelatihan` varchar(255) DEFAULT NULL,
+  `aspek_pengadaan` varchar(255) DEFAULT NULL,
+  `komentar` varchar(255) DEFAULT NULL,
+  `uch` varchar(100) DEFAULT NULL,
+  `udcr` timestamp NULL DEFAULT current_timestamp(),
+  `ucr` varchar(100) DEFAULT NULL,
+  `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`kode_kegiatan_rkt`,`kode_asset`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Dumping data for table db_asset.ref_identifikasi_kebutuhan_5: ~0 rows (approximately)
 
 -- Dumping structure for table db_asset.ref_jenis_trn
 CREATE TABLE IF NOT EXISTS `ref_jenis_trn` (
@@ -932,7 +1025,7 @@ CREATE TABLE IF NOT EXISTS `ref_kartu` (
   PRIMARY KEY (`kode_kartu`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table db_asset.ref_kartu: ~0 rows (approximately)
+-- Dumping data for table db_asset.ref_kartu: ~2 rows (approximately)
 INSERT INTO `ref_kartu` (`kode_kartu`, `nama_kartu`, `ucr`, `uch`, `udcr`, `udch`) VALUES
 	('1', 'DBR', NULL, NULL, '2022-12-14 06:53:31', NULL),
 	('2', 'DBL', NULL, NULL, '2022-12-14 06:53:31', NULL),
@@ -954,6 +1047,20 @@ INSERT INTO `ref_kondisi_asset` (`kode_kondisi`, `nama_kondisi`, `ucr`, `uch`, `
 	('1', 'Baik', NULL, NULL, '2022-07-19 04:16:12', NULL),
 	('2', 'Rusak Ringan', NULL, NULL, '2022-07-19 04:16:12', NULL),
 	('3', 'Rusak Berat', NULL, NULL, '2022-07-19 04:16:12', NULL);
+
+-- Dumping structure for table db_asset.ref_kriteria_barang
+CREATE TABLE IF NOT EXISTS `ref_kriteria_barang` (
+  `kode_kegiatan_rkt` int(11) NOT NULL,
+  `kode_asset` char(10) NOT NULL,
+  `kriteria_barang` varchar(255) DEFAULT NULL,
+  `ucr` varchar(100) DEFAULT NULL,
+  `uch` varchar(100) DEFAULT NULL,
+  `udcr` timestamp NULL DEFAULT current_timestamp(),
+  `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`kode_kegiatan_rkt`,`kode_asset`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Dumping data for table db_asset.ref_kriteria_barang: ~0 rows (approximately)
 
 -- Dumping structure for table db_asset.ref_pembukuan
 CREATE TABLE IF NOT EXISTS `ref_pembukuan` (
@@ -980,7 +1087,7 @@ CREATE TABLE IF NOT EXISTS `ref_pembukuan` (
   PRIMARY KEY (`kode_pembukuan`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table db_asset.ref_pembukuan: ~2 rows (approximately)
+-- Dumping data for table db_asset.ref_pembukuan: ~0 rows (approximately)
 
 -- Dumping structure for table db_asset.ref_pindah_tangan
 CREATE TABLE IF NOT EXISTS `ref_pindah_tangan` (
@@ -1104,15 +1211,14 @@ CREATE TABLE IF NOT EXISTS `ref_rkbmut_pemindahtanganan` (
 
 -- Dumping structure for table db_asset.ref_rkbmut_pengadaan_detail
 CREATE TABLE IF NOT EXISTS `ref_rkbmut_pengadaan_detail` (
-  `kode_skema_pengadaan` char(1) DEFAULT NULL,
+  `kode_kegiatan_rkt` int(11) NOT NULL,
   `kode_asset` char(10) NOT NULL,
   `kode_unit_kerja` char(16) NOT NULL,
-  `kode_output` int(11) NOT NULL DEFAULT 0,
-  `tahun` char(4) NOT NULL,
   `revisi_ke` int(11) NOT NULL DEFAULT 0,
   `status_revisi` int(11) DEFAULT NULL,
   `status_paraf` int(11) DEFAULT 0,
-  `kuantitas` int(11) DEFAULT NULL,
+  `kode_skema_pengadaan` char(1) DEFAULT NULL,
+  `kuantitas` varchar(255) DEFAULT NULL,
   `sbsk` int(11) DEFAULT NULL,
   `existing_bmut` int(11) DEFAULT NULL,
   `kebutuhan_riil` int(11) DEFAULT NULL,
@@ -1121,36 +1227,40 @@ CREATE TABLE IF NOT EXISTS `ref_rkbmut_pengadaan_detail` (
   `uch` varchar(100) DEFAULT NULL,
   `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `udcr` timestamp NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`kode_asset`,`kode_unit_kerja`,`kode_output`,`tahun`)
+  PRIMARY KEY (`kode_kegiatan_rkt`,`kode_asset`,`kode_unit_kerja`,`revisi_ke`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table db_asset.ref_rkbmut_pengadaan_detail: ~0 rows (approximately)
+-- Dumping data for table db_asset.ref_rkbmut_pengadaan_detail: ~2 rows (approximately)
+INSERT INTO `ref_rkbmut_pengadaan_detail` (`kode_kegiatan_rkt`, `kode_asset`, `kode_unit_kerja`, `revisi_ke`, `status_revisi`, `status_paraf`, `kode_skema_pengadaan`, `kuantitas`, `sbsk`, `existing_bmut`, `kebutuhan_riil`, `keterangan`, `ucr`, `uch`, `udch`, `udcr`) VALUES
+	(5, '3100102002', 'UN31.UPBJ', 0, 0, 0, '1', '10', 15, 15, 15, 'Tidak Ada', NULL, NULL, '2022-12-22 04:11:53', '2022-12-22 04:11:53'),
+	(5, '3100102009', 'UN31.UPBJ', 0, 0, 0, '1', '10', 15, 15, 15, 'Tidak Ada', NULL, NULL, '2022-12-22 04:11:53', '2022-12-22 04:11:53');
 
 -- Dumping structure for table db_asset.ref_rkbmut_pengadaan_header
 CREATE TABLE IF NOT EXISTS `ref_rkbmut_pengadaan_header` (
-  `kode_unit_kerja` char(16) NOT NULL,
-  `tahun` char(4) NOT NULL,
   `kode_kegiatan_rkt` int(11) NOT NULL,
-  `kode_output` int(11) NOT NULL,
-  `status_revisi` int(11) NOT NULL DEFAULT 0,
+  `tahun` char(4) NOT NULL,
+  `kode_unit_kerja` char(16) NOT NULL,
   `revisi_ke` int(11) NOT NULL DEFAULT 0,
+  `status_revisi` int(11) NOT NULL DEFAULT 0,
   `status_paraf` int(11) DEFAULT 0,
+  `nama_kegiatan_rkt` varchar(255) DEFAULT NULL,
   `nama_unit_kerja` varchar(255) DEFAULT NULL,
   `kode_program_rsb` varchar(20) DEFAULT NULL,
   `nama_program_rsb` varchar(255) DEFAULT NULL,
-  `nama_kegiatan_rkt` varchar(255) DEFAULT NULL,
-  `nama_output` varchar(255) DEFAULT NULL,
-  `kode_jenis_belanja` char(7) DEFAULT NULL,
+  `kode_jenis_belanja` char(8) DEFAULT NULL,
   `nama_jenis_belanja` varchar(255) DEFAULT NULL,
   `komentar` varchar(255) DEFAULT NULL,
+  `jenis_revisi` enum('besar','kecil') DEFAULT 'kecil',
   `ucr` varchar(100) DEFAULT NULL,
   `uch` varchar(100) DEFAULT NULL,
   `udcr` timestamp NULL DEFAULT current_timestamp(),
   `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
-  PRIMARY KEY (`tahun`,`kode_unit_kerja`,`kode_output`) USING BTREE
+  PRIMARY KEY (`kode_kegiatan_rkt`,`tahun`,`kode_unit_kerja`,`revisi_ke`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.ref_rkbmut_pengadaan_header: ~0 rows (approximately)
+INSERT INTO `ref_rkbmut_pengadaan_header` (`kode_kegiatan_rkt`, `tahun`, `kode_unit_kerja`, `revisi_ke`, `status_revisi`, `status_paraf`, `nama_kegiatan_rkt`, `nama_unit_kerja`, `kode_program_rsb`, `nama_program_rsb`, `kode_jenis_belanja`, `nama_jenis_belanja`, `komentar`, `jenis_revisi`, `ucr`, `uch`, `udcr`, `udch`) VALUES
+	(5, '2022', 'UN31.UPBJ', 0, 0, 0, 'Data3 ', 'Unit Pengadaan Barang dan Jasa', NULL, NULL, NULL, NULL, NULL, 'kecil', NULL, NULL, '2022-12-22 04:11:53', '2022-12-22 04:11:53');
 
 -- Dumping structure for table db_asset.ref_rkbmut_penghapusan
 CREATE TABLE IF NOT EXISTS `ref_rkbmut_penghapusan` (
@@ -1195,7 +1305,7 @@ CREATE TABLE IF NOT EXISTS `ref_ruang` (
   PRIMARY KEY (`kode_ruang`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table db_asset.ref_ruang: ~5 rows (approximately)
+-- Dumping data for table db_asset.ref_ruang: ~338 rows (approximately)
 INSERT INTO `ref_ruang` (`kode_ruang`, `nip`, `nama_pj`, `kode_unit`, `nama_unit`, `nama_ruang`, `ucr`, `uch`, `udcr`, `udch`) VALUES
 	(1, NULL, NULL, 'UN31', 'Rektorat', 'Ruang Rektor', NULL, NULL, '2022-07-28 08:17:10', NULL),
 	(2, NULL, NULL, 'UN31.WR1', 'Wakil Rektor 1', 'Ruang Wakil Rektor', NULL, NULL, '2022-07-29 03:31:07', '2022-07-29 03:31:13'),
@@ -1389,6 +1499,42 @@ CREATE TABLE IF NOT EXISTS `trx_kib_bangunan` (
 
 -- Dumping data for table db_asset.trx_kib_bangunan: ~0 rows (approximately)
 
+-- Dumping structure for table db_asset.trx_kib_bangunan_air
+CREATE TABLE IF NOT EXISTS `trx_kib_bangunan_air` (
+  `kode_status_pemilik` char(2) DEFAULT NULL,
+  `kode_asset` char(10) DEFAULT NULL,
+  `no_kib_bangunan` int(11) DEFAULT NULL,
+  `no_asset` int(11) NOT NULL,
+  `kode_pembukuan` char(9) NOT NULL,
+  `luas_bangunan` decimal(12,2) DEFAULT NULL,
+  `nup` varchar(50) DEFAULT NULL,
+  `luas_dasar_bangunan` decimal(12,2) DEFAULT NULL,
+  `kuantitas` decimal(20,2) DEFAULT NULL,
+  `kapasitas` decimal(20,2) DEFAULT NULL,
+  `tahun_bangun` char(4) DEFAULT NULL,
+  `tahun_guna` char(4) DEFAULT NULL,
+  `pdf` varchar(255) DEFAULT NULL,
+  `lokasi_bangunan` varchar(255) DEFAULT NULL,
+  `nup_tanah` varchar(50) DEFAULT NULL,
+  `kode_unit` char(20) DEFAULT NULL,
+  `nama_unit` varchar(255) DEFAULT NULL,
+  `sumber_dana` enum('APBN','NON APBN') DEFAULT NULL,
+  `no_dana` varchar(255) DEFAULT NULL,
+  `tanggal_dana` date DEFAULT NULL,
+  `nilai_wajar` decimal(20,2) DEFAULT NULL,
+  `njop` decimal(20,2) DEFAULT NULL,
+  `catatan` tinytext DEFAULT NULL,
+  `ucr` varchar(100) DEFAULT NULL,
+  `uch` varchar(100) DEFAULT NULL,
+  `udcr` timestamp NULL DEFAULT current_timestamp(),
+  `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`kode_pembukuan`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Dumping data for table db_asset.trx_kib_bangunan_air: ~0 rows (approximately)
+INSERT INTO `trx_kib_bangunan_air` (`kode_status_pemilik`, `kode_asset`, `no_kib_bangunan`, `no_asset`, `kode_pembukuan`, `luas_bangunan`, `nup`, `luas_dasar_bangunan`, `kuantitas`, `kapasitas`, `tahun_bangun`, `tahun_guna`, `pdf`, `lokasi_bangunan`, `nup_tanah`, `kode_unit`, `nama_unit`, `sumber_dana`, `no_dana`, `tanggal_dana`, `nilai_wajar`, `njop`, `catatan`, `ucr`, `uch`, `udcr`, `udch`) VALUES
+	('01', '5020703002', NULL, 1, 'A04221', 134.20, NULL, 123.40, 15.00, 20.25, '2020', '2020', '', NULL, 'UN31.UPBJ.2022.2010101003.1', 'UN31.UPBJ', ' Unit Pengadaan Barang Jasa', 'APBN', '1233141412', '2015-05-08', NULL, NULL, 'Tidak Ada', NULL, NULL, '2022-12-15 10:44:58', '2022-12-15 10:44:58');
+
 -- Dumping structure for table db_asset.trx_kib_tanah
 CREATE TABLE IF NOT EXISTS `trx_kib_tanah` (
   `kode_asset` char(10) DEFAULT NULL,
@@ -1439,6 +1585,8 @@ CREATE TABLE IF NOT EXISTS `trx_rkbmut_all` (
   `status_pemindahtanganan` smallint(6) DEFAULT 0,
   `status_pemanfaatan` smallint(6) DEFAULT 0,
   `status_penghapusan` smallint(6) DEFAULT 0,
+  `pdf` varchar(255) DEFAULT NULL,
+  `status_rkbmutall` smallint(6) DEFAULT 0,
   `ucr` varchar(100) DEFAULT NULL,
   `uch` varchar(100) DEFAULT NULL,
   `udcr` timestamp NULL DEFAULT current_timestamp(),
@@ -1447,8 +1595,52 @@ CREATE TABLE IF NOT EXISTS `trx_rkbmut_all` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.trx_rkbmut_all: ~0 rows (approximately)
-INSERT INTO `trx_rkbmut_all` (`kode_unit_kerja`, `nama_unit_kerja`, `status_pengadaan`, `status_pemeliharaan`, `status_pemindahtanganan`, `status_pemanfaatan`, `status_penghapusan`, `ucr`, `uch`, `udcr`, `udch`) VALUES
-	('UN31.UPBJ', 'UPBJ', 1, 1, 0, 1, 1, NULL, NULL, '2022-10-31 03:06:47', '2022-11-10 08:28:26');
+INSERT INTO `trx_rkbmut_all` (`kode_unit_kerja`, `nama_unit_kerja`, `status_pengadaan`, `status_pemeliharaan`, `status_pemindahtanganan`, `status_pemanfaatan`, `status_penghapusan`, `pdf`, `status_rkbmutall`, `ucr`, `uch`, `udcr`, `udch`) VALUES
+	('UN31.UPBJ', 'UPBJ', 1, 1, 1, 1, 1, 'https://sippp.ut.ac.id/hrd/pdf-rkbm/UN31.UPBJ.pdf', 1, NULL, NULL, '2022-10-31 03:06:47', '2022-12-16 12:11:03');
+
+-- Dumping structure for trigger db_asset.insert_rkbmut_pengadaan_detail
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `insert_rkbmut_pengadaan_detail` AFTER INSERT ON `ref_rkbmut_pengadaan_detail` FOR EACH ROW 
+BEGIN 
+INSERT INTO log_rkbmut_pengadaan
+SET kode_kegiatan_rkt = NEW.kode_kegiatan_rkt, 
+kode_skema_pengadaan = NEW.kode_skema_pengadaan, 
+kuantitas = NEW.kuantitas, 
+sbsk = NEW.sbsk, 
+existing_bmut = NEW.existing_bmut, 
+kebutuhan_riil = NEW.kebutuhan_riil, 
+keterangan = NEW.keterangan,
+revisi_ke = NEW.revisi_ke, 
+kode_asset = NEW.kode_asset, 
+kode_unit_kerja = NEW.kode_unit_kerja, 
+event_trigger = "CREATE",
+status_revisi = NEW.status_revisi;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+
+-- Dumping structure for trigger db_asset.update_rkbmut_pengadaan_detail
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `update_rkbmut_pengadaan_detail` AFTER UPDATE ON `ref_rkbmut_pengadaan_detail` FOR EACH ROW BEGIN 
+INSERT INTO log_rkbmut_pengadaan
+SET kode_kegiatan_rkt = OLD.kode_kegiatan_rkt, 
+kode_skema_pengadaan = OLD.kode_skema_pengadaan, 
+kuantitas = OLD.kuantitas, 
+sbsk = OLD.sbsk, 
+existing_bmut = OLD.existing_bmut, 
+kebutuhan_riil = OLD.kebutuhan_riil, 
+keterangan = OLD.keterangan,
+revisi_ke = OLD.revisi_ke,
+kode_asset = OLD.kode_asset, 
+kode_unit_kerja = OLD.kode_unit_kerja, 
+status_paraf = OLD.status_paraf,
+event_trigger = "UPDATE",
+status_revisi = OLD.status_revisi;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

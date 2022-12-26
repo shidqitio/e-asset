@@ -13,7 +13,8 @@ const StatusPemilik = require("../models/statusPemilik")
 const sequelize = require("sequelize")
 const DokumenTanah = require("../models/dokumenTanah")
 const RkbmutPemeliharaanDetail = require("../models/rkbmutPemeliharaanDetail")
-
+const axios = require("axios")
+require("dotenv").config();
 
 
 exports.indexdetail = (req, res, next) => {
@@ -46,6 +47,40 @@ exports.antrean = (req, res, next) => {
                 kode_asset_nup : {
                     [Op.eq] : null
                 }
+            }
+        }]
+    })
+    .then((data) => {
+        res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data", 
+            data : data
+        });
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    });
+}
+
+//Antrian NUP 
+exports.antreannupeproc = (req, res, next) => {
+    PembukuanDetail.findAll({
+        where : {
+            no_sppa : "A0222"
+        },
+        include : [
+            {
+                model : Asset
+            },
+            {
+            model : DaftarBarang, 
+            where : {
+                kode_asset_nup : {
+                    [Op.eq] : null
+                }, 
             }
         }]
     })
@@ -916,6 +951,10 @@ exports.storefrompromise = (req, res, next) => {
     let ruang = req.body.ruang
     let metode_penyusutan = req.body.metode_penyusutan
     let dasar_harga = req.body.dasar_harga
+    let id_permintaan_item = req.body.id_permintaan_item
+    let penyedia = req.body.penyedia
+    let status_permintaan_item = 0
+
     const split_ruang = ruang.split("-")
     const kode_ruang = parseInt(split_ruang[1])
 
@@ -963,7 +1002,6 @@ exports.storefrompromise = (req, res, next) => {
                     throw error
                 }
                 const pembukuan = JSON.parse(JSON.stringify(insert))
-                console.log("Kode Asset : ", pembukuan.jumlah_barang)
                 let jmlbarang = pembukuan.jumlah_barang
                 let arr_dafbar = [] 
                 let barang = 1
@@ -990,14 +1028,20 @@ exports.storefrompromise = (req, res, next) => {
                         error.statusCode = 422
                         throw error
                     }
-                    t.commit()
-                    return res.json({
-                        status : "Success", 
-                        message : "Data Berhasil Masuk", 
-                        data : {
-                            "pembukuan" : insert,
-                            "daftar_barang" : bcreate
-                        }
+                    console.log(`${process.env.BASE_PATH_EPROC}/update_status_asset/${penyedia}/${id_permintaan_item}`)
+                    return axios.put(`${process.env.BASE_PATH_EPROC}/update_status_asset/${penyedia}/${id_permintaan_item}`, {
+                        status_permintaan_item : 0
+                    })
+                    .then((res_eproc) => {
+                        t.commit()
+                        return res.json({
+                            status : "Success", 
+                            message : "Data Berhasil Masuk", 
+                            data : {
+                                "pembukuan" : insert,
+                                "daftar_barang" : bcreate
+                            }
+                        })
                     })
                 })
             })

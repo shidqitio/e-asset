@@ -15,17 +15,17 @@ const {
     getbangunanbyunit,
     getbarangbyunitfilter,
     getbangunanairbyunit, 
-    storefrompromise
+    storefrompromise,
+    antreannupeproc
 } = require("../controllers/pembukuanController")
 
 const pembukuanSchema = require("../middlewares/request/pembukuan")
 
 router.get("/", indexdetail)
 
+router.get("/antrean-nup-eproc", antreannupeproc)
+
 router.get("/antrean", antrean)
-
-router.get("/:kode_pembukuan", showbykodeform)
-
 
 router.get("/tanah/:kode_unit", gettanahbyunit)
 
@@ -41,6 +41,8 @@ router.get("/bangunan/:kode_unit",getbangunanbyunit )
 
 router.get("/bangunan-air/:kode_unit", getbangunanairbyunit)
 
+
+router.get("/:kode_pembukuan", showbykodeform)
 
 router.post("/", 
     pembukuanSchema.store
