@@ -1,4 +1,5 @@
 const db = require("../../config/database")
+const Asset = require("../../models/asset")
 const RkbmutPengadaanDetail = require("../../models/rkbmutPengadaanDetail")
 const RkbmutPengadaanHeader = require("../../models/rkbmutPengadaanHeader")
 const RefIdentifikasiKebutuhan1 = require("../../models/sippan/refIdentifikasiKebutuhan1")
@@ -218,7 +219,15 @@ exports.indexsippan = (req, res, next) => {
         kode_asset : req.params.kode_asset
     }
     return RefIdentifikasiKebutuhan1.findAll({
-        where : params
+        where : params, 
+        include : [
+            {
+                model : Asset
+            },
+            {
+                model : RkbmutPengadaanHeader
+            }
+        ]
     })
     .then((identifikasi1) => {
         return RefIdentifikasiKebutuhan2.findAll({
