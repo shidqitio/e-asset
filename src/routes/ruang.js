@@ -11,7 +11,8 @@ const {
     barangbyunitdata,
     jumlahbarangbyunit, 
     getbarangbyunitfilter, 
-    getbarangbyunitpenghapusan
+    getbarangbyunitpenghapusan,
+    jumlahkondisi
 } = require("../controllers/ruangController")
 
 const {validationResult} = require('express-validator')
@@ -33,6 +34,8 @@ router.get("/barangunitdata/:kode_unit", barangbyunitdata)
 router.get("/existing-bmut/:kode_unit/:kode_asset", jumlahbarangbyunit)
 
 router.get("/get-barang-pemeliharaan/:kode_unit", getbarangbyunitfilter)
+
+router.get("/get-jumlah-kondisi/:kode_unit/:kode_asset", jumlahkondisi)
 
 router.post ("/",timeout('5s'), 
 RuangSchema.store,

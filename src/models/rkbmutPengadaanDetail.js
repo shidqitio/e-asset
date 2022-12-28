@@ -61,6 +61,11 @@ const RkbmutPengadaanDetail = db.define(
             type : DataTypes.TEXT(),
             allowNull : true,
         },
+        status_sippan : {
+            type : DataTypes.INTEGER(), 
+            defaultValue : 0,
+            allowNull : true
+        },
         ucr: {
             type: DataTypes.STRING(100),
             allowNull: true,

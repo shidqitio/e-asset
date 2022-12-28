@@ -532,3 +532,89 @@ exports.getbarangbyunitpenghapusan = (req, res, next) => {
         })
     })
 }
+
+//Hitung Kondisi Barang
+exports.jumlahkondisi = (req, res, next) => {
+    return DaftarBarang.count({
+        where : {
+            nup : {
+                [Op.not] : null
+            }, 
+            kode_asset : req.params.kode_asset,
+            kondisi : "Baik",
+        },
+        include : [
+            {
+                model : Ruang,
+                where : {
+                    kode_unit : req.params.kode_unit
+                }
+            }, 
+        ]
+    })
+    .then((baik) => {
+        if(baik.length === 0) {
+            baik = 0
+        }
+        return DaftarBarang.count({
+            where : {
+                nup : {
+                    [Op.not] : null
+                }, 
+                kode_asset : req.params.kode_asset,
+                kondisi : "Rusak Ringan"
+            },
+            include : [
+                {
+                    model : Ruang,
+                    where : {
+                        kode_unit : req.params.kode_unit
+                    }
+                }
+            ]
+        })
+        .then((rusak) => {
+            if(rusak.length === 0) {
+                rusak = 0
+            } 
+            return DaftarBarang.count({
+                where : {
+                    nup : {
+                        [Op.not] : null
+                    }, 
+                    kode_asset : req.params.kode_asset,
+                    kondisi : "Rusak Ringan"
+                },
+                include : [
+                    {
+                        model : Ruang,
+                        where : {
+                            kode_unit : req.params.kode_unit
+                        }
+                    }
+                ]
+            })
+            .then((rusak_berat) => {
+                if(rusak_berat.length === 0) {
+                    rusak_berat = 0
+                }
+                return res.json({
+                    status : "Success", 
+                    message : "Berhasil Menampilkan Data",
+                    data : {
+                        "kondisi_baik" : baik,
+                        "kondisi_rusak_ringan" : rusak,
+                        "kondisi_rusak_berat" : rusak_berat
+                    }
+                })
+            })
+        })
+    })
+    .catch((err) => {
+        logger(err)
+        if(!err.statusCode) {
+            err.statusCode = 500
+        }
+        next(err)
+    });
+ }

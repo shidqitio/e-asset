@@ -67,58 +67,16 @@ CREATE TABLE IF NOT EXISTS `log_rkbmut_pengadaan` (
   `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `udcr` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`kode_log_rkbmut_pengadaan`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table db_asset.log_rkbmut_pengadaan: ~46 rows (approximately)
+-- Dumping data for table db_asset.log_rkbmut_pengadaan: ~2 rows (approximately)
 INSERT INTO `log_rkbmut_pengadaan` (`kode_log_rkbmut_pengadaan`, `kode_skema_pengadaan`, `kode_kegiatan_rkt`, `kode_unit_kerja`, `kode_asset`, `kuantitas`, `sbsk`, `existing_bmut`, `kebutuhan_riil`, `revisi_ke`, `status_paraf`, `status_revisi`, `event_trigger`, `keterangan`, `ucr`, `uch`, `udch`, `udcr`) VALUES
-	(1, 1, 2, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:28:08'),
-	(2, 1, 2, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:28:09'),
-	(3, 1, 2, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:28:16'),
-	(4, 1, 2, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:28:16'),
-	(5, 1, 2, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:28:23'),
-	(6, 1, 2, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:28:24'),
-	(7, 1, 2, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:29:52'),
-	(8, 1, 2, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:29:52'),
-	(9, 1, 2, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:33:10'),
-	(10, 1, 2, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:33:12'),
-	(27, 1, 2, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:53:01'),
-	(28, 1, 2, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:53:01'),
-	(29, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:53:49'),
-	(30, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:53:49'),
-	(31, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:54:52'),
-	(32, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:54:52'),
-	(33, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:57:56'),
-	(34, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:57:56'),
-	(35, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:58:10'),
-	(36, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 03:58:14'),
-	(37, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:11:59'),
-	(38, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:11:59'),
-	(39, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:13:34'),
-	(40, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:13:34'),
-	(41, 1, 2, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:13:36'),
-	(42, 1, 2, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:13:37'),
-	(43, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:14:33'),
-	(44, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:14:33'),
-	(45, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:15:30'),
-	(46, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:15:30'),
-	(47, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:15:36'),
-	(48, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:15:36'),
-	(49, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:15:52'),
-	(50, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:15:53'),
-	(51, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:18:26'),
-	(52, 1, 4, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:18:26'),
-	(53, 1, 2, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:18:41'),
-	(54, 1, 2, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, 2, 1, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:18:41'),
-	(55, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 3, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:48:47'),
-	(56, 1, 4, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, 2, 31, 'UPDATE', 'Tidak Ada', NULL, NULL, NULL, '2022-10-31 04:48:49'),
-	(57, 1, 1, 'UN31.UPBJ', '3050105053', NULL, NULL, NULL, NULL, 0, 0, 0, 'CREATE', NULL, NULL, NULL, NULL, '2022-11-21 01:47:32'),
-	(58, 1, 1, 'UN31.UPBJ', '3050105053', NULL, NULL, NULL, NULL, 0, 0, 0, 'UPDATE', NULL, NULL, NULL, NULL, '2022-11-21 01:47:40'),
-	(59, 1, 2, 'UN31.UPBJ', '3100102002', 0, 15, 15, 15, 0, 0, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-11-21 01:59:17'),
-	(60, 1, 2, 'UN31.UPBJ', '3100102009', 0, 15, 15, 15, 0, 0, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-11-21 01:59:17'),
-	(61, 1, 2, 'UN31.UPBJ', '3100102002', 0, 15, 15, 15, 0, 0, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-11-21 08:28:36'),
-	(62, 1, 2, 'UN31.UPBJ', '3100102009', 0, 15, 15, 15, 0, 0, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-11-21 08:28:36'),
-	(63, 1, 5, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, NULL, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-12-22 04:11:53'),
-	(64, 1, 5, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, NULL, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-12-22 04:11:53');
+	(11, 1, 5, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 0, NULL, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-12-28 05:22:50'),
+	(12, 1, 5, 'UN31.UPBJ', '3100102009', 10, 15, 15, 15, 0, NULL, 0, 'CREATE', 'Tidak Ada', NULL, NULL, NULL, '2022-12-28 05:22:50'),
+	(13, 1, 5, 'UN31.UPBJ', '3100102002', 20, 15, 15, 15, 3, 2, 2, 'UPDATE', 'Ganti', NULL, NULL, NULL, '2022-12-28 05:32:55'),
+	(14, 1, 5, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 4, 2, 1, 'UPDATE', 'Tetap di Angka Ini', NULL, NULL, NULL, '2022-12-28 05:33:18'),
+	(15, 1, 5, 'UN31.UPBJ', '3100102002', 20, 15, 15, 15, 5, 2, 2, 'UPDATE', 'Ganti', NULL, NULL, NULL, '2022-12-28 05:33:30'),
+	(16, 1, 5, 'UN31.UPBJ', '3100102002', 10, 15, 15, 15, 6, 2, 1, 'UPDATE', 'Tetap di Angka Ini', NULL, NULL, NULL, '2022-12-28 05:34:00');
 
 -- Dumping structure for table db_asset.ref_asset
 CREATE TABLE IF NOT EXISTS `ref_asset` (
@@ -906,11 +864,14 @@ CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_1` (
   `kode_kegiatan_rkt` int(11) NOT NULL,
   `kode_asset` char(10) NOT NULL,
   `waktu_pemanfaatan` int(11) DEFAULT NULL,
-  `perkiaraan_pengadaan` int(11) DEFAULT NULL,
+  `perkiraan_pengadaan` int(11) DEFAULT NULL,
   `pihak_pengguna` varchar(255) DEFAULT NULL,
-  `e-katalog` enum('Y','N') DEFAULT NULL,
+  `ekatalog` enum('iya','tidak') DEFAULT NULL,
   `tingkat_prioritas` enum('tinggi','sedang','kecil') DEFAULT NULL,
   `perkiraan_biaya` decimal(12,2) DEFAULT NULL,
+  `kegunaan` varchar(255) DEFAULT NULL,
+  `spesifikasi` varchar(255) DEFAULT NULL,
+  `kebutuhan_riil` int(11) DEFAULT NULL,
   `komentar` varchar(255) DEFAULT NULL,
   `ucr` varchar(100) DEFAULT NULL,
   `uch` varchar(100) DEFAULT NULL,
@@ -920,6 +881,8 @@ CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_1` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.ref_identifikasi_kebutuhan_1: ~0 rows (approximately)
+INSERT INTO `ref_identifikasi_kebutuhan_1` (`kode_kegiatan_rkt`, `kode_asset`, `waktu_pemanfaatan`, `perkiraan_pengadaan`, `pihak_pengguna`, `ekatalog`, `tingkat_prioritas`, `perkiraan_biaya`, `kegunaan`, `spesifikasi`, `kebutuhan_riil`, `komentar`, `ucr`, `uch`, `udcr`, `udch`) VALUES
+	(5, '3100102002', 5, 0, 'User', 'iya', 'tinggi', 5000000000.00, NULL, NULL, NULL, NULL, NULL, NULL, '2022-12-28 05:36:52', '2022-12-28 05:36:52');
 
 -- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_2
 CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_2` (
@@ -937,6 +900,8 @@ CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_2` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.ref_identifikasi_kebutuhan_2: ~0 rows (approximately)
+INSERT INTO `ref_identifikasi_kebutuhan_2` (`kode_kegiatan_rkt`, `kode_asset`, `jumlah_pegawai`, `tingkat_beban_tugas`, `jumlah_barang_tersedia`, `komentar`, `ucr`, `uch`, `udcr`, `udch`) VALUES
+	(5, '3100102002', 10, 'tinggi', 'ya', NULL, NULL, NULL, '2022-12-28 05:36:52', '2022-12-28 05:36:52');
 
 -- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_3
 CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_3` (
@@ -957,6 +922,8 @@ CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_3` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.ref_identifikasi_kebutuhan_3: ~0 rows (approximately)
+INSERT INTO `ref_identifikasi_kebutuhan_3` (`kode_kegiatan_rkt`, `kode_asset`, `existing_bmut`, `kondisi_baik`, `kondisi_rusak_ringan`, `kondisi_rusak_berat`, `pnbp`, `rm`, `komentar`, `uch`, `udcr`, `ucr`, `udch`) VALUES
+	(5, '3100102002', 2, 2, 0, 0, 500000000.00, 200000000.00, NULL, NULL, '2022-12-28 05:36:52', NULL, '2022-12-28 05:36:52');
 
 -- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_4
 CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_4` (
@@ -975,6 +942,8 @@ CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_4` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.ref_identifikasi_kebutuhan_4: ~0 rows (approximately)
+INSERT INTO `ref_identifikasi_kebutuhan_4` (`kode_kegiatan_rkt`, `kode_asset`, `barang_pasar`, `produsen_syarat`, `persyaratan_barang`, `sedikit_tkdn`, `komentar`, `uch`, `udcr`, `ucr`, `udch`) VALUES
+	(5, '3100102002', 'ya', 'banyak', 'iya', 200000000.00, NULL, NULL, '2022-12-28 05:36:52', NULL, '2022-12-28 05:36:52');
 
 -- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_5
 CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_5` (
@@ -996,6 +965,26 @@ CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_5` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.ref_identifikasi_kebutuhan_5: ~0 rows (approximately)
+INSERT INTO `ref_identifikasi_kebutuhan_5` (`kode_kegiatan_rkt`, `kode_asset`, `cara_pengiriman`, `cara_pengakuan`, `cara_pemasangan`, `cara_penimbunan`, `cara_pengoperasian`, `kebutuhan_pelatihan`, `aspek_pengadaan`, `komentar`, `uch`, `udcr`, `ucr`, `udch`) VALUES
+	(5, '3100102002', 'kirim', 'ngaku', 'pasang', 'timbun', 'operasi', 'pelatihan', 'ada', NULL, NULL, '2022-12-28 05:36:52', NULL, '2022-12-28 05:36:52');
+
+-- Dumping structure for table db_asset.ref_identifikasi_kebutuhan_6
+CREATE TABLE IF NOT EXISTS `ref_identifikasi_kebutuhan_6` (
+  `kode_kegiatan_rkt` int(11) NOT NULL,
+  `kode_asset` char(10) NOT NULL,
+  `barang_sejenis` enum('ada','tidak') DEFAULT NULL,
+  `konsolidasi` enum('rekomendasi','tidak rekomendasi') DEFAULT NULL,
+  `komentar` varchar(255) DEFAULT NULL,
+  `uch` varchar(100) DEFAULT NULL,
+  `udcr` timestamp NULL DEFAULT current_timestamp(),
+  `ucr` varchar(100) DEFAULT NULL,
+  `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`kode_kegiatan_rkt`,`kode_asset`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Dumping data for table db_asset.ref_identifikasi_kebutuhan_6: ~0 rows (approximately)
+INSERT INTO `ref_identifikasi_kebutuhan_6` (`kode_kegiatan_rkt`, `kode_asset`, `barang_sejenis`, `konsolidasi`, `komentar`, `uch`, `udcr`, `ucr`, `udch`) VALUES
+	(5, '3100102002', 'ada', 'rekomendasi', NULL, NULL, '2022-12-28 05:36:52', NULL, '2022-12-28 05:36:52');
 
 -- Dumping structure for table db_asset.ref_jenis_trn
 CREATE TABLE IF NOT EXISTS `ref_jenis_trn` (
@@ -1050,6 +1039,7 @@ INSERT INTO `ref_kondisi_asset` (`kode_kondisi`, `nama_kondisi`, `ucr`, `uch`, `
 
 -- Dumping structure for table db_asset.ref_kriteria_barang
 CREATE TABLE IF NOT EXISTS `ref_kriteria_barang` (
+  `kode_kriteria` int(11) NOT NULL AUTO_INCREMENT,
   `kode_kegiatan_rkt` int(11) NOT NULL,
   `kode_asset` char(10) NOT NULL,
   `kriteria_barang` varchar(255) DEFAULT NULL,
@@ -1057,10 +1047,13 @@ CREATE TABLE IF NOT EXISTS `ref_kriteria_barang` (
   `uch` varchar(100) DEFAULT NULL,
   `udcr` timestamp NULL DEFAULT current_timestamp(),
   `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
-  PRIMARY KEY (`kode_kegiatan_rkt`,`kode_asset`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`kode_kriteria`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.ref_kriteria_barang: ~0 rows (approximately)
+INSERT INTO `ref_kriteria_barang` (`kode_kriteria`, `kode_kegiatan_rkt`, `kode_asset`, `kriteria_barang`, `ucr`, `uch`, `udcr`, `udch`) VALUES
+	(1, 5, '3100102002', 'export luar negeri', NULL, NULL, '2022-12-28 05:36:52', '2022-12-28 05:36:52'),
+	(2, 5, '3100102002', 'export dalam negeri', NULL, NULL, '2022-12-28 05:36:52', '2022-12-28 05:36:52');
 
 -- Dumping structure for table db_asset.ref_pembukuan
 CREATE TABLE IF NOT EXISTS `ref_pembukuan` (
@@ -1223,6 +1216,7 @@ CREATE TABLE IF NOT EXISTS `ref_rkbmut_pengadaan_detail` (
   `existing_bmut` int(11) DEFAULT NULL,
   `kebutuhan_riil` int(11) DEFAULT NULL,
   `keterangan` tinytext DEFAULT NULL,
+  `status_sippan` tinyint(4) DEFAULT 0 COMMENT '0 : belum identifikasi\r\n1 : sudah identifikasi & bisa edit \r\n2 : Kasubdit pengecekan \r\n3 : Kembali ke Unit untuk pengecekan \r\n4 : Diterima',
   `ucr` varchar(100) DEFAULT NULL,
   `uch` varchar(100) DEFAULT NULL,
   `udch` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
@@ -1231,9 +1225,9 @@ CREATE TABLE IF NOT EXISTS `ref_rkbmut_pengadaan_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table db_asset.ref_rkbmut_pengadaan_detail: ~2 rows (approximately)
-INSERT INTO `ref_rkbmut_pengadaan_detail` (`kode_kegiatan_rkt`, `kode_asset`, `kode_unit_kerja`, `revisi_ke`, `status_revisi`, `status_paraf`, `kode_skema_pengadaan`, `kuantitas`, `sbsk`, `existing_bmut`, `kebutuhan_riil`, `keterangan`, `ucr`, `uch`, `udch`, `udcr`) VALUES
-	(5, '3100102002', 'UN31.UPBJ', 0, 0, 0, '1', '10', 15, 15, 15, 'Tidak Ada', NULL, NULL, '2022-12-22 04:11:53', '2022-12-22 04:11:53'),
-	(5, '3100102009', 'UN31.UPBJ', 0, 0, 0, '1', '10', 15, 15, 15, 'Tidak Ada', NULL, NULL, '2022-12-22 04:11:53', '2022-12-22 04:11:53');
+INSERT INTO `ref_rkbmut_pengadaan_detail` (`kode_kegiatan_rkt`, `kode_asset`, `kode_unit_kerja`, `revisi_ke`, `status_revisi`, `status_paraf`, `kode_skema_pengadaan`, `kuantitas`, `sbsk`, `existing_bmut`, `kebutuhan_riil`, `keterangan`, `status_sippan`, `ucr`, `uch`, `udch`, `udcr`) VALUES
+	(5, '3100102002', 'UN31.UPBJ', 6, 3, 2, '1', '10', 15, 15, 15, 'Tetap di Angka Ini', 1, NULL, NULL, '2022-12-28 05:36:52', '2022-12-28 05:22:50'),
+	(5, '3100102009', 'UN31.UPBJ', 6, 3, 2, '1', '10', 15, 15, 15, 'Ubah', 0, NULL, NULL, '2022-12-28 05:34:00', '2022-12-28 05:22:50');
 
 -- Dumping structure for table db_asset.ref_rkbmut_pengadaan_header
 CREATE TABLE IF NOT EXISTS `ref_rkbmut_pengadaan_header` (
@@ -1258,9 +1252,9 @@ CREATE TABLE IF NOT EXISTS `ref_rkbmut_pengadaan_header` (
   PRIMARY KEY (`kode_kegiatan_rkt`,`tahun`,`kode_unit_kerja`,`revisi_ke`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table db_asset.ref_rkbmut_pengadaan_header: ~0 rows (approximately)
+-- Dumping data for table db_asset.ref_rkbmut_pengadaan_header: ~1 rows (approximately)
 INSERT INTO `ref_rkbmut_pengadaan_header` (`kode_kegiatan_rkt`, `tahun`, `kode_unit_kerja`, `revisi_ke`, `status_revisi`, `status_paraf`, `nama_kegiatan_rkt`, `nama_unit_kerja`, `kode_program_rsb`, `nama_program_rsb`, `kode_jenis_belanja`, `nama_jenis_belanja`, `komentar`, `jenis_revisi`, `ucr`, `uch`, `udcr`, `udch`) VALUES
-	(5, '2022', 'UN31.UPBJ', 0, 0, 0, 'Data3 ', 'Unit Pengadaan Barang dan Jasa', NULL, NULL, NULL, NULL, NULL, 'kecil', NULL, NULL, '2022-12-22 04:11:53', '2022-12-22 04:11:53');
+	(5, '2022', 'UN31.UPBJ', 6, 3, 2, 'Data3 ', 'Unit Pengadaan Barang dan Jasa', NULL, NULL, NULL, NULL, NULL, 'kecil', NULL, NULL, '2022-12-28 05:22:50', '2022-12-28 05:34:00');
 
 -- Dumping structure for table db_asset.ref_rkbmut_penghapusan
 CREATE TABLE IF NOT EXISTS `ref_rkbmut_penghapusan` (
@@ -1596,7 +1590,7 @@ CREATE TABLE IF NOT EXISTS `trx_rkbmut_all` (
 
 -- Dumping data for table db_asset.trx_rkbmut_all: ~0 rows (approximately)
 INSERT INTO `trx_rkbmut_all` (`kode_unit_kerja`, `nama_unit_kerja`, `status_pengadaan`, `status_pemeliharaan`, `status_pemindahtanganan`, `status_pemanfaatan`, `status_penghapusan`, `pdf`, `status_rkbmutall`, `ucr`, `uch`, `udcr`, `udch`) VALUES
-	('UN31.UPBJ', 'UPBJ', 1, 1, 1, 1, 1, 'https://sippp.ut.ac.id/hrd/pdf-rkbm/UN31.UPBJ.pdf', 1, NULL, NULL, '2022-10-31 03:06:47', '2022-12-16 12:11:03');
+	('UN31.UPBJ', 'UPBJ', 1, 1, 1, 1, 1, 'https://sippp.ut.ac.id/hrd/pdf-rkbm/UN31.UPBJ.pdf', 1, NULL, NULL, '2022-10-31 03:06:47', '2022-12-28 05:34:00');
 
 -- Dumping structure for trigger db_asset.insert_rkbmut_pengadaan_detail
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
@@ -1624,20 +1618,22 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `update_rkbmut_pengadaan_detail` AFTER UPDATE ON `ref_rkbmut_pengadaan_detail` FOR EACH ROW BEGIN 
-INSERT INTO log_rkbmut_pengadaan
-SET kode_kegiatan_rkt = OLD.kode_kegiatan_rkt, 
-kode_skema_pengadaan = OLD.kode_skema_pengadaan, 
-kuantitas = OLD.kuantitas, 
-sbsk = OLD.sbsk, 
-existing_bmut = OLD.existing_bmut, 
-kebutuhan_riil = OLD.kebutuhan_riil, 
-keterangan = OLD.keterangan,
-revisi_ke = OLD.revisi_ke,
-kode_asset = OLD.kode_asset, 
-kode_unit_kerja = OLD.kode_unit_kerja, 
-status_paraf = OLD.status_paraf,
-event_trigger = "UPDATE",
-status_revisi = OLD.status_revisi;
+IF NOT EXISTS (SELECT * FROM log_rkbmut_pengadaan WHERE kode_unit_kerja = OLD.kode_unit_kerja AND revisi_ke = OLD.revisi_ke) THEN
+	INSERT INTO log_rkbmut_pengadaan
+	SET kode_kegiatan_rkt = OLD.kode_kegiatan_rkt, 
+	kode_skema_pengadaan = OLD.kode_skema_pengadaan, 
+	kuantitas = OLD.kuantitas, 
+	sbsk = OLD.sbsk, 
+	existing_bmut = OLD.existing_bmut, 
+	kebutuhan_riil = OLD.kebutuhan_riil, 
+	keterangan = OLD.keterangan,
+	revisi_ke = OLD.revisi_ke,
+	kode_asset = OLD.kode_asset, 
+	kode_unit_kerja = OLD.kode_unit_kerja, 
+	status_paraf = OLD.status_paraf,
+	event_trigger = "UPDATE",
+	status_revisi = OLD.status_revisi;
+	END IF;
 END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
