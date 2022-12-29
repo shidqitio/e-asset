@@ -9,6 +9,7 @@ const RefIdentifikasiKebutuhan4 = require("../../models/sippan/refIdentifikasiKe
 const RefIdentifikasiKebutuhan5 = require("../../models/sippan/refIdentifikasiKebutuhan5")
 const RefIdentifikasiKebutuhan6 = require("../../models/sippan/refIndentifikasiKebutuhan6")
 const RefKriteriaBarang = require("../../models/sippan/refKriteriaBarang")
+const {Op} = require("sequelize")
 
 
 
@@ -542,7 +543,258 @@ exports.updatesippan = (req, res, next) => {
     })
 }
 
-//Revisi 
-exports.revisisippan = (req, res, next) => {
+//Kirim Ke Kasubdit 
+exports.kirimkasubdit = (req, res, next) => {
+    let param = {
+        kode_unit_kerja : req.params.kode_unit_kerja,
+    }
+    return RkbmutPengadaanDetail.findAll({
+        where : {
+            kode_unit_kerja : param.kode_unit_kerja,
+            status_sippan_posisi : 0,
+            status_sippan : 1
+        }
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return RkbmutPengadaanHeader.findAll({
+            where : {
+                tahun : req.params.tahun,
+                kode_unit_kerja : param.kode_unit_kerja
+            },
+            include : [
+                {
+                    model : RkbmutPengadaanDetail,
+                    where : {
+                        kode_unit_kerja : param.kode_unit_kerja,
+                        status_sippan : 0
+                    }, 
+                    
+                }
+            ],
+            raw : true
+        })
+        .then((rkbm) => {
+            if(rkbm.length !== 0 ) {
+                const error = new Error("Data Belum Siap Kirim")
+                error.statusCode = 422
+                throw error
+            }
+            console.log(rkbm)
+            return RkbmutPengadaanDetail.update({ 
+                status_sippan_posisi : 1
+            }, 
+            {
+                where : param
+            })
+            .then((data) => {
+                if(!data) {
+                    const error = new Error("Data Gagal Update")
+                    error.statusCode = 422 
+                    throw error
+                }
+                return res.json({
+                    status : "Success", 
+                    message : "Data Berhasil di Kirim ke Kasubdit",
+                    data : data
+                })
+            })
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    });
+}
+
+//REVISI KASUBDIT
+exports.komentar = (req, res, next) => {
+    let param = {
+        kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt), 
+        kode_asset : req.params.kode_asset
+    }
+    let komentar_identifikasi1 = req.body.komentar_identifikasi1
+    let komentar_identifikasi2 = req.body.komentar_identifikasi2
+    let komentar_identifikasi3 = req.body.komentar_identifikasi3
+    let komentar_identifikasi4 = req.body.komentar_identifikasi4
+    let komentar_identifikasi5 = req.body.komentar_identifikasi5
+    let komentar_identifikasi6 = req.body.komentar_identifikasi6
+    return db.transaction()
+    .then((t) => {
+        console.log(param.kode_kegiatan_rkt)
+        return RkbmutPengadaanDetail.findAll({
+            where : {
+                kode_kegiatan_rkt : param.kode_kegiatan_rkt,
+                kode_asset : param.kode_asset,
+                status_sippan : 1, 
+                status_sippan_posisi : 1
+            }, 
+        })
+        .then((rkbmut) => {
+            if(rkbmut.length === 0) {
+                const error = new Error("Data Tidak Ada")
+                error.statusCode = 422
+                throw error
+            }
+            return RefIdentifikasiKebutuhan1.update({
+                komentar : komentar_identifikasi1
+            },
+            {
+                where : param,
+                transaction : t
+            })
+            .then((update1) => {
+                if(!update1) {
+                    const error = new Error("Data Gagal Update")
+                    error.statusCode = 422
+                    throw error
+                }
+                return RefIdentifikasiKebutuhan2.update({
+                    komentar : komentar_identifikasi2
+                }, 
+                {
+                    where : param,
+                    transaction : t
+                })
+                .then((update2) => {
+                    if(!update2) {
+                        const error = new Error("Data Gagal Update")
+                        error.statusCode = 422
+                        throw error
+                    }
+                    return RefIdentifikasiKebutuhan3.update({
+                        komentar : komentar_identifikasi3
+                    },
+                    {
+                        where : param, 
+                        transaction : t
+                    })
+                    .then((update3) => {
+                        if(!update3) {
+                            const error = new Error("Data Gagal Update")
+                            error.statusCode = 422
+                            throw error
+                        }
+                        return RefIdentifikasiKebutuhan4.update({
+                            komentar : komentar_identifikasi4
+                        },
+                        {
+                            where : param, 
+                            transaction : t
+                        })
+                        .then((update4) => {
+                            if(!update4) {
+                                const error = new Error("Data Gagal Update")
+                                error.statusCode = 422
+                                throw error
+                            }
+                            return RefIdentifikasiKebutuhan5.update({
+                                komentar : komentar_identifikasi5
+                            },
+                            {
+                                where : param, 
+                                transaction : t
+                            })
+                            .then((update5) => {
+                                if(!update5) {
+                                    const error = new Error("Data Gagal Update")
+                                    error.statusCode = 422
+                                    throw error
+                                }
+                                return RefIdentifikasiKebutuhan6.update({
+                                    komentar : komentar_identifikasi6
+                                },
+                                {
+                                    where : param, 
+                                    transaction : t
+                                })
+                                .then((update6) => {
+                                    if(!update6) {
+                                        const error = new Error("Data Gagal Update")
+                                        error.statusCode = 422
+                                        throw error
+                                    }
+                                    if(komentar_identifikasi1 === "" && komentar_identifikasi2 === "" 
+                                        && komentar_identifikasi3 === "" && komentar_identifikasi4 === "" 
+                                        && komentar_identifikasi5 === "" && komentar_identifikasi6 === "") 
+                                        {
+                                            console.log("Jalankan Ini")
+                                            return RkbmutPengadaanDetail.update({
+                                                status_sippan : 3, 
+                                                status_sippan_posisi : 1, 
+                                            }, 
+                                            {
+                                                where : param,
+                                                transaction : t
+                                            })
+                                            .then((detail) => {
+                                                if(!detail) {
+                                                    const error = new Error("Data Gagal Update")
+                                                    error.statusCode = 422
+                                                    throw error
+                                                }
+                                                t.commit()
+                                                return res.json({
+                                                    status : "Success", 
+                                                    message : "Data Berhasil Update",
+                                                    data : {
+                                                        update1, update2, update3, update4, update5, update6, detail
+                                                    }
+                                                })
+                                            })
+                                        }
+                                        console.log("coba ini")
+                                        return RkbmutPengadaanDetail.update({
+                                            status_sippan : 2, 
+                                            status_sippan_posisi : 1
+                                        }, 
+                                        {
+                                            where : param,
+                                            transaction : t
+                                        })
+                                        .then((detail) => {
+                                            if(!detail) {
+                                                const error = new Error("Data Gagal Update")
+                                                error.statusCode = 422
+                                                throw error
+                                            }
+                                            t.commit()
+                                            return res.json({
+                                                status : "Success", 
+                                                message : "Data Berhasil Update",
+                                                data : {
+                                                    update1, update2, update3, update4, update5, update6, detail
+                                                }
+                                            })
+                                        })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback()
+            return next(err);
+        });
+    })
+}
+
+//Kirim Balik Unit 
+exports.kirimunit = (req, res, next) => {
+    let param = {
+        kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt), 
+        kode_asset : req.params.kode_asset
+    }
     
 }
