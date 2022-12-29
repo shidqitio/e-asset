@@ -9,7 +9,7 @@ const RefIdentifikasiKebutuhan4 = require("../../models/sippan/refIdentifikasiKe
 const RefIdentifikasiKebutuhan5 = require("../../models/sippan/refIdentifikasiKebutuhan5")
 const RefIdentifikasiKebutuhan6 = require("../../models/sippan/refIndentifikasiKebutuhan6")
 const RefKriteriaBarang = require("../../models/sippan/refKriteriaBarang")
-const {Op} = require("sequelize")
+const {Op, where} = require("sequelize")
 
 
 
@@ -632,8 +632,15 @@ exports.komentar = (req, res, next) => {
             where : {
                 kode_kegiatan_rkt : param.kode_kegiatan_rkt,
                 kode_asset : param.kode_asset,
-                status_sippan : 1, 
-                status_sippan_posisi : 1
+                status_sippan_posisi : 1,
+                [Op.or] : [
+                    {
+                        status_sippan : 1
+                    },
+                    {
+                        status_sippan : 2
+                    }
+                ]
             }, 
         })
         .then((rkbmut) => {
@@ -793,8 +800,243 @@ exports.komentar = (req, res, next) => {
 //Kirim Balik Unit 
 exports.kirimunit = (req, res, next) => {
     let param = {
-        kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt), 
-        kode_asset : req.params.kode_asset
+        kode_unit_kerja : req.params.kode_unit_kerja
     }
-    
+    return RkbmutPengadaanHeader.findAll({
+        where : {
+            kode_unit_kerja : param.kode_unit_kerja,
+            tahun : req.params.tahun
+        },
+        include : [
+            {
+                model : RkbmutPengadaanDetail,
+                where : {
+                    status_sippan : 2, 
+                    status_sippan : 3, 
+                    status_sippan_posisi : 1
+                }
+            }
+        ]
+    })
+    .then((exist) => {
+        if(exist.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return RkbmutPengadaanHeader.findAll({
+            where : {
+                kode_unit_kerja : param.kode_unit_kerja, 
+                tahun : req.params.tahun
+            },
+            include : [
+                {
+                    model : RkbmutPengadaanDetail,
+                    where : {
+                        kode_unit_kerja : param.kode_unit_kerja, 
+                        [Op.or] : [
+                            {
+                                [Op.and] : [
+                                    {
+                                        status_sippan : {
+                                            [Op.not] : 2
+                                        }
+                                    },
+                                    {
+                                        status_sippan : {
+                                            [Op.not] : 3
+                                        }
+                                    },
+                                    
+                                ],
+                            },
+                            {
+                                status_sippan_posisi : {
+                                    [Op.not] : 1
+                                }
+                            }
+                        ],
+                    },
+                    required : true,
+                }
+            ],
+            raw : true
+        })
+        .then((cekrkbmut) => {
+            if(cekrkbmut.length !== 0) {
+                const error = new Error("Data Belum Siap Dikirim")
+                error.statusCode = 422
+                throw error
+            }
+            console.log(cekrkbmut)
+            return RkbmutPengadaanHeader.findAll({
+                where : {
+                    kode_unit_kerja : param.kode_unit_kerja,
+                    tahun : req.params.tahun
+                },
+                include : [
+                    {
+                        model : RkbmutPengadaanDetail,
+                        where : {
+                            kode_unit_kerja : param.kode_unit_kerja,
+                            [Op.or] : [
+                                {
+                                    status_sippan_posisi : {
+                                        [Op.not] : 1
+                                    }
+                                },
+                                {
+                                    status_sippan : {
+                                        [Op.not] : 3
+                                    }
+                                }
+                                
+                            ], 
+                            
+                        }
+                    }
+                ]
+            })
+            .then((ceksetuju) => {
+                if(ceksetuju.length !== 0 ) {
+                    return RkbmutPengadaanDetail.update({
+                        status_sippan_posisi : 0
+                    }, 
+                    {
+                        where : param
+                    })
+                    .then((update) => {
+                        if(!update) {
+                            const error = new Error("Data Gagal Update")
+                            error.statusCode = 422
+                            throw error
+                        }
+                        return res.json({
+                            status : "Success",
+                            message : "Data Berhasil Kembali Ke Unit",
+                            data : update
+                        })
+                    })
+                }
+                return RkbmutPengadaanDetail.update({
+                    status_sippan : 4, 
+                    status_sippan_posisi : 0
+                }, 
+                {
+                    where : param
+                })
+                .then((update) => {
+                    if(!update) {
+                        const error = new Error("Data Gagal Update")
+                        error.statusCode = 422
+                        throw error
+                    }
+                    return res.json({
+                        status : "Success",
+                        message : "Data Berhasil Kembali Ke Unit",
+                        data : update
+                    })
+                })
+            })
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    }); 
 }
+
+//Kirim Revisian Unit ke Kasubdit
+exports.kirimrevisiunit = (req, res, next) => {
+    let param = {
+        kode_unit_kerja : req.params.kode_unit_kerja,
+    }
+    return RkbmutPengadaanDetail.findAll({
+        where : {
+            kode_unit_kerja : param.kode_unit_kerja,
+            status_sippan_posisi : 0,
+            status_sippan : 2, 
+            status_sippan : 3
+        }
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return RkbmutPengadaanHeader.findAll({
+            where : {
+                tahun : req.params.tahun,
+                kode_unit_kerja : param.kode_unit_kerja
+            },
+            include : [
+                {
+                    model : RkbmutPengadaanDetail,
+                    where : {
+                        kode_unit_kerja : param.kode_unit_kerja, 
+                        [Op.or] : [
+                            {
+                                [Op.and] : [
+                                    {
+                                        status_sippan : {
+                                            [Op.not] : 2
+                                        }
+                                    },
+                                    {
+                                        status_sippan : {
+                                            [Op.not] : 3
+                                        }
+                                    },
+                                    
+                                ],
+                            },
+                            {
+                                status_sippan_posisi : {
+                                    [Op.not] : 0
+                                }
+                            }
+                        ],
+                    },
+                    required : true
+                }
+            ],
+            raw : true
+        })
+        .then((rkbm) => {
+            if(rkbm.length !== 0 ) {
+                const error = new Error("Data Belum Siap Kirim")
+                error.statusCode = 422
+                throw error
+            }
+            console.log(rkbm)
+            return RkbmutPengadaanDetail.update({ 
+                status_sippan_posisi : 1, 
+            }, 
+            {
+                where : param
+            })
+            .then((data) => {
+                if(!data) {
+                    const error = new Error("Data Gagal Update")
+                    error.statusCode = 422 
+                    throw error
+                }
+                return res.json({
+                    status : "Success", 
+                    message : "Data Berhasil di Kirim ke Kasubdit",
+                    data : data
+                })
+            })
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        return next(err);
+    });
+}
+
