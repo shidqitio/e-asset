@@ -108,7 +108,7 @@ const RefMetodeKebutuhan = db.define(
           },
     },
     {
-        tableName : "ref_identifikasi_kebutuhan_6", 
+        tableName : "ref_metode_kebutuhan", 
         createdAt : 'udcr', 
         updatedAt : 'udch'
     }
