@@ -618,3 +618,49 @@ exports.jumlahkondisi = (req, res, next) => {
         next(err)
     });
  }
+
+ //Get Barang By Unit dan Asset
+ //Barang By Unit Data Select
+exports.barangbyunitasset = (req, res, next) => {
+    return Asset.findAll({
+        where : {
+            kode_asset : req.params.kode_asset
+        },
+        include : [
+            {
+                model : DaftarBarang, 
+                where : {
+                    nup : {
+                        [Op.not] : null
+                    },
+                },
+                include : [
+                    {
+                        model : Ruang,
+                        where : {
+                            kode_unit : req.params.kode_unit
+                        }
+                    }
+                ]
+            }
+        ]
+    })
+    .then((data) => {
+        if(data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Ditampilkan",
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500
+        }
+        next(err)
+    });
+ }
