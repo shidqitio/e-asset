@@ -100,3 +100,28 @@ exports.store = (req, res, next) => {
     });
 }
 
+exports.updatemetode = (req, res, next) => {
+    let nama_rup = rquest.nama_rup;
+    let jenis_pengadaan = rquest.jenis_pengadaan;
+    let metode_pengadaan = rquest.metode_pengadaan
+    let lokasi = rquest.lokasi
+    let uraian_pekerjaan = rquest.uraian_pekerjaan
+    let spesifikasi = rquest.spesifikasi
+    let volume = rquest.volume
+    let satuan = rquest.satuan
+    let produksi_dalam_negeri = rquest.produksi_dalam_negeri
+    let usaha = rquest.usaha
+    let sumber_dana = rquest.sumber_dana
+    let pilih_penyedia_mulai = rquest.pilih_penyedia_mulai
+    let pilih_penyedia_selesai = rquest.pilih_penyedia_selesai
+    let pelaksanaan_kontrak_mulai = rquest.pelaksanaan_kontrak_mulai
+    let pelaksanaan_kontrak_selesai = rquest.pelaksanaan_kontrak_selesai
+    let rencana_pemanfaatan_mulai = rquest.rencana_pemanfaatan_mulai
+    let rencana_pemanfaatan_selesai = rquest.rencana_pemanfaatan_selesai
+    let param = {
+        kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt), 
+        kode_asset : req.params.kode_asset
+    }
+
+    
+}
