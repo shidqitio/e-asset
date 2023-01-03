@@ -5,7 +5,7 @@ const router = express.Router()
 const path = require("path")
 const fs = require("fs")
 const multer = require("multer")
-const { store } = require("../../controllers/sippan/metodekebutuhanController")
+const { store, updatemetode } = require("../../controllers/sippan/metodekebutuhanController")
 
 const {checker} = require("../../helpers/utils")
 
@@ -24,7 +24,7 @@ const uploadFile = multer({
     storage : storage, 
     fileFilter(req, file, cb) {
         if(
-            file.mimetype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
+            file.mimetype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
             file.mimetype === "application/vnd.ms-excel"
         ) {
             cb(null, true)
@@ -42,5 +42,7 @@ router.post("/",
     ],
     checker,
 store)
+
+router.put("/update_metode_kebutuhan/:kode_kegiatan_rkt/:kode_asset", updatemetode)
 
 module.exports = router

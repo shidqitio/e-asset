@@ -23,7 +23,10 @@ exports.store = (req, res, next) => {
     let pelaksanaan_kontrak_selesai = rquest.pelaksanaan_kontrak_selesai
     let rencana_pemanfaatan_mulai = rquest.rencana_pemanfaatan_mulai
     let rencana_pemanfaatan_selesai = rquest.rencana_pemanfaatan_selesai
+    const path = require('path')
+    const filename = path.parse(req.file.filename).base
     
+
     return RefMetodeKebutuhan.findAll({
         where : {
             kode_kegiatan_rkt : kode_kegiatan_rkt,
@@ -56,7 +59,7 @@ exports.store = (req, res, next) => {
             pelaksanaan_kontrak_selesai : pelaksanaan_kontrak_selesai,
             rencana_pemanfaatan_mulai : rencana_pemanfaatan_mulai, 
             rencana_pemanfaatan_selesai : rencana_pemanfaatan_selesai,
-            upload_file : req.filename
+            upload_file : filename
         })
         .then((data) => {
             if(!data) {
@@ -69,6 +72,7 @@ exports.store = (req, res, next) => {
                 error.statusCode = 422
                 throw error
             }
+
             return RkbmutPengadaanDetail.update({
                 status_sippan : 5
             }, 
@@ -101,6 +105,7 @@ exports.store = (req, res, next) => {
 }
 
 exports.updatemetode = (req, res, next) => {
+    const rquest = req.body
     let nama_rup = rquest.nama_rup;
     let jenis_pengadaan = rquest.jenis_pengadaan;
     let metode_pengadaan = rquest.metode_pengadaan
@@ -123,5 +128,50 @@ exports.updatemetode = (req, res, next) => {
         kode_asset : req.params.kode_asset
     }
 
-    
+    return RefMetodeKebutuhan.findAll({
+        where : param
+    })
+    .then((metode) => {
+        return RefMetodeKebutuhan.update({
+            nama_rup : nama_rup, 
+            jenis_pengadaan : jenis_pengadaan, 
+            metode_pengadaan : metode_pengadaan, 
+            lokasi : lokasi, 
+            uraian_pekerjaan : uraian_pekerjaan, 
+            spesifikasi : spesifikasi, 
+            volume : volume,
+            satuan : satuan, 
+            produksi_dalam_negeri : produksi_dalam_negeri, 
+            usaha : usaha, 
+            sumber_dana : sumber_dana, 
+            pilih_penyedia_mulai : pilih_penyedia_mulai, 
+            pilih_penyedia_selesai : pilih_penyedia_selesai, 
+            pelaksanaan_kontrak_mulai : pelaksanaan_kontrak_mulai, 
+            pelaksanaan_kontrak_selesai : pelaksanaan_kontrak_selesai,
+            rencana_pemanfaatan_mulai : rencana_pemanfaatan_mulai, 
+            rencana_pemanfaatan_selesai : rencana_pemanfaatan_selesai
+        }, 
+        {
+            where : param
+        }).then((upd) => {
+            if(!upd) {
+                const error = new Error("Data Gagal Update")
+                error.statusCode = 422
+                throw error
+            }
+            return res.json({
+                status : "Success", 
+                message : "Data Berhasil Diubah",
+                data : upd
+            })
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500;
+        }
+        t.rollback()
+        return next(err);
+    });
 }
+

@@ -51,7 +51,7 @@ const RefMetodeKebutuhan = db.define(
             allowNull : true
         },
         produksi_dalam_negeri : {
-            type : DataTypes.ENUM('ya','tidak'),
+            type : DataTypes.ENUM('iya','tidak'),
             allowNull : true
         }, 
         usaha : {
