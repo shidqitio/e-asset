@@ -811,8 +811,14 @@ exports.kirimunit = (req, res, next) => {
             {
                 model : RkbmutPengadaanDetail,
                 where : {
-                    status_sippan : 2, 
-                    status_sippan : 3, 
+                    [Op.or] : [
+                        {
+                            status_sippan : 2
+                        },
+                        {
+                            status_sippan : 3
+                        }
+                    ],
                     status_sippan_posisi : 1
                 }
             }
