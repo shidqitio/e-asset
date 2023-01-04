@@ -2,6 +2,29 @@ const RefMetodeKebutuhan = require("../../models/sippan/refMetodeKebutuhan")
 const RkbmutPengadaanHeader = require("../../models/rkbmutPengadaanHeader")
 const RkbmutPengadaanDetail = require("../../models/rkbmutPengadaanDetail")
 
+exports.index = (req, res, next) => {
+    let param = {
+        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt,
+        kode_asset : req.params.kode_asset
+    }
+    return RefMetodeKebutuhan.findAll({
+        where : param
+    })
+    .then((data) => {
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data",
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode){
+            err.statusCode = 500;
+        }
+        return next(err)
+    });
+}
+
 exports.store = (req, res, next) => {
     const rquest = req.body
     const kode_kegiatan_rkt = rquest.kode_kegiatan_rkt;
@@ -241,4 +264,60 @@ exports.kirimkasubdit = (req, res, next) => {
         }
         return next(err);
     });
+}
+
+exports.revisikasubdik = (req, res, next) => {
+    const rquest = req.body
+    let nama_rup = rquest.nama_rup;
+    let jenis_pengadaan = rquest.jenis_pengadaan;
+    let metode_pengadaan = rquest.metode_pengadaan
+    let lokasi = rquest.lokasi
+    let uraian_pekerjaan = rquest.uraian_pekerjaan
+    let spesifikasi = rquest.spesifikasi
+    let volume = rquest.volume
+    let satuan = rquest.satuan
+    let produksi_dalam_negeri = rquest.produksi_dalam_negeri
+    let usaha = rquest.usaha
+    let sumber_dana = rquest.sumber_dana
+    let pilih_penyedia_mulai = rquest.pilih_penyedia_mulai
+    let pilih_penyedia_selesai = rquest.pilih_penyedia_selesai
+    let pelaksanaan_kontrak_mulai = rquest.pelaksanaan_kontrak_mulai
+    let pelaksanaan_kontrak_selesai = rquest.pelaksanaan_kontrak_selesai
+    let rencana_pemanfaatan_mulai = rquest.rencana_pemanfaatan_mulai
+    let rencana_pemanfaatan_selesai = rquest.rencana_pemanfaatan_selesai
+
+    return RkbmutPengadaanDetail.findAll({
+        where : {
+            kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+            kode_asset : req.params.kode_asset, 
+            kode_status : 5, 
+            kode_status_sippan : 1
+        }
+    })
+    .then((rkbm) => {
+        if(rkbm.length === 0 ) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422 
+            throw error 
+        }
+        return RefMetodeKebutuhan.update({
+            nama_rup : nama_rup, 
+            jenis_pengadaan : jenis_pengadaan, 
+            metode_pengadaan : metode_pengadaan, 
+            lokasi : lokasi, 
+            uraian_pekerjaan : uraian_pekerjaan, 
+            spesifikasi : spesifikasi, 
+            volume : volume,
+            satuan : satuan, 
+            produksi_dalam_negeri : produksi_dalam_negeri, 
+            usaha : usaha, 
+            sumber_dana : sumber_dana, 
+            pilih_penyedia_mulai : pilih_penyedia_mulai, 
+            pilih_penyedia_selesai : pilih_penyedia_selesai, 
+            pelaksanaan_kontrak_mulai : pelaksanaan_kontrak_mulai, 
+            pelaksanaan_kontrak_selesai : pelaksanaan_kontrak_selesai,
+            rencana_pemanfaatan_mulai : rencana_pemanfaatan_mulai, 
+            rencana_pemanfaatan_selesai : rencana_pemanfaatan_selesai
+        })
+    })
 }
