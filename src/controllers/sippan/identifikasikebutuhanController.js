@@ -639,6 +639,9 @@ exports.komentar = (req, res, next) => {
                     },
                     {
                         status_sippan : 2
+                    }, 
+                    {
+                        status_sippan : 3
                     }
                 ]
             }, 
@@ -733,7 +736,7 @@ exports.komentar = (req, res, next) => {
                                         {
                                             console.log("Jalankan Ini")
                                             return RkbmutPengadaanDetail.update({
-                                                status_sippan : 3, 
+                                                status_sippan : 4, 
                                                 status_sippan_posisi : 1, 
                                             }, 
                                             {
@@ -816,7 +819,7 @@ exports.kirimunit = (req, res, next) => {
                             status_sippan : 2
                         },
                         {
-                            status_sippan : 3
+                            status_sippan : 4
                         }
                     ],
                     status_sippan_posisi : 1
@@ -850,7 +853,7 @@ exports.kirimunit = (req, res, next) => {
                                     },
                                     {
                                         status_sippan : {
-                                            [Op.not] : 3
+                                            [Op.not] : 4
                                         }
                                     },
                                     
@@ -893,7 +896,7 @@ exports.kirimunit = (req, res, next) => {
                                 },
                                 {
                                     status_sippan : {
-                                        [Op.not] : 3
+                                        [Op.not] : 4
                                     }
                                 }
                                 
@@ -925,7 +928,7 @@ exports.kirimunit = (req, res, next) => {
                     })
                 }
                 return RkbmutPengadaanDetail.update({
-                    status_sippan : 4, 
+                    status_sippan : 5, 
                     status_sippan_posisi : 0
                 }, 
                 {
@@ -963,8 +966,16 @@ exports.kirimrevisiunit = (req, res, next) => {
         where : {
             kode_unit_kerja : param.kode_unit_kerja,
             status_sippan_posisi : 0,
-            status_sippan : 2, 
-            status_sippan : 3
+            [Op.or] : [
+                {
+                    status_sippan : 3, 
+                }, 
+                {
+                    status_sippan : 4
+                }
+            ]
+            
+            
         }
     })
     .then((data) => {
@@ -988,12 +999,12 @@ exports.kirimrevisiunit = (req, res, next) => {
                                 [Op.and] : [
                                     {
                                         status_sippan : {
-                                            [Op.not] : 2
+                                            [Op.not] : 3
                                         }
                                     },
                                     {
                                         status_sippan : {
-                                            [Op.not] : 3
+                                            [Op.not] : 4
                                         }
                                     },
                                     
@@ -1046,3 +1057,305 @@ exports.kirimrevisiunit = (req, res, next) => {
     });
 }
 
+//Update Revisi Komentar Dari Kasubdik
+exports.updaterevisi = (req, res, next) => {
+    let kode_kegiatan_rkt = req.body.kode_kegiatan_rkt
+    let kode_asset = req.body.kode_asset
+    let waktu_pemanfaatan = req.body.waktu_pemanfaatan
+    let perkiraan_pengadaan = req.body.perkiraan_pengadaan
+    let pihak_pengguna = req.body.pihak_pengguna
+    let ekatalog = req.body.ekatalog
+    let tingkat_prioritas = req.body.tingkat_prioritas
+    let perkiraan_biaya = req.body.perkiraan_biaya
+    let kegunaan = req.body.kegunaan
+    let spesifikasi = req.body.spesifikasi
+    let kebutuhan_riil = req.body.kebutuhan_riil
+    let jumlah_pegawai = req.body.jumlah_pegawai
+    let tingkat_beban_tugas = req.body.tingkat_beban_tugas
+    let jumlah_barang_tersedia = req.body.jumlah_barang_tersedia
+    let existing_bmut = req.body.existing_bmut  
+    let kondisi_baik = req.body.kondisi_baik
+    let kondisi_rusak_ringan = req.body.kondisi_rusak_ringan
+    let kondisi_rusak_berat = req.body.kondisi_rusak_berat
+    let pnbp = req.body.pnbp
+    let rm = req.body.rm
+    let barang_pasar = req.body.barang_pasar
+    let produsen_syarat = req.body.produsen_syarat
+    let persyaratan_barang = req.body.persyaratan_barang
+    let sedikit_tkdn = req.body.sedikit_tkdn
+    let cara_pengiriman = req.body.cara_pengiriman
+    let cara_pengakuan = req.body.cara_pengakuan
+    let cara_pemasangan = req.body.cara_pemasangan
+    let cara_penimbunan = req.body.cara_penimbunan
+    let cara_pengoperasian = req.body.cara_pengoperasian
+    let kebutuhan_pelatihan = req.body.kebutuhan_pelatihan
+    let aspek_pengadaan = req.body.aspek_pengadaan
+    let param = {
+        kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt), 
+        kode_asset : req.params.kode_asset
+    }
+    let barang_sejenis = req.body.barang_sejenis
+    let konsolidasi = req.body.konsolidasi
+
+    return db.transaction()
+    .then((t) => {
+        return RkbmutPengadaanDetail.findAll({
+            where : {
+                kode_kegiatan_rkt : param.kode_kegiatan_rkt, 
+                kode_asset : param.kode_asset, 
+                status_sippan : 2, 
+                status_sippan_posisi : 0
+            }
+        })
+        .then((detil) => {
+            if(detil.length === 0) {
+                const error = new Error("Data Tidak Ada")
+                error.statusCode = 422
+                throw error
+            }
+            return RefIdentifikasiKebutuhan1.findAll({
+                where : param
+            })
+            .then((kebutuhan1) => {
+                return RefIdentifikasiKebutuhan1.update({
+                    waktu_pemanfaatan : waktu_pemanfaatan,
+                    perkiraan_pengadaan : perkiraan_pengadaan,
+                    pihak_pengguna : pihak_pengguna,
+                    ekatalog : ekatalog, 
+                    tingkat_prioritas : tingkat_prioritas, 
+                    perkiraan_biaya : perkiraan_biaya,
+                    kegunaan : kegunaan,
+                    spesifikasi : spesifikasi, 
+                    kebutuhan_riil : kebutuhan_riil, 
+                }, 
+                {
+                    where : param,
+                    transaction : t
+                })
+                .then((update1) => {
+                    if(!update1) {
+                        const error = new Error("Data Gagal Update")
+                        error.statusCode = 422
+                        throw error
+                    }
+                    return RefIdentifikasiKebutuhan2.findAll({
+                        where : param
+                    })
+                    .then((kebutuhan2) => {
+                        return RefIdentifikasiKebutuhan2.update({
+                            kode_kegiatan_rkt : kode_kegiatan_rkt,
+                            kode_asset : kode_asset,
+                            jumlah_pegawai : jumlah_pegawai, 
+                            tingkat_beban_tugas : tingkat_beban_tugas,
+                            jumlah_barang_tersedia : jumlah_barang_tersedia
+                        }, 
+                        {
+                            where : param,
+                            transaction : t
+                        })
+                        .then((update2) => {
+                            if(!update2) {
+                                const error = new Error("Data Gagal Update")
+                                error.statusCode = 422
+                                throw error
+                            }
+                            return RefIdentifikasiKebutuhan3.findAll({
+                                where : param
+                            })
+                            .then((kebutuhan3) => {
+                                return RefIdentifikasiKebutuhan3.update({
+                                    kode_kegiatan_rkt : kode_kegiatan_rkt,
+                                    kode_asset : kode_asset,
+                                    existing_bmut : existing_bmut,
+                                    kondisi_baik : kondisi_baik,
+                                    kondisi_rusak_ringan : kondisi_rusak_ringan,
+                                    kondisi_rusak_berat : kondisi_rusak_berat,
+                                    pnbp : pnbp, 
+                                    rm : rm
+                                },{
+                                    where : param, 
+                                    transaction : t
+                                })
+                                .then((update3) => {
+                                    if(!update3) {
+                                        const error = new Error("Data Gagal Update")
+                                        error.statusCode = 422
+                                        throw error
+                                    }
+                                    return RefIdentifikasiKebutuhan4.findAll({
+                                        where : param
+                                    })
+                                    .then((kebutuhan4) => {
+                                        return RefIdentifikasiKebutuhan4.update({
+                                            kode_kegiatan_rkt : kode_kegiatan_rkt,
+                                            kode_asset : kode_asset, 
+                                            barang_pasar : barang_pasar,
+                                            produsen_syarat : produsen_syarat,
+                                            persyaratan_barang : persyaratan_barang,
+                                            sedikit_tkdn : sedikit_tkdn
+                                        }, 
+                                        {
+                                            where : param, 
+                                            transaction : t
+                                        })
+                                        .then((update4) => {
+                                            if(!update4) {
+                                                const error = new Error("Data Gagal Update")
+                                                error.statusCode = 422
+                                                throw error
+                                            }
+                                            return RefIdentifikasiKebutuhan5.findAll({
+                                                where : param
+                                            })
+                                            .then((kebutuhan5) => {
+                                                return RefIdentifikasiKebutuhan5.update({
+                                                    cara_pengiriman : cara_pengiriman, 
+                                                    cara_pemasangan : cara_pemasangan, 
+                                                    cara_pengakuan : cara_pengakuan,
+                                                    cara_penimbunan : cara_penimbunan, 
+                                                    cara_pengoperasian : cara_pengoperasian, 
+                                                    kebutuhan_pelatihan : kebutuhan_pelatihan, 
+                                                    aspek_pengadaan : aspek_pengadaan
+                                                },
+                                                {
+                                                    where : param, 
+                                                    transaction : t
+                                                })
+                                                .then((update5) => {
+                                                    if(!update5) {
+                                                        const error = new Error("Data Gagal Update")
+                                                        error.statusCode = 422
+                                                        throw error
+                                                    }
+                                                    return RefIdentifikasiKebutuhan6.update({
+                                                        barang_sejenis : barang_sejenis, 
+                                                        konsolidasi : konsolidasi
+                                                    },  {
+                                                        where : param,
+                                                        transaction : t
+                                                    })
+                                                    .then((update6) => {
+                                                        if(!update6) {
+                                                            const error = new Error("Data Gagal Update")
+                                                            error.statusCode = 422
+                                                            throw error
+                                                        }
+                                                        return RkbmutPengadaanDetail.update({
+                                                            status_sippan : 3
+                                                        }, {
+                                                            where : param, 
+                                                            transaction : t
+                                                        })
+                                                        .then((rkbm_up) => {
+                                                            if(!rkbm_up) {
+                                                                const error = new Error("Data Gagal Update")
+                                                                error.statusCode = 422
+                                                                throw error
+                                                            }
+                                                            return RefKriteriaBarang.findAll({
+                                                                where : param,
+                                                                raw : true
+                                                            })
+                                                            .then((krit)=> {
+                                                                if(krit.length !== 0) {
+                                                                    return RefKriteriaBarang.destroy({
+                                                                      where : param,
+                                                                      transaction : t
+                                                                    })
+                                                                    .then((destroy) => {
+                                                                      if(!destroy) {
+                                                                          const error = new Error("Data Gagal Hapus")
+                                                                          error.statusCode = 422
+                                                                          throw error
+                                                                      }
+                                                                      const request = req.body
+                                                                      const data = request.kriteria_barang.map((item) => {
+                                                                          return {
+                                                                              kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt),
+                                                                              kode_asset : req.params.kode_asset, 
+                                                                              "kriteria_barang" : item
+                                                                          }
+                                                                      })
+                                                                      console.log(data)
+                                                                      return RefKriteriaBarang.bulkCreate(data, {transaction : t})
+                                                                      .then((kriteria) => {
+                                                                          if(!kriteria) {
+                                                                              const error = new Error("Gagal Insert kriteria")
+                                                                              error.statusCode = 422
+                                                                              throw error
+                                                                          }
+                                                                          return t.commit()
+                                                                          .then(() => {
+                                                                              return res.json({
+                                                                                  status : "Success", 
+                                                                                  message : "Data Berhasil Di Update",
+                                                                                  data : {
+                                                                                      "update1" : update1,
+                                                                                      "update2" : update2,
+                                                                                      "update3" : update3,
+                                                                                      "update4" : update4,
+                                                                                      "update5" : update5,
+                                                                                      "update6" : update6, 
+                                                                                      "rkbmut" : rkbm_up
+                                                                                  }
+                                                                              })
+                                                                          })
+                                                                      })
+                                                                    })
+                                                                }
+                                                                const request = req.body
+                                                                      const data = request.kriteria_barang.map((item) => {
+                                                                          return {
+                                                                              kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt),
+                                                                              kode_asset : req.params.kode_asset, 
+                                                                              "kriteria_barang" : item
+                                                                          }
+                                                                      })
+                                                                      console.log(data)
+                                                                      return RefKriteriaBarang.bulkCreate(data, {transaction : t})
+                                                                      .then((kriteria) => {
+                                                                          if(!kriteria) {
+                                                                              const error = new Error("Gagal Insert kriteria")
+                                                                              error.statusCode = 422
+                                                                              throw error
+                                                                          }
+                                                                          return t.commit()
+                                                                          .then(() => {
+                                                                              return res.json({
+                                                                                  status : "Success", 
+                                                                                  message : "Data Berhasil Di Update",
+                                                                                  data : {
+                                                                                      "update1" : update1,
+                                                                                      "update2" : update2,
+                                                                                      "update3" : update3,
+                                                                                      "update4" : update4,
+                                                                                      "update5" : update5,
+                                                                                      "update6" : update6,
+                                                                                      "rkbmut" : rkbm_up
+                                                                                  }
+                                                                              })
+                                                                          })
+                                                                      })
+                                                            })
+                                                        })
+                                                    })
+                                                })
+                                            })
+                                        })
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+        .catch((err) => {
+            if(!err.statusCode) {
+                err.statusCode = 500;
+            }
+            t.rollback()
+            return next(err);
+        });
+    })
+}

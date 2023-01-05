@@ -12,10 +12,10 @@ const {
     kirimrevisiunit
 } = require("../../controllers/sippan/identifikasikebutuhanController")
 
-
-router.get('/get-identifikasi/:kode_kegiatan_rkt/:kode_asset', indexsippan)
 router.post('/',store)
+router.get("/get-identifikasi/:kode_kegiatan_rkt/:kode_asset", indexsippan)
 router.put('/update-identifikasi/:kode_kegiatan_rkt/:kode_asset', updatesippan)
+
 
 //Lempar-Lempar
 router.put("/kirim-kasubdit/:kode_unit_kerja/:tahun", kirimkasubdit)
