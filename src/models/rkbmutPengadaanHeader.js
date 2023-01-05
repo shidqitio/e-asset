@@ -62,6 +62,10 @@ const RkbmutPengadaanHeader = db.define(
             type : DataTypes.STRING(255),
             allowNull : true
         },
+        alokasi_pagu : {
+            type : DataTypes.DECIMAL(16,2),
+            allowNull : true
+        },
         ucr: {
             type: DataTypes.STRING(100),
             allowNull: true,

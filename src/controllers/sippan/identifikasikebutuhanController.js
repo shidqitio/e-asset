@@ -180,19 +180,55 @@ exports.store = (req, res, next) => {
                                                 error.statusCode = 422
                                                 throw error
                                             }
-                                            t.commit()
-                                            return res.json({
-                                                status : "Success", 
-                                                message : "Data Identifikasi Berhasil Ditambah",
-                                                data : {
-                                                    "identifikasi_kebutuhan1" : insert1,
-                                                    "identifikasi_kebutuhan2" : insert2, 
-                                                    "identifikasi_kebutuhan3" : insert3, 
-                                                    "identifikasi_kebutuhan4" : insert4, 
-                                                    "identifikasi_kebutuhan5" : insert5,
-                                                    "identifikasi_kebutuhan6" : insert6, 
-                                                    "update_rkbm" : update_rkbm
+                                            return RkbmutPengadaanHeader.findAll({
+                                                include : [
+                                                    {
+                                                        model : RkbmutPengadaanDetail,
+                                                        where : {
+                                                            kode_kegiatan_rkt : kode_kegiatan_rkt, 
+                                                            kode_asset : kode_asset
+                                                        }
+                                                    }
+                                                ]
+                                            })
+                                            .then((head) => {
+                                                if(!head) {
+                                                    const error = new Error("Data Tidak Ada")
+                                                    error.statusCode = 422
+                                                    throw error
                                                 }
+                                                let alokasi_pagu = head[0].alokasi_pagu
+                                                let hasil_pagu_akhir = alokasi_pagu - perkiraan_biaya 
+                                                console.log(hasil_pagu_akhir)
+                                                return RkbmutPengadaanHeader.update({
+                                                    alokasi_pagu : hasil_pagu_akhir
+                                                }, {
+                                                    where : {
+                                                        kode_kegiatan_rkt : kode_kegiatan_rkt
+                                                    }
+                                                })
+                                                .then((upd_head) => {
+                                                    if(!upd_head) {
+                                                        const error = new Error("Pagu Gagal Berkurang")
+                                                        error.statusCode = 422
+                                                        throw error
+                                                    }
+                                                    t.commit()
+                                                    return res.json({
+                                                        status : "Success", 
+                                                        message : "Data Identifikasi Berhasil Ditambah",
+                                                        data : {
+                                                            "identifikasi_kebutuhan1" : insert1,
+                                                            "identifikasi_kebutuhan2" : insert2, 
+                                                            "identifikasi_kebutuhan3" : insert3, 
+                                                            "identifikasi_kebutuhan4" : insert4, 
+                                                            "identifikasi_kebutuhan5" : insert5,
+                                                            "identifikasi_kebutuhan6" : insert6, 
+                                                            "update_rkbm" : update_rkbm, 
+                                                            "rkbm_head" : upd_head
+                                                        }
+                                                    })
+                                                })
                                             })
                                         })
                                     })

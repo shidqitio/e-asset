@@ -176,6 +176,7 @@ exports.store = (req, res, next) => {
                 kode_kegiatan_rkt : kode_kegiatan_rkt, 
                 nama_kegiatan_rkt : nama_kegiatan_rkt, 
                 tahun : req.body.tahun, 
+                alokasi_pagu : req.body.alokasi_pagu,
                 status_revisi : 0, 
                 revisi_ke : 0
             },{transaction : t})
