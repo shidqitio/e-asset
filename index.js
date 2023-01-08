@@ -7,6 +7,7 @@ const path = require("path");
 const {Server} = require("socket.io")
 
 const http = require("http");
+const notFound = require("./src/middlewares/notFound");
 const server = http.createServer(app);
 
 require("dotenv").config();
@@ -41,9 +42,13 @@ io.on("connection", (socket) => {
   console.log(`User Connected : ${socket.id}`)
 })
 
-
+//Routes
 app.use(require("./src/routes"));
 
+//NOT FOUND 
+app.use(notFound)
+
+//Error Handler
 app.use(require("./src/middlewares/errorHandler"));
 
 

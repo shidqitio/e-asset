@@ -16,6 +16,8 @@ const {
     barangbyunitasset
 } = require("../controllers/ruangController")
 
+const {checker} = require("../helpers/utils")
+
 const {validationResult} = require('express-validator')
 
 const RuangSchema = require("../middlewares/request/ruang")
@@ -40,16 +42,7 @@ router.get("/get-jumlah-kondisi/:kode_unit/:kode_asset", jumlahkondisi)
 
 router.post ("/",timeout('5s'), 
 RuangSchema.store,
-(req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const error = new Error();
-        error.statusCode = 422;
-        error.message = errors.array();
-        throw error;
-      }
-      next();
-},
+checker,
 store)
 
 router.get("/get-barang-penghapusan/:kode_unit", getbarangbyunitpenghapusan)

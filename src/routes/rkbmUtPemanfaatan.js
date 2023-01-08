@@ -21,6 +21,7 @@ const {
 } = require("../controllers/rkbmutpemanfaatanController")
 const {validationResult} = require("express-validator")
 const RkbmPemanfaatanSchema = require("../middlewares/request/rkbmUtPemanfaatan")
+const {checker} = require("../helpers/utils")
 
 router.get("/indexunit/:kode_unit_kerja", indexunit)
 router.get("/indexppk/:kode_unit_kerja", indexppk)
@@ -28,16 +29,7 @@ router.get("/indexapip/:kode_unit_kerja", indexapip)
 
 router.post("/",
     RkbmPemanfaatanSchema.store,
-     (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error = new Error();
-            error.statusCode = 422;
-            error.message = errors.array();
-            throw error;
-          }    
-          next();
-    },
+    checker,
 store)
 
 //Proses PPK

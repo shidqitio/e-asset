@@ -3,6 +3,7 @@ const router = express.Router()
 
 const {validationResult} = require("express-validator")
 const RkbmPengadaanSchema = require("../middlewares/request/rkbmUtPengadaan")
+const {checker} = require("../helpers/utils")
 
 // const {authenticate} = require("../middlewares/auth")
 
@@ -33,58 +34,22 @@ router.get("/apip/:kode_unit_kerja", indexapip)
 
 router.post("/", 
 RkbmPengadaanSchema.store, 
-(req, res, next) => {
-    const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error = new Error();
-            error.statusCode = 422;
-            error.message = errors.array();
-            throw error;
-          }
-          next();
-},
+checker,
 store)
 
 router.post("/update", 
 RkbmPengadaanSchema.store, 
-(req, res, next) => {
-    const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error = new Error();
-            error.statusCode = 422;
-            error.message = errors.array();
-            throw error;
-          }
-          next();
-},
+checker,
 update)
 
 router.put("/review/:kode_unit_kerja/:kode_kegiatan_rkt", 
 RkbmPengadaanSchema.update,
-(req, res, next) => {
-    const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error = new Error();
-            error.statusCode = 422;
-            error.message = errors.array();
-            throw error;
-          }
-          next();
-},
+checker,
 review)
 
 router.put("/reviewunit/:kode_unit_kerja/:kode_kegiatan_rkt", 
 RkbmPengadaanSchema.update,
-(req, res, next) => {
-    const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error = new Error();
-            error.statusCode = 422;
-            error.message = errors.array();
-            throw error;
-          }
-          next();
-},
+checker,
 reviewunit)
 
 router.put("/parafunit/:kode_unit_kerja",parafunit)
@@ -97,16 +62,7 @@ router.put("/komentarppk/:kode_kegiatan_rkt/:kode_unit_kerja", perbaikanppk)
 
 router.put("/perbaikanunit/:kode_kegiatan_rkt/:kode_unit_kerja", 
 RkbmPengadaanSchema.update,
-(req, res, next) => {
-    const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error = new Error();
-            error.statusCode = 422;
-            error.message = errors.array();
-            throw error;
-          }
-          next();
-},
+checker,
 perbaikanunit)
 
 router.put("/parafapip/:kode_unit_kerja/:kode_kegiatan_rkt",parafapip)

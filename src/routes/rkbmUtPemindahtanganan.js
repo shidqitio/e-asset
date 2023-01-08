@@ -22,6 +22,8 @@ const {
 
 const {validationResult} = require("express-validator")
 
+const {checker} = require("../helpers/utils")
+
 const RkbmPindahtanganSchema = require("../middlewares/request/rkbmUtPemindahtanganan")
 
 router.get("/indexunit/:kode_unit_kerja", indexunit)
@@ -30,16 +32,7 @@ router.get("/indexapip/:kode_unit_kerja", indexapip)
 
 router.post("/",
 RkbmPindahtanganSchema.store,
-     (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error = new Error();
-            error.statusCode = 422;
-            error.message = errors.array();
-            throw error;
-          }    
-          next();
-    },
+checker,
 store)
 //Proses PPK
 router.put("/ajukanppk/:kode_unit_kerja", ajukanppk)

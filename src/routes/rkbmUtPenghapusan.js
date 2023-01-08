@@ -64,16 +64,7 @@ router.post("/",
         uploadImage.single("foto")
     ],
     RkbmPenghapusanSchema.store,
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if(!errors.isEmpty()) {
-          const error = new Error();
-          error.statusCode = 422;
-          error.message = errors.array();
-          throw error;
-        }
-        next();
-      }, 
+    checker,
 store)
 
 router.put("/update/:kode_unit_kerja/:nup", 
