@@ -13,7 +13,10 @@ require("dotenv").config();
 require("dotenv").config({ path: __dirname + "/.env" });
 
 app.use("/public", express.static(path.join(__dirname, "public")));
-app.use("/aset/selendang", express.static(path.join("public/files/kebutuhanfe")))
+app.use("/aset/selendang", express.static(path.join(__dirname,"public/files/kebutuhanfe")))
+app.use("/aset/excelformat/", express.static(path.join(__dirname,"public/files/excel_format")))
+
+
 
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json());

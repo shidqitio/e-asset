@@ -287,6 +287,10 @@ exports.revisikasubdik = (req, res, next) => {
     let pelaksanaan_kontrak_selesai = rquest.pelaksanaan_kontrak_selesai
     let rencana_pemanfaatan_mulai = rquest.rencana_pemanfaatan_mulai
     let rencana_pemanfaatan_selesai = rquest.rencana_pemanfaatan_selesai
+    let param = {
+        kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
+        kode_asset : req.params.kode_asset
+    }
 
     return db.transaction()
     .then((t) => {
@@ -295,8 +299,8 @@ exports.revisikasubdik = (req, res, next) => {
             where : {
                 kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
                 kode_asset : req.params.kode_asset, 
-                kode_status : 5, 
-                kode_status_sippan : 1
+                status_sippan : 6, 
+                status_sippan_posisi : 1
             }
         })
         .then((rkbm) => {
@@ -305,7 +309,6 @@ exports.revisikasubdik = (req, res, next) => {
                 error.statusCode = 422 
                 throw error 
             }
-            if(!req.body) {
                 return RefMetodeKebutuhan.update({
                 nama_rup : nama_rup, 
                 jenis_pengadaan : jenis_pengadaan, 
@@ -336,7 +339,7 @@ exports.revisikasubdik = (req, res, next) => {
                     throw error
                 }
                 return RkbmutPengadaanDetail.update({
-                    status_sippan : 6, 
+                    status_sippan : 7, 
                     status_sippan_posisi : 1
                 }, {
                     where : param, 
@@ -356,25 +359,6 @@ exports.revisikasubdik = (req, res, next) => {
                     data : up
                 })
             })
-            }
-            else {
-                return RkbmutPengadaanDetail.update({
-                    status_sippan : 7,
-                })
-                .then((up) => {
-                    if(!up) {
-                        const error = new Error("Data Gagal Update")
-                        error.statusCode = 422
-                        throw error
-                    }
-                    t.commit()
-                    return res.json({
-                        status : "Success",
-                        message : "Data Berhasil Update",
-                        data : up
-                    })
-                })
-            }
         })
         .catch((err) => {
             if(!err.statusCode) {
@@ -423,18 +407,19 @@ exports.kirimudirsarpras = (req, res, next) => {
                     model : RkbmutPengadaanDetail,
                     where : {
                         kode_unit_kerja : param.kode_unit_kerja, 
-                        [Op.and] : [
+                        [Op.or] : [
                             {
                                 status_sippan : {
                                     [Op.not] : 7
-                                }, 
+                                }
+                            }, 
+                            {
                                 status_sippan_posisi : {
                                     [Op.not] : 1
                                 }
                             }
                         ]
                     },
-                    required : true
                 }
             ], 
             raw : true
@@ -561,3 +546,4 @@ exports.parafdirsarpras = (req, res, next) => {
         return next(err);
     });
 }
+    

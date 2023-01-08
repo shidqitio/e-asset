@@ -5,7 +5,7 @@ const router = express.Router()
 const path = require("path")
 const fs = require("fs")
 const multer = require("multer")
-const { store, updatemetode } = require("../../controllers/sippan/metodekebutuhanController")
+const { index, store, updatemetode, kirimkasubdit, revisikasubdik, kirimudirsarpras, parafdirsarpras } = require("../../controllers/sippan/metodekebutuhanController")
 
 const {checker} = require("../../helpers/utils")
 
@@ -36,6 +36,8 @@ const uploadFile = multer({
     }
 })
 
+router.get("/", index)
+
 router.post("/",
     [
         uploadFile.single("upload_file")
@@ -44,5 +46,14 @@ router.post("/",
 store)
 
 router.put("/update_metode_kebutuhan/:kode_kegiatan_rkt/:kode_asset", updatemetode)
+
+router.put("/kirim_metode_kasubdik/:kode_unit_kerja/:tahun", kirimkasubdit)
+
+router.put("/revisi_kasubdik/:kode_kegiatan_rkt/:kode_asset",revisikasubdik)
+
+router.put("/kirim_dirsarpras/:kode_unit_kerja/:tahun", kirimudirsarpras)
+
+router.put("/paraf_dirsarpras/:kode_unit_kerja/:tahun", parafdirsarpras)
+
 
 module.exports = router
