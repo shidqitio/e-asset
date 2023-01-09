@@ -12,7 +12,10 @@ const {
     kirimrevisiunit
 } = require("../../controllers/sippan/identifikasikebutuhanController")
 
-router.post('/',store)
+const IdentifikasiSchema = require("../../middlewares/request/identifikasiKebutuhan")
+const {checker} = require("../../helpers/utils")
+
+router.post('/',IdentifikasiSchema.store, checker,store)
 router.get("/get-identifikasi/:kode_kegiatan_rkt/:kode_asset", indexsippan)
 router.put('/update-identifikasi/:kode_kegiatan_rkt/:kode_asset', updatesippan)
 

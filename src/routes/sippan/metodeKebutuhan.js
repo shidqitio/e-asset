@@ -6,7 +6,7 @@ const path = require("path")
 const fs = require("fs")
 const multer = require("multer")
 const { index, store, updatemetode, kirimkasubdit, revisikasubdik, kirimudirsarpras, parafdirsarpras } = require("../../controllers/sippan/metodekebutuhanController")
-
+const MetodeKebutuhanSchema = require("../../middlewares/request/identifikasiKebutuhan")
 const {checker} = require("../../helpers/utils")
 
 const storage = multer.diskStorage({
@@ -42,6 +42,7 @@ router.post("/",
     [
         uploadFile.single("upload_file")
     ],
+    MetodeKebutuhanSchema.store,
     checker,
 store)
 

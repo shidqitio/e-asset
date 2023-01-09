@@ -2,9 +2,10 @@ const {check} = require('express-validator')
 
 exports.store = [
     check("kode_asset").notEmpty().withMessage("Kode Asset Tidak Boleh Kosong"),
+    check("kode_asset").isLength({max : 10}).trim().escape().withMessage("Kode Asset Tidak Boleh Kosong"),
     check("asal_perolehan").notEmpty().withMessage("Asal Perolehan Tidak Boleh Kosong"),
     check("jumlah_barang").notEmpty().withMessage("Jumlah Barang Tidak Boleh Kosong"),
-    check("jumlah_barang").isNumeric().withMessage("Jumlah Barang harus angka"),
+    check("jumlah_barang").isNumeric().escape().withMessage("Jumlah Barang harus angka"),
     check("no_bukti_perolehan").notEmpty().withMessage("No Bukti Perolehan Tidak Boleh Kosong"),
     check("tanggal_pembukuan").notEmpty().withMessage("Tanggal Pembukuan Tidak Boleh Kosong"),
     check("merk").notEmpty().withMessage("Merk Tidak Boleh Kosong"),
