@@ -4,110 +4,27 @@ const Ruang = require("../models/ruang")
 const {Op, where} = require("sequelize")
 const QrCode = require("qrcode")
 const path = require('path')
+const TrxPenyusutan = require("../models/trxPenyusutan")
+const db = require("../config/database")
 
 exports.updatenup = (req, res, next) => {
+    return db.transaction()
+    .then((t) => {
 
-    DaftarBarang.findAll({
-        where : {
-            kode_asset : req.params.kode_asset, 
-            kode_asset_nup : {
-                [Op.not] : null
+        DaftarBarang.findAll({
+            where : {
+                kode_asset : req.params.kode_asset, 
+                kode_asset_nup : {
+                    [Op.not] : null
+                }
             }
-        }
-    })
-    .then((data) => {
-        //Nup Barang Mulai Dari Awal
-        if(data.length === 0){
-            DaftarBarang.findAll({
-                where : {
-                    kode_asset : req.params.kode_asset, 
-                    kode_pembukuan : req.params.kode_pembukuan
-                }, 
-                include : [
-                    {
-                        model : Pembukuan, 
-                        where : [
-                            {
-                                kode_pembukuan : req.params.kode_pembukuan
-                            }
-                        ]
-                    }, 
-                    {
-                        model : Ruang
-                    }
-                ]
-            })
-            .then((data_awal) => {           
-                let daftar = JSON.parse(JSON.stringify(data_awal))
-                let awal = 1 
-                let barang = 0
-                
-                data_awal.map((barang) => {
-                    tanggal_perolehan = barang.Pembukuan.tanggal_perolehan
-                })
-                data_awal.map((barang) => {
-                    kode_unit = barang.Ruang.kode_unit
-                })
-                
-                let string_array = tanggal_perolehan.split('-')
-                let data_asset = data_awal[0].kode_asset
-                let cek = []
-                for(let i = 0 ; i < daftar.length ; i++) {
-                    kode_asset_nup = awal++ 
-                    barang = barang + 1
-                    let nup = kode_unit + "." + string_array[0] + "." + data_asset + "." + kode_asset_nup 
-                    const simpan_file =`https://dev-sippp.ut.ac.id:2323/public/qrcode/${nup}.png`
-                    cek.push(
-                        {
-                            kode_asset_nup : kode_asset_nup,
-                            barang, 
-                            nup, 
-                            qr_kode : simpan_file
-                        }
-                    )
-                    let tes = "http://localhost:3011/detail/" + nup
-
-                    const filename = path.join('.','public','images','qrcode',`${nup}.png`)
-                    console.log(nup)
-                    QrCode.toFile(filename, tes)
-                    
-                    DaftarBarang.update(cek[i], {
-                        where : {
-                            kode_asset : req.params.kode_asset, 
-                            kode_pembukuan : req.params.kode_pembukuan,
-                            kode_barang :  cek[i].barang,
-                            kode_asset_nup : null
-                        }
-                    })
-                }
-            })
-            .then((respon) => {
-                res.json({
-                    status : "Success", 
-                    message : "Berhasil Memberikan NUP", 
-                })
-            })
-            .catch((err) => {
-                if(!err.statusCode) {
-                    err.statusCode = 500;
-                }
-                return next(err);
-            });
-        }
-        //Nup Mulai Dari Tengah
-        else {
-            DaftarBarang.findAll({
-                where : {
-                    kode_asset : req.params.kode_asset,
-                    kode_asset_nup : {
-                        [Op.not] : null
-                    }
-                }
-            })   
-            .then((data_awal) => {
+        })
+        .then((data) => {
+            //Nup Barang Mulai Dari Awal
+            if(data.length === 0){
                 DaftarBarang.findAll({
                     where : {
-                        kode_asset : req.params.kode_asset,
+                        kode_asset : req.params.kode_asset, 
                         kode_pembukuan : req.params.kode_pembukuan
                     }, 
                     include : [
@@ -124,69 +41,166 @@ exports.updatenup = (req, res, next) => {
                         }
                     ]
                 })
-                .then((data_lanjut) => {
-                    console.log("Jalankan Else")
-                    let nup1 = JSON.parse(JSON.stringify(data_awal))
-                    let nup2 = JSON.parse(JSON.stringify(data_lanjut))
-                    let index = nup1.length
-                    let {kode_asset_nup} = nup1[index-1]
-                    let nup_akhir = kode_asset_nup + 1
-                    data_lanjut.map((barang) => {
+                .then((data_awal) => {           
+                    let daftar = JSON.parse(JSON.stringify(data_awal))
+                    let awal = 1 
+                    let barang = 0
+                    
+                    data_awal.map((barang) => {
                         tanggal_perolehan = barang.Pembukuan.tanggal_perolehan
                     })
-                    data_lanjut.map((barang) => {
+                    data_awal.map((barang) => {
                         kode_unit = barang.Ruang.kode_unit
                     })
+                    
                     let string_array = tanggal_perolehan.split('-')
-                    let data_asset = data_lanjut[0].kode_asset
-
-                    cek = []
-                    let barang = 0
-                    for(let i = 0 ; i < nup2.length ; i++) {
-                        kode_asset_nup = nup_akhir++
-                        barang = barang+1
-                        let nup = kode_unit + "." + string_array[0] + "." + data_asset + "." + kode_asset_nup
+                    let data_asset = data_awal[0].kode_asset
+                    let cek = []
+                    for(let i = 0 ; i < daftar.length ; i++) {
+                        kode_asset_nup = awal++ 
+                        barang = barang + 1
+                        let nup = kode_unit + "." + string_array[0] + "." + data_asset + "." + kode_asset_nup 
                         const simpan_file =`https://dev-sippp.ut.ac.id:2323/public/qrcode/${nup}.png`
-                        cek.push({
-                            kode_asset_nup : kode_asset_nup,
-                            barang,
-                            nup, 
-                            qr_kode : simpan_file
-                        })
-
-                        let tes = "http://localhost:3011/detail/" + nup
-
-                        const filename = path.join('.','public','images','qrcode',`${nup}.png`)
-                        
-                        QrCode.toFile(filename, tes)
-
-                        DaftarBarang.update(cek[i], {
-                            where : {
-                                kode_asset : req.params.kode_asset, 
-                                kode_pembukuan : req.params.kode_pembukuan,
-                                kode_barang :  cek[i].barang,
-                                kode_asset_nup : null
+                        cek.push(
+                            {
+                                kode_asset_nup : kode_asset_nup,
+                                barang, 
+                                nup, 
+                                qr_kode : simpan_file
                             }
-                        })
+                        )
+                        let tes = "http://localhost:3011/detail/" + nup
+    
+                        const filename = path.join('.','public','images','qrcode',`${nup}.png`)
+                        QrCode.toFile(filename, tes)
+                        
+                        // DaftarBarang.update(cek[i], {
+                        //     where : {
+                        //         kode_asset : req.params.kode_asset, 
+                        //         kode_pembukuan : req.params.kode_pembukuan,
+                        //         kode_barang :  cek[i].barang,
+                        //         kode_asset_nup : null
+                        //     }
+                        // })
                     }
-                })  
-            })
-            .then((respon) => {
-                res.json({
-                    status : "Success", 
-                    message : "Berhasil Memberikan NUP", 
-                    data : respon
+                    const nup_insert = cek.map(cek => cek.nup)
+                    console.log(nup_insert)
+                    return DaftarBarang.findAll({
+                        where : {
+                           nup : nup_insert
+                        }
+                    })
+                    .then((respon) => {
+                        if(!respon) {
+                            const error = new Error("Data Gagal Update")
+                            error.statusCode = 422
+                            t.rollback()
+                            throw error
+                        }
+                        console.log(respon)
+                    })
                 })
-            })
-            .catch((err) => {
-                if(!err.statusCode) {
-                    err.statusCode = 500;
-                }
-                return next(err);
-            });
-        }
-        // console.log("Data : ", data)
-    });
+                .catch((err) => {
+                    if(!err.statusCode) {
+                        err.statusCode = 500;
+                    }
+                    return next(err);
+                });
+            }
+            //Nup Mulai Dari Tengah
+            else {
+                DaftarBarang.findAll({
+                    where : {
+                        kode_asset : req.params.kode_asset,
+                        kode_asset_nup : {
+                            [Op.not] : null
+                        }
+                    }
+                })   
+                .then((data_awal) => {
+                    DaftarBarang.findAll({
+                        where : {
+                            kode_asset : req.params.kode_asset,
+                            kode_pembukuan : req.params.kode_pembukuan
+                        }, 
+                        include : [
+                            {
+                                model : Pembukuan, 
+                                where : [
+                                    {
+                                        kode_pembukuan : req.params.kode_pembukuan
+                                    }
+                                ]
+                            }, 
+                            {
+                                model : Ruang
+                            }
+                        ]
+                    })
+                    .then((data_lanjut) => {
+                        console.log("Jalankan Else")
+                        let nup1 = JSON.parse(JSON.stringify(data_awal))
+                        let nup2 = JSON.parse(JSON.stringify(data_lanjut))
+                        let index = nup1.length
+                        let {kode_asset_nup} = nup1[index-1]
+                        let nup_akhir = kode_asset_nup + 1
+                        data_lanjut.map((barang) => {
+                            tanggal_perolehan = barang.Pembukuan.tanggal_perolehan
+                        })
+                        data_lanjut.map((barang) => {
+                            kode_unit = barang.Ruang.kode_unit
+                        })
+                        let string_array = tanggal_perolehan.split('-')
+                        let data_asset = data_lanjut[0].kode_asset
+    
+                        cek = []
+                        let barang = 0
+                        for(let i = 0 ; i < nup2.length ; i++) {
+                            kode_asset_nup = nup_akhir++
+                            barang = barang+1
+                            let nup = kode_unit + "." + string_array[0] + "." + data_asset + "." + kode_asset_nup
+                            const simpan_file =`https://dev-sippp.ut.ac.id:2323/public/qrcode/${nup}.png`
+                            cek.push({
+                                kode_asset_nup : kode_asset_nup,
+                                barang,
+                                nup, 
+                                qr_kode : simpan_file
+                            })
+    
+                            let tes = "http://localhost:3011/detail/" + nup
+    
+                            const filename = path.join('.','public','images','qrcode',`${nup}.png`)
+                            
+                            QrCode.toFile(filename, tes)
+    
+                            DaftarBarang.update(cek[i], {
+                                where : {
+                                    kode_asset : req.params.kode_asset, 
+                                    kode_pembukuan : req.params.kode_pembukuan,
+                                    kode_barang :  cek[i].barang,
+                                    kode_asset_nup : null
+                                }
+                            })
+                        }
+                    })  
+                })
+                .then((respon) => {
+                    res.json({
+                        status : "Success", 
+                        message : "Berhasil Memberikan NUP", 
+                        data : respon
+                    })
+                })
+                .catch((err) => {
+                    if(!err.statusCode) {
+                        err.statusCode = 500;
+                    }
+                    return next(err);
+                });
+            }
+            // console.log("Data : ", data)
+        });
+    })
 }
 
 // exports.qr = (req, res, next) => {
