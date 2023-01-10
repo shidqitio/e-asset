@@ -34,6 +34,7 @@ exports.store = (req, res, next) => {
     let nama_rup = rquest.nama_rup;
     let jenis_pengadaan = rquest.jenis_pengadaan;
     let metode_pengadaan = rquest.metode_pengadaan
+    let type = rquest.type
     let lokasi = rquest.lokasi
     let uraian_pekerjaan = rquest.uraian_pekerjaan
     let spesifikasi = rquest.spesifikasi
@@ -70,6 +71,7 @@ exports.store = (req, res, next) => {
             nama_rup : nama_rup,
             jenis_pengadaan : jenis_pengadaan,
             metode_pengadaan : metode_pengadaan,
+            type : type,
             lokasi : lokasi, 
             uraian_pekerjaan : uraian_pekerjaan, 
             spesifikasi : spesifikasi, 
@@ -134,6 +136,7 @@ exports.updatemetode = (req, res, next) => {
     let nama_rup = rquest.nama_rup;
     let jenis_pengadaan = rquest.jenis_pengadaan;
     let metode_pengadaan = rquest.metode_pengadaan
+    let type = rquest.type
     let lokasi = rquest.lokasi
     let uraian_pekerjaan = rquest.uraian_pekerjaan
     let spesifikasi = rquest.spesifikasi
@@ -161,6 +164,7 @@ exports.updatemetode = (req, res, next) => {
             nama_rup : nama_rup, 
             jenis_pengadaan : jenis_pengadaan, 
             metode_pengadaan : metode_pengadaan, 
+            type : type,
             lokasi : lokasi, 
             uraian_pekerjaan : uraian_pekerjaan, 
             spesifikasi : spesifikasi, 
@@ -273,6 +277,7 @@ exports.revisikasubdik = (req, res, next) => {
     let nama_rup = rquest.nama_rup;
     let jenis_pengadaan = rquest.jenis_pengadaan;
     let metode_pengadaan = rquest.metode_pengadaan
+    let type = rquest.type
     let lokasi = rquest.lokasi
     let uraian_pekerjaan = rquest.uraian_pekerjaan
     let spesifikasi = rquest.spesifikasi
@@ -312,7 +317,8 @@ exports.revisikasubdik = (req, res, next) => {
                 return RefMetodeKebutuhan.update({
                 nama_rup : nama_rup, 
                 jenis_pengadaan : jenis_pengadaan, 
-                metode_pengadaan : metode_pengadaan, 
+                metode_pengadaan : metode_pengadaan,
+                type : type, 
                 lokasi : lokasi, 
                 uraian_pekerjaan : uraian_pekerjaan, 
                 spesifikasi : spesifikasi, 

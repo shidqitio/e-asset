@@ -29,7 +29,11 @@ const RefMetodeKebutuhan = db.define(
         metode_pengadaan : {
             type : DataTypes.ENUM('swakelola','penyedia'),
             allowNull : true
-        }, 
+        },
+        type : {
+            type : DataTypes.STRING(50), 
+            allowNull : true
+        },
         lokasi : {
             type : DataTypes.STRING(255),
             allowNull : true

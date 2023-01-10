@@ -83,12 +83,19 @@ exports.updatenup = (req, res, next) => {
                         //     }
                         // })
                     }
-                    const nup_insert = cek.map(cek => cek.nup)
-                    console.log(nup_insert)
-                    return DaftarBarang.findAll({
-                        where : {
-                           nup : nup_insert
-                        }
+                    const nup_insert = cek.map(cek => ({
+                        kode_barang : cek.barang, 
+                        kode_pembukuan : req.params.kode_pembukuan
+                    }))
+                    return Pembukuan.findAll({
+                        include : [
+                            {
+                                model : DaftarBarang,
+                                where : {
+                                    [Op.or] : nup_insert
+                                },
+                            }
+                        ],
                     })
                     .then((respon) => {
                         if(!respon) {
@@ -97,7 +104,17 @@ exports.updatenup = (req, res, next) => {
                             t.rollback()
                             throw error
                         }
-                        console.log(respon)
+                        let hasil = JSON.parse(JSON.stringify(respon))
+                       
+                        hasil.map((data_map) => {
+                            data_nested = data_map.DaftarBarangs
+                        })
+                        console.log(data_nested)
+                        let metode = respon[0].metode_penyusutan
+                        if(metode === "Straight Line") {
+                            
+                        }
+
                     })
                 })
                 .catch((err) => {
