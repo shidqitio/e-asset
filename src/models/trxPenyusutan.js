@@ -5,11 +5,16 @@ const {DataTypes} = require("sequelize")
 const TrxPenyusutan = db.define(
     "TrxPenyusutan", 
     {
-        nup : {
-            type : DataTypes.STRING(50), 
+        kode_pembukuan : {
+            type : DataTypes.STRING(9), 
             allowNull : false, 
             primaryKey : true
         }, 
+        kode_barang : {
+            type : DataTypes.INTEGER(11),
+            allowNull : false, 
+            primaryKey : true
+        },
         nilai_item : {
             type : DataTypes.DECIMAL(12,2),
             allowNull : true

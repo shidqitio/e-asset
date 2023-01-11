@@ -226,29 +226,45 @@ exports.store = (req, res, next) => {
                             let nilai = data[i].nilai_item
                             let tanggal_oleh = data[i].tanggal_perolehan
                             let pengurang = nilai / umur
-                            let kode_barang = data[i].kode_pembukuan
-                            console.log(umur, nilai, tanggal_oleh, pengurang)
+                            let bukuan = data[i].kode_pembukuan
+                            let kode_barang = data[i].kode_barang
+                            // console.log(umur, nilai, tanggal_oleh, pengurang)
+                            // console.log(kode_pembukuan.metode_penyusutan)
                             if(kode_pembukuan.metode_penyusutan === "Straight Line") {
                                 for(let j = 0 ; j < umur ; j++) {
                                     let kali = pengurang * j 
                                     let akhir = nilai - kali
                                     let timestamp = tanggal_oleh 
                                     let date = new Date(timestamp)
+                                    let tes =+ j 
                                     date.setFullYear(date.getFullYear()+ j )
-                                    console.log(kode_barang)
-                                    console.log(akhir,date.toISOString())
-                                    
+                                //    console.log(tes, kode_barang, bukuan, akhir,date.toISOString())
+                                    array_data.push({
+                                        kode_pembukuan : bukuan, 
+                                        kode_barang : kode_barang, 
+                                        nilai_item : nilai,
+                                        tanggal_penyusutan : date.toISOString().substr(0, 10), 
+                                        angka_penyusutan : akhir, 
+                                        penyusutan_ke : tes
+                                    })
                                 }
                             }
                         }
-                    })
-                    .then((respons) => {
-                        // res.json({
-                        //     status : "Success", 
-                        //     message : "Berhasil Menambah Data", 
-                        //     data : respons
-                        // })
-                        return 
+                        console.log(array_data)
+                        return TrxPenyusutan.bulkCreate(array_data)
+                        .then((respons) => {
+                            if(!respons) {
+                                const error = new Error("Data Penyusutan Gagal Masuk")
+                                error.statusCode = 422
+                                throw error
+                            }
+                            t.commit()
+                            return res.json({
+                                status : "Success", 
+                                message : "Berhasil Menambah Data", 
+                                data : respons
+                            })
+                        })
                     })
                     .catch((err) => {
                         if(!err.statusCode) {
