@@ -13,7 +13,8 @@ const {
     getbarangbyunitfilter, 
     getbarangbyunitpenghapusan,
     jumlahkondisi,
-    barangbyunitasset
+    barangbyunitasset,
+    updateruang
 } = require("../controllers/ruangController")
 
 const {checker} = require("../helpers/utils")
@@ -48,6 +49,8 @@ store)
 router.get("/get-barang-penghapusan/:kode_unit", getbarangbyunitpenghapusan)
 
 // router.get("/barang-unit-asset/:kode_unit/:kode_asset", getbarangbyunitpenghapusan)
+
+router.put("/pindah-ruang/:nup", updateruang)
 
 
 module.exports = router

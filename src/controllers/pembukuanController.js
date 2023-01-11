@@ -13,6 +13,7 @@ const StatusPemilik = require("../models/statusPemilik")
 const sequelize = require("sequelize")
 const DokumenTanah = require("../models/dokumenTanah")
 const RkbmutPemeliharaanDetail = require("../models/rkbmutPemeliharaanDetail")
+const TrxPenyusutan = require("../models/trxPenyusutan")
 const axios = require("axios")
 require("dotenv").config();
 
@@ -199,28 +200,55 @@ exports.store = (req, res, next) => {
                     const request = req.body;
                     const data = request.barang.map((item) => {
                         return {
-                            kode_barang : item.kode_barang, 
-                            kode_pembukuan : kode_pembukuan.kode_pembukuan,
-                            kode_asset : kode_pembukuan.kode_asset, 
-                            nilai_item : kode_pembukuan.nilai_item,  
-                            merk : kode_pembukuan.merk, 
-                            tanggal_perolehan : kode_pembukuan.tanggal_perolehan,
-                            kode_ruang : item.kode_ruang, 
-                            deskripsi : item.deskripsi, 
-                            kondisi : item.kondisi, 
-                            optional_key : item.optional_key,
+                            kode_barang      : item.kode_barang,
+                            kode_pembukuan   : kode_pembukuan.kode_pembukuan,
+                            kode_asset       : kode_pembukuan.kode_asset,
+                            nilai_item       : kode_pembukuan.nilai_item,
+                            merk             : kode_pembukuan.merk,
+                            tanggal_perolehan: kode_pembukuan.tanggal_perolehan,
+                            kode_ruang       : item.kode_ruang,
+                            deskripsi        : item.deskripsi,
+                            kondisi          : item.kondisi,
+                            optional_key     : item.optional_key,
+                            umur_ekonomis    : item.umur_ekonomis
                         }
                     })
                     return DaftarBarang.bulkCreate(data, {transaction : t})
-                    .then(() => {
-                        return t.commit()
+                    .then((respons) => {
+                        if(!respons) {
+                            const error = new Error("Data Gagal Input")
+                            error.statusCode = 422
+                            throw error
+                        }
+                        let array_data = []
+                        for(let i = 0; i < data.length ; i++) {
+                            let umur = data[i].umur_ekonomis
+                            let nilai = data[i].nilai_item
+                            let tanggal_oleh = data[i].tanggal_perolehan
+                            let pengurang = nilai / umur
+                            let kode_barang = data[i].kode_pembukuan
+                            console.log(umur, nilai, tanggal_oleh, pengurang)
+                            if(kode_pembukuan.metode_penyusutan === "Straight Line") {
+                                for(let j = 0 ; j < umur ; j++) {
+                                    let kali = pengurang * j 
+                                    let akhir = nilai - kali
+                                    let timestamp = tanggal_oleh 
+                                    let date = new Date(timestamp)
+                                    date.setFullYear(date.getFullYear()+ j )
+                                    console.log(kode_barang)
+                                    console.log(akhir,date.toISOString())
+                                    
+                                }
+                            }
+                        }
                     })
                     .then((respons) => {
-                        res.json({
-                            status : "Success", 
-                            message : "Berhasil Menambah Data", 
-                            data : respons
-                        })
+                        // res.json({
+                        //     status : "Success", 
+                        //     message : "Berhasil Menambah Data", 
+                        //     data : respons
+                        // })
+                        return 
                     })
                     .catch((err) => {
                         if(!err.statusCode) {
@@ -263,35 +291,35 @@ exports.store = (req, res, next) => {
                             }
                             
                             return TrxKibTanah.create({
-                                kode_asset : req.body.kode_asset, 
-                                kode_status_pemilik : req.body.kode_status_pemilik, 
-                                kode_pembukuan : kode_pembukuan.kode_pembukuan,
-                                kode_dokumen : req.body.kode_dokumen,
-                                no_asset : no_asset_tanah, 
-                                no_sppa : kode_pembukuan.no_sppa, 
-                                kode_unit : kode_unit, 
-                                nama_unit : nama_unit, 
-                                alamat : req.body.alamat,
-                                longitude : req.body.longitude, 
-                                latitude : req.body.latitude, 
-                                tanah_bangunan : req.body.tanah_bangunan, 
-                                tanah_sarana : req.body.tanah_sarana, 
-                                tanah_kosong : req.body.tanah_kosong, 
-                                tanah_seluruh : tanah_seluruh,
-                                batas_utara : req.body.batas_utara, 
-                                batas_timur : req.body.batas_timur, 
-                                batas_barat : req.body.batas_barat, 
-                                batas_selatan : req.body.batas_selatan, 
-                                no_dokumen : req.body.no_dokumen, 
-                                tanggal_dokumen : req.body.tanggal_dokumen, 
-                                instansi_penerbit : req.body.instansi_penerbit, 
-                                dana : req.body.dana, 
-                                tanggal_dana : req.body.tanggal_dana, 
-                                harga_taksiran_satuan : req.body.harga_taksiran_satuan, 
-                                harga_njop_satuan : req.body.harga_njop_satuan, 
-                                harga_taksiran_total :  taksiran_total , 
-                                harga_njop_total : njop_total, 
-                                catatan : req.body.catatan,
+                                kode_asset           : req.body.kode_asset,
+                                kode_status_pemilik  : req.body.kode_status_pemilik,
+                                kode_pembukuan       : kode_pembukuan.kode_pembukuan,
+                                kode_dokumen         : req.body.kode_dokumen,
+                                no_asset             : no_asset_tanah,
+                                no_sppa              : kode_pembukuan.no_sppa,
+                                kode_unit            : kode_unit,
+                                nama_unit            : nama_unit,
+                                alamat               : req.body.alamat,
+                                longitude            : req.body.longitude,
+                                latitude             : req.body.latitude,
+                                tanah_bangunan       : req.body.tanah_bangunan,
+                                tanah_sarana         : req.body.tanah_sarana,
+                                tanah_kosong         : req.body.tanah_kosong,
+                                tanah_seluruh        : tanah_seluruh,
+                                batas_utara          : req.body.batas_utara,
+                                batas_timur          : req.body.batas_timur,
+                                batas_barat          : req.body.batas_barat,
+                                batas_selatan        : req.body.batas_selatan,
+                                no_dokumen           : req.body.no_dokumen,
+                                tanggal_dokumen      : req.body.tanggal_dokumen,
+                                instansi_penerbit    : req.body.instansi_penerbit,
+                                dana                 : req.body.dana,
+                                tanggal_dana         : req.body.tanggal_dana,
+                                harga_taksiran_satuan: req.body.harga_taksiran_satuan,
+                                harga_njop_satuan    : req.body.harga_njop_satuan,
+                                harga_taksiran_total : taksiran_total,
+                                harga_njop_total     : njop_total,
+                                catatan              : req.body.catatan,
                             },{transaction : t})
                             .then(() => {
                                 return t.commit()

@@ -664,3 +664,46 @@ exports.barangbyunitasset = (req, res, next) => {
         next(err)
     });
  }
+
+ //Ubah Ruangan
+ exports.updateruang = (req, res, next) => {
+    let kode_ruang = req.body.kode_ruang
+    let param = {
+        nup : req.params.nup
+    }
+
+    return DaftarBarang.findAll({
+        where : param
+    })
+    .then((data) => {
+        if(data.length === 0 ) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
+        return DaftarBarang.update ({
+            kode_ruang : kode_ruang
+        },
+        {
+            where : param
+        })
+    })
+    .then((upd) => {
+        if(!upd) {
+            const error = new Error("Data Gagal Update")
+            error.statusCode = 422
+            throw error
+        }
+        return res.json({
+            status : "Success", 
+            message : "Data Berhasil Update",
+            data : upd
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500
+        }
+        next(err)
+    });
+ }
