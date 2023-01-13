@@ -3,6 +3,7 @@ const RkbmutPengadaanDetail = require("../models/rkbmutPengadaanDetail");
 const Aset = require("../models/asset")
 const TrxRkbmutAll = require("../models/trxRkbmutAll")
 const SkemaPengadaan = require("../models/skemaPengadaan")
+const TrxStatusParaf = require("../models/trxStatusParaf")
 const db = require("../config/database");
 const {Op} = require("sequelize")
 const {logger} = require("../helpers/log");
@@ -557,13 +558,29 @@ exports.parafunit = (req, res, next) => {
                     }, 
                     transaction : t
                 })
-            })
-            .then((respon) => {
-                t.commit()
-                return res.json({
-                    status : "Success", 
-                    message : "Berhasil Paraf Data Ke APIP", 
-                    data : respon
+                .then((det) => {
+                    if(!det) {
+                        const error = new Error("Data Gagal Update")
+                        error.statusCode = 422
+                        throw error
+                    }
+                    return TrxStatusParaf.update({
+                        status_pengadaan : 1
+                    }, 
+                    {
+                        where : {
+                            kode_unit_kerja : req.params.kode_unit_kerja, 
+                        },
+                        transaction : t
+                    })
+                    .then((respon) => {
+                        t.commit()
+                        return res.json({
+                            status : "Success", 
+                            message : "Berhasil Paraf Data Ke APIP", 
+                            data : respon
+                        })
+                    })
                 })
             })
         })

@@ -23,6 +23,7 @@ const rkbmutallRoutes = require("./trxRkbmutAll")
 const trxkibbangunanairRoutes = require("./trxKibBangunanAir")
 const identifikasikebutuhanRoutes = require("./sippan/identifikasiKebutuhan")
 const metodeKebutuhan = require("./sippan/metodeKebutuhan")
+const trxpenyusutanRoutes = require("./trxPenyusutan")
 const authRoutes = require("./auth")
 
 //Routing 
@@ -48,5 +49,6 @@ router.use("/kib-bangunan-air", trxkibbangunanairRoutes)
 router.use("/identifikasi-kebutuhan", identifikasikebutuhanRoutes)
 router.use("/auth", authRoutes)
 router.use("/metode-kebutuhan", metodeKebutuhan)
+router.use("/penyusutan", trxpenyusutanRoutes)
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const RkbmutPemindahtanganan = require("../models/rkbmutPemindahtanganan")
 const Aset = require("../models/asset")
 const PindahTangan = require("../models/pindahTangan")
+const TrxStatusParaf = require("../models/trxStatusParaf")
 const {Op} = require("sequelize")
 const TrxRkbmutAll = require("../models/trxRkbmutAll")
 const token = require("../controllers/authController/authorizationController")
@@ -415,6 +416,21 @@ exports.perbaikanunit = (req, res, next) =>{
                 kode_unit_kerja : req.params.kode_unit_kerja
             }
         });
+    })
+    .then((pindah) => {
+        if(!pindah) {
+            const error = new Error("Data Gagal Update")
+            error.statusCode = 422
+            throw error
+        }
+        return TrxStatusParaf.update({
+            status_pemindahtanganan : 1
+        }, 
+        {
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja
+            }
+        })
     })
     .then((respon) => {
         if(!respon) {

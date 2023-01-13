@@ -1,9 +1,11 @@
 const RkbmutPenghapusan = require("../models/rkbmutPenghapusan")
 const Aset = require("../models/asset")
 const TrxRkbmutAll = require("../models/trxRkbmutAll")
+const TrxStatusParaf = require("../models/trxStatusParaf")
 const {Op} = require("sequelize")
 const path = require("path")
 const fs = require("fs")
+
 
 //Data RKBMUT UNIT
 exports.indexunit = (req, res, next) => {
@@ -498,6 +500,21 @@ exports.parafppk = (req, res, next) => {
                 kode_unit_kerja : req.params.kode_unit_kerja
             }
         });
+    })
+    .then((penghapus) => {
+        if(!penghapus) {
+            const error = new Error("Data Gagal Update")
+            error.statusCode = 422
+            throw error
+        }
+        return TrxStatusParaf.update({
+            status_penghapusan : 1
+        }, 
+        {
+            where : {
+                kode_unit_kerja : req.params.kode_unit_kerja
+            }
+        })
     })
     .then((respon) => {
         if(!respon) {

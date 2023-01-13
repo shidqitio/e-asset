@@ -63,7 +63,7 @@ const DaftarBarang = db.define(
             allowNull : true
         },
         umur_ekonomis : {
-            type : DataTypes.STRING(50),
+            type : DataTypes.INTEGER(),
             allowNull : true
         },
         ucr: {

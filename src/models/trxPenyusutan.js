@@ -1,19 +1,32 @@
 const db = require("../config/database")
 const {DataTypes} = require("sequelize")
+const DaftarBarang = require("../models/daftarBarang")
 
 
 const TrxPenyusutan = db.define(
     "TrxPenyusutan", 
     {
+        kode_penyusutan : {
+            type : DataTypes.INTEGER(11), 
+            autoIncrement : true, 
+            allowNull : false, 
+            primaryKey : true
+        },
         kode_pembukuan : {
             type : DataTypes.STRING(9), 
             allowNull : false, 
-            primaryKey : true
+            references : {
+                model : DaftarBarang, 
+                key : "kode_pembukuan"
+            }
         }, 
         kode_barang : {
             type : DataTypes.INTEGER(11),
             allowNull : false, 
-            primaryKey : true
+            references : {
+                model : DaftarBarang, 
+                key : "kode_barang"
+            }
         },
         nilai_item : {
             type : DataTypes.DECIMAL(12,2),
@@ -54,5 +67,19 @@ const TrxPenyusutan = db.define(
         updatedAt : "udch"
     }
 )
+
+DaftarBarang.hasMany(TrxPenyusutan, {
+    foreignKey : "kode_barang",
+    as : "trxpenyusutan"
+})
+
+TrxPenyusutan.belongsTo(DaftarBarang, {
+    foreignKey : "kode_barang",
+    as : "daftarbarang"
+})
+
+// TrxPenyusutan.belongsTo(DaftarBarang, {
+//     foreignKey : "kode_pembukuan"
+// })
 
 module.exports = TrxPenyusutan

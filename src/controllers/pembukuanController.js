@@ -132,6 +132,11 @@ exports.showbykodeform = (req, res, next) => {
     });
 }
 
+// const cek = (data, angka) => {
+//     for()
+// }
+
+
 exports.store = (req, res, next) => {
     return db.transaction()
     .then((t) => {
@@ -249,9 +254,49 @@ exports.store = (req, res, next) => {
                                     })
                                 }
                             }
+                            if(kode_pembukuan.metode_penyusutan === "Double Decline") {
+                                    //Untuk Dapat Pengurang jika array kosong 
+                                    kurang = pengurang * 2 
+                                    hasil_dd = nilai - kurang
+                                    let timestamp = tanggal_oleh 
+                                    let date = new Date(timestamp)
+                                    // let tes =+ j 
+                                    date.setFullYear(date.getFullYear())
+                                //    console.log(tes, kode_barang, bukuan, akhir,date.toISOString())
+
+                                    console.log(kode_barang)
+                                    array_data.push({
+                                        kode_pembukuan : bukuan, 
+                                        kode_barang : kode_barang, 
+                                        nilai_item : nilai,
+                                        tanggal_penyusutan : date.toISOString().substr(0, 10), 
+                                        angka_penyusutan : nilai, 
+                                        penyusutan_ke : 0
+                                    })            
+                                for(let j = 0 ; j < umur ; j++) {
+                                    // console.log(array_data)
+                                        item_nilai = array_data[j].angka_penyusutan
+                                        kurang = item_nilai / umur  * 2
+                                        hasil_dd = item_nilai - kurang
+                                            let timestamp = tanggal_oleh 
+                                            let date = new Date(timestamp)
+                                            let tes = j + 1
+                                            date.setFullYear(date.getFullYear()+ (j + 1) )
+                                        //    console.log(tes, kode_barang, bukuan, akhir,date.toISOString())
+                                            array_data.push({
+                                                kode_pembukuan : bukuan, 
+                                                kode_barang : kode_barang, 
+                                                nilai_item : nilai,
+                                                tanggal_penyusutan : date.toISOString().substr(0, 10), 
+                                                angka_penyusutan : hasil_dd, 
+                                                penyusutan_ke : tes
+                                            })
+                                       
+                                }
+                            }
                         }
-                        console.log(array_data)
-                        return TrxPenyusutan.bulkCreate(array_data)
+                        // console.log(array_data)
+                        return TrxPenyusutan.bulkCreate(array_data, {transaction : t})
                         .then((respons) => {
                             if(!respons) {
                                 const error = new Error("Data Penyusutan Gagal Masuk")

@@ -4,6 +4,7 @@ const {DataTypes, ENUM} = require("sequelize")
 //Kebutuhan Relasi
 const Asset = require("../asset")
 const RkbmutPengadaanHeader = require("../rkbmutPengadaanHeader")
+const RkbmutPengadaanDetail = require("../rkbmutPengadaanDetail")
 
 const RefMetodeKebutuhan = db.define(
     "RefMetodeKebutuhan", 
@@ -126,12 +127,24 @@ RefMetodeKebutuhan.belongsTo(RkbmutPengadaanHeader, {
     foreignKey : "kode_kegiatan_rkt"
 })
 
+
+
 Asset.hasMany(RefMetodeKebutuhan, {
     foreignKey : "kode_asset", 
 })
 
 RefMetodeKebutuhan.belongsTo(Asset, {
     foreignKey : "kode_asset"
+})
+
+RkbmutPengadaanDetail.hasMany(RefMetodeKebutuhan, {
+    foreignKey : "kode_asset",
+    
+})
+
+RefMetodeKebutuhan.belongsTo(RkbmutPengadaanDetail, {
+    foreignKey : "kode_asset", 
+   
 })
 
 module.exports = RefMetodeKebutuhan

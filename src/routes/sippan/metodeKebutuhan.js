@@ -5,7 +5,7 @@ const router = express.Router()
 const path = require("path")
 const fs = require("fs")
 const multer = require("multer")
-const { index, store, updatemetode, kirimkasubdit, revisikasubdik, kirimudirsarpras, parafdirsarpras } = require("../../controllers/sippan/metodekebutuhanController")
+const { index, store, updatemetode, kirimkasubdit, revisikasubdik, kirimudirsarpras, parafdirsarpras, indexall } = require("../../controllers/sippan/metodekebutuhanController")
 const MetodeKebutuhanSchema = require("../../middlewares/request/identifikasiKebutuhan")
 const {checker} = require("../../helpers/utils")
 
@@ -56,5 +56,6 @@ router.put("/kirim_dirsarpras/:kode_unit_kerja/:tahun", kirimudirsarpras)
 
 router.put("/paraf_dirsarpras/:kode_unit_kerja/:tahun", parafdirsarpras)
 
+router.get("/get-all-metode/:kode_unit_kerja", indexall)
 
 module.exports = router

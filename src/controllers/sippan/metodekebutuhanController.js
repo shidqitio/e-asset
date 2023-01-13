@@ -2,6 +2,7 @@ const RefMetodeKebutuhan = require("../../models/sippan/refMetodeKebutuhan")
 const RkbmutPengadaanHeader = require("../../models/rkbmutPengadaanHeader")
 const RkbmutPengadaanDetail = require("../../models/rkbmutPengadaanDetail")
 const db = require("../../config/database")
+const sequelize = require('sequelize')
 const {Op} = require("sequelize")
 
 exports.index = (req, res, next) => {
@@ -13,6 +14,59 @@ exports.index = (req, res, next) => {
         where : param
     })
     .then((data) => {
+        return res.json({
+            status : "Success", 
+            message : "Berhasil Menampilkan Data",
+            data : data
+        })
+    })
+    .catch((err) => {
+        if(!err.statusCode){
+            err.statusCode = 500;
+        }
+        return next(err)
+    });
+}
+
+exports.indexall = (req, res, next) => {
+    return RkbmutPengadaanHeader.findAll({
+        where : {
+            kode_unit_kerja : req.params.kode_unit_kerja
+        },
+        attributes : {
+            exclude : ["ucr", "uch", "udch", "udcr"]
+        },
+        include : [
+            {
+                model : RkbmutPengadaanDetail, 
+                attributes : {
+                    exclude : ["ucr", "uch", "udch", "udcr"]
+                },
+                where : {
+                    kode_unit_kerja : req.params.kode_unit_kerja
+                },
+                include : [
+                    {
+                        model : RefMetodeKebutuhan, 
+                     
+                        attributes : {
+                            exclude : ["ucr", "uch", "udch", "udcr"]
+                        },
+                        on : {
+                            kode_asset : sequelize.where(sequelize.col('RkbmutPengadaanDetails.kode_asset'), '=', sequelize.col('RkbmutPengadaanDetails->RefMetodeKebutuhans.kode_asset')),
+                            kode_kegiatan_rkt : sequelize.where(sequelize.col('RkbmutPengadaanDetails.kode_kegiatan_rkt'), '=', sequelize.col('RkbmutPengadaanDetails->RefMetodeKebutuhans.kode_kegiatan_rkt'))
+                        }
+                    }
+                ]
+            }
+        ]
+    })
+    .then((data) => {
+        if (data.length === 0) {
+            const error = new Error("Data Tidak Ada")
+            error.statusCode = 422
+            throw error
+        }
         return res.json({
             status : "Success", 
             message : "Berhasil Menampilkan Data",

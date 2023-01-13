@@ -4,6 +4,7 @@ const Aset = require("../models/asset")
 const {Op} = require("sequelize")
 const db = require("../config/database")
 const TrxRkbmutAll = require("../models/trxRkbmutAll")
+const TrxStatusParaf = require("../models/trxStatusParaf")
 
 //Data RKBMUT UNIT
 exports.indexunit = (req, res, next) => {
@@ -323,14 +324,30 @@ exports.parafppk = (req, res, next) => {
                     kode_unit_kerja : req.params.kode_unit_kerja
                 }, 
                 transaction : t
-            });
-        })
-        .then(() => {
-            res.json({
-                status : "Success",
-                message : "Berhasil Paraf PPK " 
-            });
-            return t.commit()
+            })
+            .then((det) => {
+                if(!det) {
+                    const error = new Error("Data Gagal Update")
+                    error.statusCode = 422
+                    throw error
+                }
+                return TrxStatusParaf.update({
+                    status_pemeliharaan : 1
+                }, 
+                {
+                    where : {
+                        kode_unit_kerja : req.params.kode_unit_kerja, 
+                    },
+                    transaction : t
+                })
+                .then(() => {
+                    res.json({
+                        status : "Success",
+                        message : "Berhasil Paraf PPK " 
+                    });
+                    return t.commit()
+                })
+            })
         })
         .catch((err) => {
             if(!err.statusCode) {
