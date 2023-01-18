@@ -14,7 +14,8 @@ const {
     getbarangbyunitpenghapusan,
     jumlahkondisi,
     barangbyunitasset,
-    updateruang
+    updateruang, 
+    destroyRuang
 } = require("../controllers/ruangController")
 
 const {checker} = require("../helpers/utils")
@@ -52,5 +53,6 @@ router.get("/get-barang-penghapusan/:kode_unit", getbarangbyunitpenghapusan)
 
 router.put("/pindah-ruang/:nup", updateruang)
 
+router.delete("/hapus-ruang/:kode_unit/:kode_ruang", destroyRuang);
 
 module.exports = router

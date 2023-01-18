@@ -707,3 +707,44 @@ exports.barangbyunitasset = (req, res, next) => {
         next(err)
     });
  }
+
+ //DESTROY RUANGAN 
+ exports.destroyRuang = (req, res, next) => {
+    let param = {
+        kode_ruang : req.params.kode_ruang,
+        kode_unit : req.params.kode_unit
+    }
+    return DaftarBarang.findAll({
+        where : {
+            kode_ruang : param.kode_ruang
+        }
+    })
+    .then((barang) => {
+        if(barang.length !== 0) {
+            const error = new Error('Terdapat Barang Dalam Ruang')
+            error.statusCode = 422
+            throw error
+        }
+        return Ruang.destroy({
+            where : param
+        })
+        .then((hapus) => {
+            if(!hapus){
+                const error = new Error("Data gagal Hapus")
+                error.statusCode = 422
+                throw error
+            }
+            return res.json({
+                status : "Success", 
+                message : "Berhasil Menghapus Barang", 
+                data : hapus
+            })
+         })
+    })
+    .catch((err) => {
+        if(!err.statusCode) {
+            err.statusCode = 500
+        }
+        next(err)
+    });
+ }
