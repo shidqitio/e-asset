@@ -95,6 +95,10 @@ const RefMetodeKebutuhan = db.define(
             type : DataTypes.STRING(255), 
             allowNull : true
         },
+        rup : {
+            type : DataTypes.STRING(30),
+            allowNull : true
+        },
         ucr: {
             type: DataTypes.STRING(100),
             allowNull: true,

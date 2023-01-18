@@ -360,7 +360,15 @@ exports.revisikasubdik = (req, res, next) => {
                 kode_asset : req.params.kode_asset, 
                 status_sippan : 6, 
                 status_sippan_posisi : 1
-            }
+            }, 
+            include : [
+                {
+                    model : RkbmutPengadaanHeader, 
+                    attributes : ['tahun']
+                }
+            ],
+            raw : true, 
+            nest : true
         })
         .then((rkbm) => {
             if(rkbm.length === 0 ) {
@@ -405,18 +413,18 @@ exports.revisikasubdik = (req, res, next) => {
                     where : param, 
                     transaction : t
                 })
-            })
-            .then((up) => {
-                if(!up) {
-                    const error = new Error("Data Gagal Update")
-                    error.statusCode = 422
-                    throw error
-                }
-                t.commit()
-                return res.json({
-                    status : "Success",
-                    message : "Data Berhasil Update",
-                    data : up
+                .then((up) => {
+                    if(!up) {
+                        const error = new Error("Data Gagal Update")
+                        error.statusCode = 422
+                        throw error
+                    }
+                    console.log(rkbm[0].kode_unit_kerja)
+                    rkbm.map((item) => {
+                        result = item.RkbmutPengadaanHeader
+                    })
+                    const nomor_rup = rkbm[0].kode_unit_kerja + "-" + result.tahun 
+                    console.log(nomor_rup) 
                 })
             })
         })
