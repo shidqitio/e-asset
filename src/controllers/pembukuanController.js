@@ -247,6 +247,7 @@ exports.store = (req, res, next) => {
                                     array_data.push({
                                         kode_pembukuan : bukuan, 
                                         kode_barang : kode_barang, 
+                                        nilai_susut : kali,
                                         nilai_item : nilai,
                                         tanggal_penyusutan : date.toISOString().substr(0, 10), 
                                         angka_penyusutan : akhir, 
@@ -269,6 +270,7 @@ exports.store = (req, res, next) => {
                                         kode_pembukuan : bukuan, 
                                         kode_barang : kode_barang, 
                                         nilai_item : nilai,
+                                        nilai_susut : 0,
                                         tanggal_penyusutan : date.toISOString().substr(0, 10), 
                                         angka_penyusutan : nilai, 
                                         penyusutan_ke : 0
@@ -287,6 +289,7 @@ exports.store = (req, res, next) => {
                                                 kode_pembukuan : bukuan, 
                                                 kode_barang : kode_barang, 
                                                 nilai_item : nilai,
+                                                nilai_susut : kurang,
                                                 tanggal_penyusutan : date.toISOString().substr(0, 10), 
                                                 angka_penyusutan : hasil_dd, 
                                                 penyusutan_ke : tes

@@ -28,6 +28,10 @@ const TrxPenyusutan = db.define(
                 key : "kode_barang"
             }
         },
+        nilai_susut : {
+            type : DataTypes.DECIMAL(12,2), 
+            allowNull : true,
+        },
         nilai_item : {
             type : DataTypes.DECIMAL(12,2),
             allowNull : true
