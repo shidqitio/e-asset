@@ -85,6 +85,7 @@ exports.store = (req, res, next) => {
     const rquest = req.body
     const kode_kegiatan_rkt = rquest.kode_kegiatan_rkt;
     let kode_asset = rquest.kode_asset;
+    const kode_unit_kerja = rquest.kode_unit_kerja
     let nama_rup = rquest.nama_rup;
     let jenis_pengadaan = rquest.jenis_pengadaan;
     let metode_pengadaan = rquest.metode_pengadaan
@@ -110,7 +111,8 @@ exports.store = (req, res, next) => {
     return RefMetodeKebutuhan.findAll({
         where : {
             kode_kegiatan_rkt : kode_kegiatan_rkt,
-            kode_asset : kode_asset
+            kode_asset : kode_asset,
+            kode_unit_kerja : kode_unit_kerja
         }
     })
     .then((app) => {
@@ -122,6 +124,7 @@ exports.store = (req, res, next) => {
         return RefMetodeKebutuhan.create({
             kode_kegiatan_rkt : kode_kegiatan_rkt, 
             kode_asset : kode_asset, 
+            kode_unit_kerja : kode_unit_kerja, 
             nama_rup : nama_rup,
             jenis_pengadaan : jenis_pengadaan,
             metode_pengadaan : metode_pengadaan,
@@ -160,7 +163,8 @@ exports.store = (req, res, next) => {
             {
                 where : {
                     kode_kegiatan_rkt : kode_kegiatan_rkt, 
-                    kode_asset : kode_asset
+                    kode_asset : kode_asset,
+                    kode_unit_kerja : kode_unit_kerja
                 }
             })
             .then((upd) => {
@@ -207,7 +211,8 @@ exports.updatemetode = (req, res, next) => {
     let rencana_pemanfaatan_selesai = rquest.rencana_pemanfaatan_selesai
     let param = {
         kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt), 
-        kode_asset : req.params.kode_asset
+        kode_asset : req.params.kode_asset,
+        kode_unit_kerja : req.params.kode_unit_kerja
     }
 
     return RefMetodeKebutuhan.findAll({
@@ -330,6 +335,7 @@ exports.revisikasubdik = (req, res, next) => {
     const rquest = req.body
     let nama_rup = rquest.nama_rup;
     let jenis_pengadaan = rquest.jenis_pengadaan;
+    const kode_unit_kerja = rquest.kode_unit_kerja
     let metode_pengadaan = rquest.metode_pengadaan
     let type = rquest.type
     let lokasi = rquest.lokasi
@@ -348,7 +354,8 @@ exports.revisikasubdik = (req, res, next) => {
     let rencana_pemanfaatan_selesai = rquest.rencana_pemanfaatan_selesai
     let param = {
         kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
-        kode_asset : req.params.kode_asset
+        kode_asset : req.params.kode_asset, 
+        kode_unit_kerja : req.params.kode_unit_kerja
     }
 
     return db.transaction()
@@ -358,6 +365,7 @@ exports.revisikasubdik = (req, res, next) => {
             where : {
                 kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
                 kode_asset : req.params.kode_asset, 
+                kode_unit_kerja : req.params.kode_unit_kerja,
                 status_sippan : 6, 
                 status_sippan_posisi : 1
             }, 
@@ -423,7 +431,7 @@ exports.revisikasubdik = (req, res, next) => {
                     rkbm.map((item) => {
                         result = item.RkbmutPengadaanHeader
                     })
-                    const nomor_rup = rkbm[0].kode_unit_kerja + "-" + result.tahun 
+                    const nomor_rup = rkbm[0].kode_unit_kerja + "-" + result.tahun + "- 1" + 
                     console.log(nomor_rup) 
                 })
             })

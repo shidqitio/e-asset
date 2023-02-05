@@ -18,6 +18,11 @@ const RefKriteriaBarang = db.define(
             allowNull : false, 
             primaryKey : true
         }, 
+        kode_unit_kerja : {
+            type : DataTypes.STRING(16),
+            allowNull : false, 
+            primaryKey : true
+        },
         kriteria_barang : {
             type : DataTypes.STRING(255), 
             allowNull : true

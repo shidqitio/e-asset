@@ -16,6 +16,7 @@ const {Op, where} = require("sequelize")
 exports.store = (req, res, next) => {
     let kode_kegiatan_rkt = req.body.kode_kegiatan_rkt
     let kode_asset = req.body.kode_asset
+    let kode_unit_kerja = req.body.kode_unit_kerja
     let waktu_pemanfaatan = req.body.waktu_pemanfaatan
     let perkiraan_pengadaan = req.body.perkiraan_pengadaan
     let pihak_pengguna = req.body.pihak_pengguna
@@ -53,7 +54,8 @@ exports.store = (req, res, next) => {
         RefIdentifikasiKebutuhan1.findAll({
             where : {
                 kode_kegiatan_rkt : kode_kegiatan_rkt, 
-                kode_asset : kode_asset
+                kode_asset : kode_asset, 
+                kode_unit_kerja : kode_unit_kerja
             }
         })
         .then((kebutuhan1) => {
@@ -65,6 +67,7 @@ exports.store = (req, res, next) => {
             return RefIdentifikasiKebutuhan1.create({
                 kode_kegiatan_rkt : kode_kegiatan_rkt,
                 kode_asset : kode_asset, 
+                kode_unit_kerja : kode_unit_kerja,
                 waktu_pemanfaatan : waktu_pemanfaatan,
                 perkiraan_pengadaan : perkiraan_pengadaan,
                 pihak_pengguna : pihak_pengguna,
@@ -84,6 +87,7 @@ exports.store = (req, res, next) => {
                 return RefIdentifikasiKebutuhan2.create({
                     kode_kegiatan_rkt : kode_kegiatan_rkt,
                     kode_asset : kode_asset,
+                    kode_unit_kerja : kode_unit_kerja,
                     jumlah_pegawai : jumlah_pegawai, 
                     tingkat_beban_tugas : tingkat_beban_tugas,
                     jumlah_barang_tersedia : jumlah_barang_tersedia
@@ -97,6 +101,7 @@ exports.store = (req, res, next) => {
                     return RefIdentifikasiKebutuhan3.create({
                         kode_kegiatan_rkt : kode_kegiatan_rkt,
                         kode_asset : kode_asset,
+                        kode_unit_kerja : kode_unit_kerja,
                         existing_bmut : existing_bmut,
                         kondisi_baik : kondisi_baik,
                         kondisi_rusak_ringan : kondisi_rusak_ringan,
@@ -113,6 +118,7 @@ exports.store = (req, res, next) => {
                         return RefIdentifikasiKebutuhan4.create({
                             kode_kegiatan_rkt : kode_kegiatan_rkt,
                             kode_asset : kode_asset, 
+                            kode_unit_kerja : kode_unit_kerja,
                             barang_pasar : barang_pasar,
                             produsen_syarat : produsen_syarat,
                             persyaratan_barang : persyaratan_barang,
@@ -127,6 +133,7 @@ exports.store = (req, res, next) => {
                             return RefIdentifikasiKebutuhan5.create({
                                 kode_kegiatan_rkt : kode_kegiatan_rkt,
                                 kode_asset : kode_asset, 
+                                kode_unit_kerja : kode_unit_kerja,
                                 cara_pengiriman : cara_pengiriman, 
                                 cara_pemasangan : cara_pemasangan, 
                                 cara_pengakuan : cara_pengakuan,
@@ -144,6 +151,7 @@ exports.store = (req, res, next) => {
                                 return RefIdentifikasiKebutuhan6.create({
                                     kode_kegiatan_rkt : kode_kegiatan_rkt,
                                     kode_asset : kode_asset, 
+                                    kode_unit_kerja : kode_unit_kerja,
                                     barang_sejenis : barang_sejenis, 
                                     konsolidasi : konsolidasi
                                 }, {transaction : t})
@@ -158,6 +166,7 @@ exports.store = (req, res, next) => {
                                         return {
                                             kode_kegiatan_rkt : kode_kegiatan_rkt,
                                             kode_asset : kode_asset, 
+                                            kode_unit_kerja : kode_unit_kerja,
                                             "kriteria_barang" : item
                                         }
                                     })
@@ -170,7 +179,8 @@ exports.store = (req, res, next) => {
                                         {
                                             where : {
                                                 kode_kegiatan_rkt : kode_kegiatan_rkt, 
-                                                kode_asset : kode_asset
+                                                kode_asset : kode_asset,
+                                                kode_unit_kerja : kode_unit_kerja,
                                             },
                                             transaction : t
                                         })
@@ -186,6 +196,7 @@ exports.store = (req, res, next) => {
                                                         model : RkbmutPengadaanDetail,
                                                         where : {
                                                             kode_kegiatan_rkt : kode_kegiatan_rkt, 
+                                                            kode_unit_kerja : kode_unit_kerja,
                                                             kode_asset : kode_asset
                                                         }
                                                     }
@@ -204,7 +215,8 @@ exports.store = (req, res, next) => {
                                                     alokasi_pagu : hasil_pagu_akhir
                                                 }, {
                                                     where : {
-                                                        kode_kegiatan_rkt : kode_kegiatan_rkt
+                                                        kode_kegiatan_rkt : kode_kegiatan_rkt,
+                                                        kode_unit_kerja : kode_unit_kerja
                                                     }
                                                 })
                                                 .then((upd_head) => {
@@ -253,7 +265,8 @@ exports.store = (req, res, next) => {
 exports.indexsippan = (req, res, next) => {
     let params = {
         kode_kegiatan_rkt : req.params.kode_kegiatan_rkt, 
-        kode_asset : req.params.kode_asset
+        kode_asset : req.params.kode_asset,
+        kode_unit_kerja : req.params.kode_unit_kerja
     }
     return RefIdentifikasiKebutuhan1.findAll({
         where : params, 
@@ -341,7 +354,8 @@ exports.updatesippan = (req, res, next) => {
     let aspek_pengadaan = req.body.aspek_pengadaan
     let param = {
         kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt), 
-        kode_asset : req.params.kode_asset
+        kode_asset : req.params.kode_asset,
+        kode_unit_kerja : req.params.kode_unit_kerja
     }
     let barang_sejenis = req.body.barang_sejenis
     let konsolidasi = req.body.konsolidasi
@@ -496,6 +510,7 @@ exports.updatesippan = (req, res, next) => {
                                                                   return {
                                                                       kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt),
                                                                       kode_asset : req.params.kode_asset, 
+                                                                      kode_unit_kerja : param.kode_unit_kerja,
                                                                       "kriteria_barang" : item
                                                                   }
                                                               })
@@ -530,6 +545,7 @@ exports.updatesippan = (req, res, next) => {
                                                                   return {
                                                                       kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt),
                                                                       kode_asset : req.params.kode_asset, 
+                                                                      kode_unit_kerja : param.kode_unit_kerja,
                                                                       "kriteria_barang" : item
                                                                   }
                                                               })
@@ -653,7 +669,8 @@ exports.kirimkasubdit = (req, res, next) => {
 exports.komentar = (req, res, next) => {
     let param = {
         kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt), 
-        kode_asset : req.params.kode_asset
+        kode_asset : req.params.kode_asset,
+        kode_unit_kerja : req.params.kode_unit_kerja
     }
     let komentar_identifikasi1 = req.body.komentar_identifikasi1
     let komentar_identifikasi2 = req.body.komentar_identifikasi2
@@ -668,6 +685,7 @@ exports.komentar = (req, res, next) => {
             where : {
                 kode_kegiatan_rkt : param.kode_kegiatan_rkt,
                 kode_asset : param.kode_asset,
+                kode_unit_kerja : param.kode_unit_kerja,
                 status_sippan_posisi : 1,
                 [Op.or] : [
                     {
@@ -1128,7 +1146,8 @@ exports.updaterevisi = (req, res, next) => {
     let aspek_pengadaan = req.body.aspek_pengadaan
     let param = {
         kode_kegiatan_rkt : parseInt(req.params.kode_kegiatan_rkt), 
-        kode_asset : req.params.kode_asset
+        kode_asset : req.params.kode_asset,
+        kode_unit_kerja : req.params.kode_unit_kerja
     }
     let barang_sejenis = req.body.barang_sejenis
     let konsolidasi = req.body.konsolidasi
@@ -1139,6 +1158,7 @@ exports.updaterevisi = (req, res, next) => {
             where : {
                 kode_kegiatan_rkt : param.kode_kegiatan_rkt, 
                 kode_asset : param.kode_asset, 
+                kode_unit_kerja : param.kode_unit_kerja,
                 status_sippan : 2, 
                 status_sippan_posisi : 0
             }

@@ -18,6 +18,11 @@ const RefIdentifikasiKebutuhan1 = db.define(
             allowNull : false, 
             primaryKey : true
         }, 
+        kode_unit_kerja : {
+            type : DataTypes.STRING(16),
+            allowNull : false, 
+            primaryKey : true
+        },
         waktu_pemanfaatan : {
             type : DataTypes.INTEGER(11),
             allowNull : true

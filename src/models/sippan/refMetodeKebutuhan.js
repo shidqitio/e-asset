@@ -19,6 +19,11 @@ const RefMetodeKebutuhan = db.define(
             allowNull : false, 
             primaryKey : true
         }, 
+        kode_unit_kerja : {
+            type : DataTypes.STRING(16),
+            allowNull : false, 
+            primaryKey : true
+        },
         nama_rup : {
             type : DataTypes.STRING(255),
             allowNull : true

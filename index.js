@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const db = require("./src/config/database");
+const helmet = require("helmet")
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
@@ -23,6 +24,7 @@ app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
+app.use(helmet())
 
 
 //SOCKET IO CONNECTION
